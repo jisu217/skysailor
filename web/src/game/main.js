@@ -151,7 +151,7 @@ async function loadStrategy(id){
  $('rewindInfo').textContent='자동 비행 다시보기 · A/D 또는 시간 막대로 이동';
  $('currentLog').hidden=false;$('currentLog').href='/api/game/strategies/'+id+'/result';
  const s=result.summary,p=result.settings;
- $('strategySummary').textContent=`${(result.agent_name||strategyName(result.strategy))} · ${result.quality==='fine'?'정밀':'빠른'} 계산 / ${s.duration_s.toFixed(2)}초 (${s.termination==='ground'?'착지':'시간 한도'}) · 최대 기울기 ${s.max_tilt_deg.toFixed(1)}° · 평균 하강 ${s.mean_descent_m_s.toFixed(2)}m/s · 계산 ${s.wall_seconds.toFixed(1)}초. 추 ${p.payload_mass_g}g / 바람 ${p.wind_mode} / 직선 ${p.rail_linear_mm_s}mm/s`;
+ $('strategySummary').textContent=`${(result.agent_name||strategyName(result.strategy))} · ${result.quality==='fine'?'정밀':'빠른'} 계산 / ${s.duration_s.toFixed(2)}초 (${s.termination==='ground'?'착지':'시간 한도'}) · 최대 기울기 ${s.max_tilt_deg.toFixed(1)}° · 평균 하강 ${(Number.isFinite(s.mean_descent_m_s)?s.mean_descent_m_s.toFixed(2):'—')}m/s · 계산 ${(Number.isFinite(s.wall_seconds)?s.wall_seconds.toFixed(1):'—')}초. 추 ${p.payload_mass_g}g / 바람 ${p.wind_mode} / 직선 ${p.rail_linear_mm_s}mm/s`;
  $('source').textContent=`저장된 C 레일 비행 · 지름 ${result.frames[0].dome_diameter_mm||240}mm / 깊이 ${result.frames[0].dome_depth_mm||60}mm. 380mm 공기력은 잠정 환산입니다. 새 낙하로 직접 조종에 돌아갑니다.`;
  renderReplay();
 }

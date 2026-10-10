@@ -27,7 +27,7 @@ def test_evaluation_persists_replays(tmp_path,monkeypatch):
     assert replay['settings']['rail_drop_mm']==120
     assert row['hardware']==dict(payload_mass_g=32,rail_drop_mm=120)
 
-@pytest.mark.parametrize('field,value',[('payload_mass_g',0),('payload_mass_g',101),('rail_drop_mm',4),('rail_drop_mm',301),('rail_drop_mm',float('nan'))])
+@pytest.mark.parametrize('field,value',[('payload_mass_g',0),('rail_drop_mm',4),('rail_drop_mm',301),('rail_drop_mm',float('nan'))])
 def test_hardware_bounds(field,value):
     from benchmark import CodeSubmission
     with pytest.raises(ValidationError):

@@ -25,13 +25,13 @@ executor=ThreadPoolExecutor(max_workers=1)
 lock=threading.Lock();active=set()
 class Hardware(BaseModel):
     model_config=ConfigDict(extra="forbid",allow_inf_nan=False)
-    payload_mass_g:float=Field(18,ge=.1,le=100)
+    payload_mass_g:float=Field(18,ge=.1)
     rail_drop_mm:float=Field(5,ge=5,le=300)
 
     ring_radius_mm:float=Field(80,ge=40,le=150)
-    connector_drop_mm:float=Field(60,ge=40,le=150)
+    connector_drop_mm:float=Field(60,ge=40)
     pendulum_length_mm:float=Field(50,ge=15,le=120)
-    actuator_speed_mm_s:float=Field(30,ge=5,le=100)
+    actuator_speed_mm_s:float=Field(30,ge=5)
 
 def hardware_for(request):
     keys=['payload_mass_g','ring_radius_mm','connector_drop_mm','pendulum_length_mm','actuator_speed_mm_s'] if request.metric_id==HANGING_ID else ['payload_mass_g','rail_drop_mm']

@@ -52,7 +52,7 @@ class Experiment(BaseModel):
     rail_linear_mm_s: float = Field(80,ge=1,le=500)
     rail_torque_mnm: float = Field(2,ge=.01,le=100)
     rail_angular_deg_s: float = Field(180,ge=1,le=720)
-    payload_mass_g: float = Field(4,ge=.1,le=100)
+    payload_mass_g: float = Field(4,ge=.1)
     drive_speed_mm_s: float = Field(40, ge=5, le=300)
     target_x_mm: float = Field(0, ge=-120, le=120)
     target_y_mm: float = Field(0, ge=-120, le=120)
@@ -275,7 +275,7 @@ class GameCommand(BaseModel):
     rail_linear_mm_s: float = Field(80,ge=1,le=500)
     rail_torque_mnm: float = Field(2,ge=.01,le=100)
     rail_angular_deg_s: float = Field(180,ge=1,le=720)
-    payload_mass_g: float = Field(4,ge=.1,le=100)
+    payload_mass_g: float = Field(4,ge=.1)
 
 
 FLIGHT_LOG_DIR = Path(__file__).parent/'outputs'/'flight_logs'
@@ -482,6 +482,8 @@ def challenge_package():
 
 from benchmark import router as benchmark_router
 app.include_router(benchmark_router)
+from manual_arena import router as manual_router
+app.include_router(manual_router)
 
 static = Path(__file__).parent/'web'/'dist'
 if static.exists():

@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2
 COPY --from=ghcr.io/astral-sh/uv:0.8.22 /uv /usr/local/bin/uv
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev
-COPY clover.py leaf.py dome.py rail.py b_control.py rail_strategy.py hanging.py rail_env.py training_dashboard.py benchmark.py agent_sandbox.py dashboard.py cap_drop.py ./
+COPY clover.py leaf.py dome.py rail.py b_control.py rail_strategy.py hanging.py rail_env.py training_dashboard.py benchmark.py manual_arena.py agent_sandbox.py dashboard.py cap_drop.py ./
 COPY participant-kit.zip ./
 COPY participant/python-example ./participant/python-example
 COPY participant/direct-example ./participant/direct-example
