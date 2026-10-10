@@ -1,0 +1,28 @@
+.venv/
+__pycache__/
+.pytest_cache/
+outputs/*
+!outputs/.gitkeep
+web/node_modules/
+web/dist/
+web/test-results/
+web/playwright-report/
+
+# Local secrets and generated packages
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+participant-kit.zip
+participant-workspace/
+participant-hanging/
+data/wind/raw/
+# Preserve hardware generator source, not multi-GB generated meshes/previews.
+hardware/**
+!hardware/**/
+!hardware/**/*.py
+!hardware/**/*.js
+!hardware/**/*.md
+!hardware/**/*.scad

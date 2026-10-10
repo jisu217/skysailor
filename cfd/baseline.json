@@ -1,0 +1,8 @@
+{
+  "model": "B current independent-panel drag",
+  "speed_m_s": 1.6,
+  "drag_N": 0.07607821164633775,
+  "cd": 1.0725112887175854,
+  "weight_N": 0.08044200000000001,
+  "conditions": "Upright fixed dome, no angular motion, default coefficients. No payload/cable aero."
+}

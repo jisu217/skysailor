@@ -1,0 +1,20 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Skysailor · Agent 제출 가이드</title><link rel="stylesheet" href="/training/style.css"><style>main{max-width:1100px}pre{white-space:pre-wrap;background:#0c1922;padding:18px;border-radius:8px;font-size:13px;line-height:1.7}li{font-size:13px;color:#b3c8cf;line-height:1.9}details{margin-top:18px;font-size:13px}summary{cursor:pointer;color:#8ce6ca}h1{font-size:32px}.charts{align-items:start}</style><body><main><header><a href="/arena/">← Leaderboard</a><span>SKYSAILOR / QUICK START</span><a href="/api/benchmarks/example">예제 ZIP 다운로드 ↓</a></header><div class="intro"><div><div class="eyebrow">CODE → ZIP → SUBMIT → REPLAY</div><h1>Agent 만들고 제출하기</h1><p>새 지표 03은 관측28개·행동3개입니다. <a href="/participate/hanging.html">3점 매달린 추 전용 규격·예제 →</a></p><p>관측값을 받아 두 모터를 조종하는 Python 코드를 작성하세요.<br>먼저 예제를 그대로 제출해 전체 흐름을 확인해도 됩니다.</p></div></div><section class="charts"><article><h2>1. 예제를 받아 코드 작성</h2><p><a href="/api/benchmarks/example">예제 Agent ZIP</a>을 풀고 <code>agent.py</code>를 수정하세요. PID·MPC·신경망 등 알고리즘은 자유입니다.</p><pre>class Agent:
+    def reset(self):
+        # 매 비행 시작: 기억 초기화·모델 로딩
+        self.steps = 0
+
+    def act(self, observation):
+        self.steps += 1
+        return [0.0, 0.0]  # 중립 지령 예제</pre><p><b>입력:</b> 17개 관측값. <b>출력:</b> [레일 회전 속도 지령, 추 직선 속도 지령], 각각 −1~1. 0은 속도 지령 0이며 추를 중앙으로 옮기라는 뜻은 아닙니다.</p><p>시뮬레이션 0.02초마다 호출됩니다. 학습은 제출 전에 하고, 필요한 가중치를 함께 넣으세요.</p><details><summary>관측값 17개 보기</summary><pre>0:3   세계 위쪽 단위벡터 (기체 좌표계)
+3:6   각속도 / 10 (기체 좌표계)
+6:9   상대 공기속도 / 10 (기체 좌표계)
+9     허브 높이 / 3
+10,11 레일 각도의 sin, cos
+12    추 위치 / 돔 반지름
+13    레일 각속도 / 최대 각속도
+14    추 직선 속도 / 최대 직선 속도
+15:17 이전 행동</pre></details></article><article><h2>2. 코드와 가중치를 ZIP으로</h2><p>ZIP을 열면 <b>agent.py가 바로 보여야</b> 합니다. 바깥 폴더를 포함하지 마세요.</p><pre>agent.zip
+├── agent.py
+├── model.pt           # 필요할 때만
+├── helpers.py         # 필요할 때만
+└── requirements.txt   # 선택</pre><p>파일이 있는 폴더에서:</p><pre>python3 -m zipfile -c agent.zip agent.py model.pt</pre><p>가중치가 없으면 <code>model.pt</code>를 명령에서 빼세요. 파일은 <code>agent.py</code> 기준 상대 경로나 <code>/agent</code>에서 읽을 수 있습니다.</p><p><b>공통 환경:</b> Python 3.12 · NumPy 2.5.3 · PyTorch 2.8.0 CPU. 추가 패키지는 설치하지 않습니다. 모델은 CPU로 불러오세요.</p></article><article><h2>3. 지표를 선택하고 제출</h2><ol><li>Tailscale 초대 수락 후 앱을 연결합니다.</li><li><a href="/arena/">대시보드</a> 상단에서 무풍 / 실측 바람 지표를 고릅니다.</li><li><b>+ Agent 제출 → Python Agent · ZIP</b>을 선택합니다.</li><li>ZIP 파일과 참가자·Agent 이름을 입력하고 제출합니다.</li></ol><p>기체 크기·질량 등은 지표의 <b>평가 조건·기체 기본값 보기</b>에서 확인하세요. 추 질량(0.1–100g)과 중심 아래 레일 축 길이(5–300mm)는 제출마다 지정합니다. 기체 설정과 제어 성능을 함께 비교하며, 모든 제출은 같은 5개 공개 바람·초기 자세 조건으로 평가합니다.</p></article><article><h2>4. 순위와 3D 비행 확인</h2><p>평가가 완료되면 순위표에 자동 반영됩니다. 제출을 클릭하면 오른쪽에서 비행을 볼 수 있습니다. <b>비행 1~5</b>를 골라 비교하세요.</p><p><b>점수:</b> 5회 평균 고도 적분(m·s). 높이를 오래 유지할수록 높습니다. 시작 3m, 착지 또는 시뮬레이션 10초에 종료됩니다.</p><p><b>실패했다면:</b> 평가 상태의 오류를 확인하세요. ZIP 구조, 행동 범위, 라이브러리, 시간 제한을 점검하면 됩니다.</p><details><summary>실행 제한 보기</summary><ul><li>초기화 20초 / 행동 1회 0.25초 / 비행당 실제 실행 시간 60초</li><li>CPU 1개 / 메모리 1GB / 네트워크·GPU 없음</li><li>ZIP 20MB / 압축 해제 100MB / 최대 256개 항목</li><li>행동은 유한한 수 2개, 각각 −1~1. NaN·무한대 불가</li><li>requirements.txt는 numpy·torch 또는 위의 고정 버전만 허용</li></ul></details></article></section><p><a href="/api/challenge/package">전체 개발 환경·한국어 안내 다운로드 ↓</a></p><p class="note">전체 패키지의 participant/QUICKSTART_KO.txt에 같은 안내가 있습니다. 기존 로컬 evaluate.py의 reset(seed)와 웹 제출의 reset()은 다른 규격이므로 혼용하지 마세요. 380mm 공기력은 잠정 CFD 환산값입니다.</p></main></body></html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0c1116"><title>Clover — Flight Lab</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<div class="app">
+<header class="topbar"><a href="/game/" style="color:#8be9bd;padding:12px">직접 조종 ↗</a>
+  <a class="brand" href="/" aria-label="Clover 홈"><span class="clover-mark">✣</span><span>CLOVER<span class="brand-sub">FLIGHT LAB</span></span></a>
+  <div class="project"><span class="muted">PROJECT 01</span><span id="project-name">B · 고정 돔</span><span class="version">v0.2</span></div>
+  <div class="top-actions"><a class="text-button" href="/cfd/">CFD 유동 ↗</a><span id="connection" class="connection"><i></i>연결 중</span><button class="icon-button" id="fullscreen" aria-label="전체화면" title="전체화면">⛶</button><button class="info" data-info="about" aria-label="시뮬레이션 안내">i</button></div>
+</header>
+<main>
+  <section class="workspace">
+    <div class="stage" id="stage">
+      <div class="stage-top"><div><div class="eyebrow">DESCENT SIMULATION</div><h1>낙하 실험실 <button class="info" data-info="scene" aria-label="3D 화면 안내">i</button></h1></div><span class="status" id="status">준비</span></div>
+      <div class="view-switch segmented" aria-label="실험 보기"><button class="active" data-view="pd">PD 제어</button><button data-view="off">무제어</button><button data-view="both">나란히 비교</button></div>
+      <div class="physics-tools">
+        <select id="camera-mode" aria-label="카메라 기준"><option value="follow">기체 추적</option><option value="world" selected>지면 기준 + 확대</option><option value="top">위에서 · 날개 분절</option></select>
+        <label><input id="show-forces" type="checkbox" checked> 힘</label>
+        <label><input id="show-flow" type="checkbox" checked> 상대풍</label>
+        <label><input id="show-load" type="checkbox"> 공기하중 색상</label>
+        <button class="info" data-info="aero" aria-label="공기역학 표시 안내">i</button>
+      </div>
+      <div class="force-legend"><span class="cyan">↑ 공기력 <b id="aero-value">0.0 mN</b></span><span class="red">↓ 중력 <b>80.4 mN</b></span><span class="blue">↗ 상대풍</span><span id="com-readout" hidden></span><div id="load-scale" hidden><span>0</span><i></i><span>30+ Pa</span></div></div>
+      <div class="altimeter"><span id="alt-top">3 m</span><div class="alt-track"><i id="alt-dot"></i></div><span>0 m</span></div>
+      <div id="viewport" aria-label="네잎 날개 3D 시뮬레이션"></div>
+      <div id="detail-viewport" aria-label="기체 추적 확대 화면" hidden></div>
+      <div class="split-labels" id="split-labels" hidden><span>전체 낙하 <small>지면 기준</small></span><span>기체 확대 <small>동일 시점 · 추적</small></span></div>
+      <div class="model-labels" id="model-labels"><span class="mint">● PD 제어</span><span class="orange">● 무제어</span></div>
+      <div class="stage-stats"><div><span>현재 높이</span><strong id="height">3.00 <small>m</small></strong></div><div><span>기울기</span><strong id="tilt">15.0 <small>°</small></strong></div><div><span>낙하 속도</span><strong id="speed">0.00 <small>m/s</small></strong></div></div>
+      <div class="stage-bottom"><span class="axis-key"><b>Z</b> ↑ <span>X / Y</span></span><span>드래그 회전 · 스크롤 확대</span><button id="camera-reset" class="text-button">시점 초기화 ↗</button></div>
+    </div>
+    <section class="transport">
+      <button id="play" class="play-button" aria-label="재생" disabled>▶</button><button id="rewind" class="icon-button" aria-label="처음으로" disabled>↶</button>
+      <span id="time" class="time">0.00 <span>/ 0.00 s</span></span>
+      <input id="timeline" aria-label="재생 위치" type="range" min="0" max="1" step="0.001" value="0" disabled>
+      <select id="rate" aria-label="재생 속도"><option value="0.1">0.1×</option><option value="0.25" selected>0.25×</option><option value="0.5">0.5×</option><option value="1">1×</option><option value="2">2×</option></select>
+      <button class="info" data-info="playback" aria-label="재생 안내">i</button>
+    </section>
+    <section class="telemetry"><div class="section-heading"><h2>비행 기록 <button class="info" data-info="telemetry" aria-label="비행 기록 안내">i</button></h2><div class="legend"><span class="mint">● PD 제어</span><span class="orange">● 무제어</span><button id="download" class="text-button" disabled>CSV ↓</button></div></div><div class="charts"><div><div class="chart-title">기울기 <span>°</span></div><canvas id="tilt-chart" aria-label="시간별 기울기 그래프"></canvas></div><div><div class="chart-title">높이 <span>m</span></div><canvas id="height-chart" aria-label="시간별 높이 그래프"></canvas></div></div></section>
+  </section>
+  <aside class="sidebar">
+    <div class="side-heading"><div class="eyebrow">EXPERIMENT</div><h2>실험 설정 <button class="info" data-info="settings" aria-label="실험 설정 안내">i</button></h2></div>
+    <form id="settings">
+      <label class="variant-picker">모델 버전<select name="variant" id="variant"><option value="A">A · 물방울 날개</option><option value="B" selected>B · 고정 돔</option></select></label>
+      <section id="b-controls">
+        <div class="section-heading"><h3>자세·수평 위치 제어</h3><button type="button" class="info" data-info="dome" aria-label="B 위치 제어 안내">i</button></div>
+        <p id="world-target-readout">지면 목표 X 0 · Y 0 m</p><label class="variant-picker">알고리즘<select name="b_controller" id="b-controller"><option value="predictive">예측 가속·제동 · 실험</option><option value="position">원점 (0, 0) 위치 제어</option><option value="optimized" selected>낙하시간 튜닝 PD</option><option value="aero_pd">공기력 보상 + PD</option><option value="pd">PD · 기울기 + 회전 감쇠</option><option value="p">P · 기울기 보정</option><option value="manual">수동 목표 위치</option></select></label>
+        <label class="control">기본 줄 길이<output for="line-length">169.7 <span>mm</span></output><input id="line-length" name="line_length_mm" type="range" min="130" max="400" step="0.1" value="169.7"><div class="range-ends"><span>130 mm</span><span>400 mm</span></div></label>
+        <label class="control">줄 감김·풀림 속도<output for="drive-speed">40 <span>mm/s</span></output><input id="drive-speed" name="drive_speed_mm_s" type="range" min="5" max="300" step="5" value="40"><div class="range-ends"><span>5 mm/s</span><span>300 mm/s</span></div></label>
+        <button type="button" class="text-button" id="b-example">5° 제어 비교 예제 ↗</button>
+        <svg id="target-map" viewBox="0 0 240 220" tabindex="0" role="application" aria-label="삼각형 안을 클릭하여 제어기 목표 위치 지정">
+          <path d="M20 110H220 M120 10V210" stroke="#2b414c" stroke-dasharray="3 4"/>
+          <polygon points="220,110 70,23.397 70,196.603" fill="#7ce4bd12" stroke="#73bfa4"/>
+          <circle cx="220" cy="110" r="3" fill="#7ce4bd"/><circle cx="70" cy="23.397" r="3" fill="#7ce4bd"/><circle cx="70" cy="196.603" r="3" fill="#7ce4bd"/>
+          <circle id="actual-dot" cx="120" cy="110" r="4" fill="#ec93e0"/>
+          <circle id="target-dot" cx="120" cy="110" r="6" fill="none" stroke="#f2d878" stroke-width="2"/>
+          <text x="225" y="104" fill="#73919d" font-size="9">X</text><text x="126" y="13" fill="#73919d" font-size="9">Y</text>
+        </svg>
+        <input type="hidden" name="target_x_mm" id="target-x" value="0"><input type="hidden" name="target_y_mm" id="target-y" value="0">
+        <div class="target-values"><span id="target-values">X 0 · Y 0 mm</span><button type="button" class="text-button" id="center-target">중앙</button></div>
+        <section class="winch-panel" aria-label="세 줄 구동 상태">
+          <div class="section-heading"><h3>세 줄 구동 상태</h3><button type="button" class="info" data-info="winch" aria-label="줄 구동 설명">i</button></div>
+          <table class="winch-table"><thead><tr><th>줄</th><th>길이 mm</th><th>감김 mm/s</th><th>장력 mN</th></tr></thead><tbody>
+            <tr id="winch-0"><th>1</th><td>—</td><td>—</td><td>—</td></tr>
+            <tr id="winch-1"><th>2</th><td>—</td><td>—</td><td>—</td></tr>
+            <tr id="winch-2"><th>3</th><td>—</td><td>—</td><td>—</td></tr>
+          </tbody></table><div id="winch-state" class="run-note">실험 대기</div>
+        </section>
+      </section>
+      <div class="section-heading"><h3>초기 조건</h3><button type="button" class="text-button" id="defaults">초기화</button></div>
+      <label class="control">낙하 높이 <output for="height-input">3.0 <span>m</span></output><input id="height-input" name="height" type="range" min="0.5" max="10" step="0.5" value="3"><div class="range-ends"><span>0.5 m</span><span>10 m</span></div></label>
+      <label class="control">초기 기울기 <output for="tilt-input">15 <span>°</span></output><input id="tilt-input" name="tilt" type="range" min="0" max="80" step="1" value="15"><div class="range-ends"><span>0°</span><span>80°</span></div></label>
+      <div class="wind-label">기본 횡풍 <button type="button" class="info" data-info="wind" aria-label="횡풍 안내">i</button><span>m/s</span></div>
+      <div class="input-pair"><label><span>X</span><input name="wind_x" aria-label="X축 풍속" type="number" min="-3" max="3" step="0.1" value="0.2"></label><label><span>Y</span><input name="wind_y" aria-label="Y축 풍속" type="number" min="-3" max="3" step="0.1" value="0"></label></div>
+      <label class="variant-picker">바람 변화<select name="wind_mode" id="wind-mode"><option value="measured" selected>실측 3D 바람 · 50m 관측</option><option value="gust">랜덤 돌풍</option><option value="constant">일정한 바람</option></select></label>
+      <div class="input-pair"><label><span>돌풍 최대 m/s</span><input name="gust_speed" aria-label="돌풍 최대 풍속" type="number" min="0" max="3" step="0.1" value="0.4"></label><label><span>변화 간격 s</span><input name="gust_period" aria-label="바람 변화 간격" type="number" min="0.2" max="5" step="0.1" value="0.8"></label></div>
+      <div class="inline-control"><label for="wind-seed">바람 시드</label><input name="wind_seed" id="wind-seed" type="number" min="0" max="9999" step="1" value="0"></div>
+      <label class="variant-picker">실측 구간<select name="wind_clip" id="wind-clip"><option value="gentle">자료 내 낮은 풍속 · 약 3.3m/s</option><option value="up">10초 평균 상승 우세 · 약 5.1m/s</option><option value="down">10초 평균 하강 우세 · 약 6.9m/s</option></select></label>
+      <p id="wind-source">실측 모드는 기본 풍속·돌풍·시드를 사용하지 않습니다. 50m 관측값을 공간 전체에 그대로 재생하며 3m 높이의 바람 예측은 아닙니다. <a href="https://doi.org/10.5281/zenodo.18268508" target="_blank" rel="noopener">자료 출처</a></p>
+      <p id="wind-readout">현재 바람 · 실행 후 표시</p>
+      <div class="inline-control medium-control"><label for="medium">공기 조건</label><select id="medium" name="air_density"><option value="1.225">공기</option><option value="0">진공 · 공기력 없음</option></select></div>
+      <div class="divider"></div>
+      <div class="section-heading"><h3>자세 제어</h3><button type="button" class="info" data-info="controller" aria-label="자세 제어 안내">i</button></div>
+      <div id="a-gains"><label class="control">비례 이득 <span class="parameter">Kp</span><output for="kp-input">0.018</output><input id="kp-input" name="kp" type="range" min="0" max="0.08" step="0.001" value="0.018"></label>
+      <label class="control">감쇠 이득 <span class="parameter">Kd</span><output for="kd-input">0.004</output><input id="kd-input" name="kd" type="range" min="0" max="0.02" step="0.001" value="0.004"></label>
+      </div><div class="inline-control"><label for="seed">초기 방향 시드</label><input name="seed" id="seed" type="number" min="0" max="9999" step="1" value="0"></div>
+      <button type="submit" id="run" class="primary"><span>▶</span> 실험 실행 <span class="arrow">↗</span></button>
+      <p id="run-note" class="run-note" aria-live="polite">동일 조건으로 두 제어 모드 비교</p>
+    </form>
+    <section class="results"><div class="section-heading"><h3>실험 결과</h3><button class="info" data-info="results" aria-label="실험 결과 안내">i</button></div><div id="results-content" class="empty-results">첫 실험을 시작해보세요.</div></section>
+    <div class="side-footer"><span class="tiny-clover">✣</span><span id="model-spec">24 cm <i>·</i> 8.2 g <i>·</i> B</span><button class="info" data-info="model" aria-label="장치 모델 안내">i</button></div>
+  </aside>
+</main>
+<footer class="footer"><span><i class="dot"></i> CLOVER / FLIGHT DYNAMICS</span><span id="footer-status">실험 대기</span><span>MuJoCo <b>×</b> Python</span></footer>
+</div>
+<dialog id="info-dialog"><div class="dialog-top"><span class="eyebrow">LAB NOTES</span><button id="close-info" class="icon-button" aria-label="설명 닫기">×</button></div><h2 id="info-title"></h2><p id="info-body"></p><button id="confirm-info" class="primary">확인</button></dialog>
+<div id="toast" class="toast" role="alert" hidden></div>
+<script type="module" src="/app.js"></script>
+</body></html>

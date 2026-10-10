@@ -1,0 +1,17 @@
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const scene=new THREE.Scene();scene.background=new THREE.Color('#12232b');
+const camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,1,3000);camera.up.set(0,0,1);camera.position.set(400,-570,470);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);document.body.appendChild(renderer.domElement);
+const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,0,25);orbit.enableDamping=true;
+scene.add(new THREE.HemisphereLight(0xe9fff6,0x35435b,3));const light=new THREE.DirectionalLight(0xffffff,3);light.position.set(-200,-300,700);scene.add(light);
+const parts=[];let exploded=true;
+fetch('quarters.json').then(r=>r.json()).then(rows=>{document.querySelector('#mass').textContent=`4개 조각 · 경계 리브 편측 1.6 mm · PLA 합계 ${rows.reduce((s,r)=>s+r.mass_PLA_g,0).toFixed(1)} g`;
+rows.forEach((row,i)=>new GLTFLoader().load(row.name+'.glb',g=>{g.scene.traverse(o=>{if(o.isMesh){o.geometry.computeVertexNormals();o.material=new THREE.MeshStandardMaterial({color:[0x9ce4c8,0x8cc8ff,0xffce8a,0xe1a7ee][i],roughness:.6,side:THREE.DoubleSide});}});g.scene.userData.offset=row.offset;g.scene.position.fromArray(exploded?row.offset:[0,0,0]);parts.push(g.scene);scene.add(g.scene);document.querySelector('#state').textContent='드래그: 회전 · 휠: 확대';}));});
+document.querySelector('#explode').onclick=()=>{exploded=!exploded;parts.forEach(p=>p.position.fromArray(exploded?p.userData.offset:[0,0,0]));document.querySelector('#explode').textContent=exploded?'조립 상태':'조각 벌리기';};
+const grid=new THREE.GridHelper(600,30,0x36525d,0x243b45);grid.rotation.x=Math.PI/2;grid.position.z=-2;scene.add(grid);
+document.querySelector('#top').onclick=()=>{camera.position.set(0,0,740);camera.up.set(0,1,0);orbit.target.set(0,0,0);orbit.update();};
+document.querySelector('#angle').onclick=()=>{camera.up.set(0,0,1);camera.position.set(400,-570,470);orbit.target.set(0,0,25);orbit.update();};
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+function animate(){requestAnimationFrame(animate);orbit.update();renderer.render(scene,camera);}animate();

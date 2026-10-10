@@ -1,0 +1,9 @@
+{
+  "coefficient_Nm_s_per_rad": 0.0002416861574977738,
+  "reference_density": 1.225,
+  "reference_speed_m_s": 1.6,
+  "reference_angle_deg": 60,
+  "frequency_hz": 4,
+  "source": "cfd/cases/rotation-quick32/rotation-summary.json",
+  "approximation": "Constant dimensional coefficient for body x/y tilt rates at all attitudes and speeds; no z spin damping; numerical damping and wake phase lag are included in the fitted effective coefficient."
+}

@@ -1,0 +1,26 @@
+{
+  "upright_converged": false,
+  "meridian_comparison": {
+    "relative_cd_difference": 0.002449184080290116,
+    "tolerance": 0.03,
+    "both_converged": false,
+    "within_tolerance": true,
+    "note": "Meridional surface refinement only; same first layer and azimuthal resolution. Not a grid-independence proof."
+  },
+  "tilt_comparison": {
+    "both_converged": false,
+    "mirror_cd_difference": 0.0005752329062805031,
+    "mirror_moment_error": 0.002038726103109193,
+    "both_static_restoring": true,
+    "negative_my_com_Nm": 0.0001816448590653925,
+    "positive_my_com_Nm": -0.0001812745349497203,
+    "note": "Static tendency at a centred reference COM only; no dynamic stability conclusion."
+  },
+  "free_flight_calibration_ready": false,
+  "remaining_validation": [
+    "Wall-normal and azimuthal refinement",
+    "Domain-size sensitivity",
+    "Speed dependence",
+    "Unsteady wake and moving-body coupling"
+  ]
+}

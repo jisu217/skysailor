@@ -1,0 +1,217 @@
+{
+  "created": "2026-02-13T13:29:50.164171+00:00",
+  "modified": "2026-02-13T13:30:51.364076+00:00",
+  "id": 18268508,
+  "conceptrecid": "18268507",
+  "doi": "10.5281/zenodo.18268508",
+  "conceptdoi": "10.5281/zenodo.18268507",
+  "doi_url": "https://doi.org/10.5281/zenodo.18268508",
+  "metadata": {
+    "title": "PARASITE UAS wind measurement and ultrasonic anemometer/radiosonde reference measurements (Jülich 08/2024, Falkenberg 02/2025)",
+    "doi": "10.5281/zenodo.18268508",
+    "publication_date": "2026-02-13",
+    "description": "<h1>PARASITE UAS Wind Measurement Validation Dataset</h1>\n<p>This dataset contains meteorological measurement data recorded by the PARASITE (Portable Aircraft Rucksack for Atmospheric Sensing and In Situ Turbulence Estimation) payload attached to two multicopter uncrewed aircraft systems (UAS) as well as reference data from ultrasonic anemometers and radiosondes.</p>\n<p>The UAS used are commercially available multicopters:<br>- <strong>DJI Matrice 300 </strong>(nicknamed \"Hopper\")<br>- <strong>DJI Mavic 3E</strong> (nicknamed \"Flik\")</p>\n<p>The goal of the measurements performed for this dataset was to capture validation data for a novel indirect wind measurement method (COMP+NN) used with the PARASITE payload, which estimates the 3D wind vector from the UAS avionics without the use of an external flow sensor.</p>\n<p>The dataset contains measurements from two experiments:</p>\n<p>1. <strong>Falkenberg Mast Intercomparison (February 2025)</strong>: Hovering flights next to ultrasonic anemometers at the German Meteorological Service (DWD) Meteorological Observatory Lindenberg - Richard A&szlig;mann Observatory (MOL-RAO) in Falkenberg, Germany.</p>\n<p>2. <strong>J&uuml;lich Campaign (August 2024)</strong>: Vertical profiles up to 2000 m above sea level at Forschungszentrum J&uuml;lich, Germany, with simultaneous radiosonde ascents (within a time window of +- 20 min) for comparison.</p>\n<p>&nbsp;</p>\n<h2>Experiment 1: Falkenberg Mast Intercomparison</h2>\n<h3>Location</h3>\n<p>-&nbsp;<strong>Site</strong>: DWD Meteorological Observatory Lindenberg - Richard A&szlig;mann Observatory (MOL-RAO), Falkenberg, Germany<br>- <strong>Mast Coordinates</strong>: 52.16658&deg;N, 14.12228&deg;E<br>- <strong>Gill Maximet (\"gustl\") Coordinates</strong>: 52.167000, 14.121944<br>- <strong>Terrain</strong>: Flat, low surface roughness</p>\n<h3>Campaign Period</h3>\n<p>February 2025</p>\n<h3>Reference Instruments</h3>\n<p>Three ultrasonic anemometers were used as reference instruments (nicknames in parentheses):</p>\n<table style=\"border-collapse: collapse; width: 100%;\"><colgroup><col style=\"width: 19.9433%;\"><col style=\"width: 19.9433%;\"><col style=\"width: 19.9433%;\"><col style=\"width: 19.9433%;\"><col style=\"width: 19.9433%;\"></colgroup>\n<tbody>\n<tr>\n<td>Nickname</td>\n<td>Instrument</td>\n<td>Height (m a.g.l.)</td>\n<td>Sampling Rate</td>\n<td>Variables</td>\n</tr>\n<tr>\n<td>sully</td>\n<td>METEK USA-1</td>\n<td>99</td>\n<td>20 Hz (resampled to 10 Hz)</td>\n<td>u, v, w</td>\n</tr>\n<tr>\n<td>mike</td>\n<td>METEK USA-1</td>\n<td>50</td>\n<td>20 Hz (resampled to 10 Hz)</td>\n<td>u, v, w</td>\n</tr>\n<tr>\n<td>gustl</td>\n<td>Gill Maximet 501</td>\n<td>5</td>\n<td>1 Hz</td>\n<td>u, v, horizontal speed, direction, temperature</td>\n</tr>\n</tbody>\n</table>\n<p>&nbsp;</p>\n<h3>UAS Platforms</h3>\n<table style=\"border-collapse: collapse; width: 100%;\"><colgroup><col style=\"width: 16.6352%;\"><col style=\"width: 16.6352%;\"><col style=\"width: 16.6352%;\"><col style=\"width: 16.6352%;\"><col style=\"width: 16.6352%;\"><col style=\"width: 16.6352%;\"></colgroup>\n<tbody>\n<tr>\n<td>Nickname</td>\n<td>Platform</td>\n<td>Mass</td>\n<td>Propeller Diameter</td>\n<td>Motors</td>\n<td>Endurance</td>\n</tr>\n<tr>\n<td>Hopper</td>\n<td>DJI Matrice M300</td>\n<td>~7 kg</td>\n<td>53 cm</td>\n<td>4</td>\n<td>~45 min</td>\n</tr>\n<tr>\n<td>Flik</td>\n<td>DJI Mavic 3E</td>\n<td>~1 kg</td>\n<td>23.9 cm</td>\n<td>4</td>\n<td>~30 min</td>\n</tr>\n</tbody>\n</table>\n<p>&nbsp;</p>\n<h3>Flight Strategy</h3>\n<p>The UAS was positioned 5&ndash;10 m laterally from the sonic anemometers, orthogonal to the mean wind direction. This separation prevented rotor downwash interference with the reference sensors while keeping the UAS clear of the mast's turbulent wake.</p>\n<h3>Data Filtering</h3>\n<p><br>The provided data has been filtered to include only periods where:<br>- The UAS was hovering (not in transit)<br>- Horizontal separation from the sonic anemometer was &le;20 m<br>- Vertical separation was &le;10 m<br>- Wind direction was outside the mast wake sector (excluded: 0&deg;&ndash;50&deg;)<br>- No propeller icing occurred</p>\n<p>&nbsp;</p>\n<h2>Experiment 2: J&uuml;lich Vertical Profiles</h2>\n<h3>Location</h3>\n<ul>\n<li><strong>Site:</strong> Forschungszentrum J&uuml;lich, Germany</li>\n<li><strong>Campaign:</strong> Vital 1 (part of the HIRES-APP research project)</li>\n</ul>\n<h3>Campaign Period</h3>\n<p>August 2024</p>\n<h3>Measurements</h3>\n<ul>\n<li><strong>UAS:</strong> 19 vertical profiles using \"Flik\" (DJI Mavic 3E) up to 2000 m a.s.l.</li>\n<li><strong>Ascent rate:</strong> 4 m/s</li>\n<li><strong>Reference:</strong> Standard meteorological radiosondes launched within 20 minutes of UAS flights</li>\n</ul>\n<h3>Data Processing</h3>\n<p>Data from both systems were averaged into 50 m vertical bins to account for differing measurement principles (high-resolution UAS vs. GPS-derived radiosonde winds).</p>\n<h2>File Descriptions</h2>\n<h3>Falkenberg 10 Hz Hovering Data</h3>\n<p>These files contain synchronized 10 Hz time series from the UAS and corresponding sonic anemometer during hovering flight.</p>\n<table>\n<thead>\n<tr>\n<th>Filename</th>\n<th>UAS</th>\n<th>Reference Sonic</th>\n<th>Height</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>hopper_gustl_combined.csv</code></td>\n<td>Hopper</td>\n<td>gustl (Gill Maximet)</td>\n<td>5 m</td>\n</tr>\n<tr>\n<td><code>hopper_mike_combined.csv</code></td>\n<td>Hopper</td>\n<td>mike (USA-1)</td>\n<td>50 m</td>\n</tr>\n<tr>\n<td><code>hopper_sully_combined.csv</code></td>\n<td>Hopper</td>\n<td>sully (USA-1)</td>\n<td>99 m</td>\n</tr>\n<tr>\n<td><code>flik_gustl_combined.csv</code></td>\n<td>Flik</td>\n<td>gustl (Gill Maximet)</td>\n<td>5 m</td>\n</tr>\n<tr>\n<td><code>flik_mike_combined.csv</code></td>\n<td>Flik</td>\n<td>mike (USA-1)</td>\n<td>50 m</td>\n</tr>\n<tr>\n<td><code>flik_sully_combined.csv</code></td>\n<td>Flik</td>\n<td>sully (USA-1)</td>\n<td>99 m</td>\n</tr>\n</tbody>\n</table>\n<h3>Falkenberg Spectral Analysis Data</h3>\n<p>These files contain uninterrupted sequences of data suitable for spectral analysis and structure function computation. Each sequence is identified by a <code>block_id</code>.</p>\n<table>\n<thead>\n<tr>\n<th>Filename</th>\n<th>UAS</th>\n<th>Reference Sonic</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>hopper_sully_spectra_sections.csv</code></td>\n<td>Hopper</td>\n<td>sully (USA-1, 99 m)</td>\n</tr>\n<tr>\n<td><code>flik_sully_spectra_sections.csv</code></td>\n<td>Flik</td>\n<td>sully (USA-1, 99 m)</td>\n</tr>\n</tbody>\n</table>\n<h3>J&uuml;lich Radiosonde Comparison</h3>\n<table>\n<thead>\n<tr>\n<th>Filename</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>flik_radiosonde_comparison.csv</code></td>\n<td>Binned (50 m) comparison of Flik UAS profiles with radiosonde ascents</td>\n</tr>\n</tbody>\n</table>\n<h2>Column Descriptions</h2>\n<h3>UAS Columns (Hopper/Flik)</h3>\n<p>Replace <code>{uas}</code> with <code>hopper</code> or <code>flik</code> as appropriate.</p>\n<table>\n<thead>\n<tr>\n<th>Column</th>\n<th>Unit</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>timestamp_utc</code></td>\n<td>ISO 8601</td>\n<td>Timestamp in UTC</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_gps_longitude[deg*10^-7]</code></td>\n<td>deg &times; 10⁻⁷</td>\n<td>GNSS longitude (WGS84)</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_gps_latitude[deg*10^-7]</code></td>\n<td>deg &times; 10⁻⁷</td>\n<td>GNSS latitude (WGS84)</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_gps_altitude[mm]</code></td>\n<td>mm</td>\n<td>GNSS altitude above mean sea level</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_pitch[deg]</code></td>\n<td>degrees</td>\n<td>Aircraft pitch angle from avionics</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_roll[deg]</code></td>\n<td>degrees</td>\n<td>Aircraft roll angle from avionics</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_yaw[deg]</code></td>\n<td>degrees</td>\n<td>Aircraft yaw/heading angle from avionics</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_esc_speed1[rpm]</code></td>\n<td>RPM</td>\n<td>Propeller speed, motor 1</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_esc_speed2[rpm]</code></td>\n<td>RPM</td>\n<td>Propeller speed, motor 2</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_esc_speed3[rpm]</code></td>\n<td>RPM</td>\n<td>Propeller speed, motor 3</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_esc_speed4[rpm]</code></td>\n<td>RPM</td>\n<td>Propeller speed, motor 4</td>\n</tr>\n<tr>\n<td><code>{uas}_ardupilot_SCALED_PRESSURE:press_abs</code></td>\n<td>hPa</td>\n<td>Absolute pressure from onboard barometer</td>\n</tr>\n<tr>\n<td><code>{uas}_sht40_temperature[*C]</code></td>\n<td>&deg;C</td>\n<td>Temperature from SHT40 sensor (slow response)</td>\n</tr>\n<tr>\n<td><code>{uas}_sht40_humidity[%]</code></td>\n<td>%</td>\n<td>Relative humidity from SHT40 sensor (slow response)</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_wind_compnn_model_u[m/s]</code></td>\n<td>m/s</td>\n<td>COMP+NN estimated wind, zonal (u) component</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_wind_compnn_model_v[m/s]</code></td>\n<td>m/s</td>\n<td>COMP+NN estimated wind, meridional (v) component</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_wind_compnn_model_w[m/s]</code></td>\n<td>m/s</td>\n<td>COMP+NN estimated wind, vertical (w) component</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_wind_hspeed_compnn_model[m/s]</code></td>\n<td>m/s</td>\n<td>COMP+NN estimated horizontal wind speed</td>\n</tr>\n<tr>\n<td><code>{uas}_dji_wind_direction_compnn_model[deg]</code></td>\n<td>degrees</td>\n<td>COMP+NN estimated wind direction</td>\n</tr>\n</tbody>\n</table>\n<h3>Flik-Specific Sensors</h3>\n<table>\n<thead>\n<tr>\n<th>Column</th>\n<th>Unit</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>flik_stinger_temperature-median[&deg;C]</code></td>\n<td>&deg;C</td>\n<td>Temperature from fast-response Stinger sensor</td>\n</tr>\n<tr>\n<td><code>flik_hyt_humidity[%]</code></td>\n<td>%</td>\n<td>Humidity from fast-response IST HYT.R411 sensor</td>\n</tr>\n</tbody>\n</table>\n<h3>Sonic Anemometer Columns</h3>\n<h4>sully &amp; mike (METEK USA-1)</h4>\n<table>\n<thead>\n<tr>\n<th>Column</th>\n<th>Unit</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>sully_u</code> / <code>mike_u</code></td>\n<td>m/s</td>\n<td>Zonal wind component</td>\n</tr>\n<tr>\n<td><code>sully_v</code> / <code>mike_v</code></td>\n<td>m/s</td>\n<td>Meridional wind component</td>\n</tr>\n<tr>\n<td><code>sully_w</code> / <code>mike_w</code></td>\n<td>m/s</td>\n<td>Vertical wind component</td>\n</tr>\n</tbody>\n</table>\n<h4>gustl (Gill Maximet 501)</h4>\n<table>\n<thead>\n<tr>\n<th>Column</th>\n<th>Unit</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>gustl_u</code></td>\n<td>m/s</td>\n<td>Zonal wind component</td>\n</tr>\n<tr>\n<td><code>gustl_v</code></td>\n<td>m/s</td>\n<td>Meridional wind component</td>\n</tr>\n<tr>\n<td><code>gustl_w</code></td>\n<td>m/s</td>\n<td>Vertical wind component</td>\n</tr>\n<tr>\n<td><code>gustl_temp</code></td>\n<td>&deg;C</td>\n<td>Air temperature</td>\n</tr>\n<tr>\n<td><code>gustl_cdir</code></td>\n<td>degrees</td>\n<td>Wind direction</td>\n</tr>\n<tr>\n<td><code>gustl_cspeed</code></td>\n<td>m/s</td>\n<td>Horizontal wind speed</td>\n</tr>\n</tbody>\n</table>\n<h3>Spectral Analysis Files</h3>\n<table>\n<thead>\n<tr>\n<th>Column</th>\n<th>Unit</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>timestamp_utc</code></td>\n<td>ISO 8601</td>\n<td>Timestamp in UTC</td>\n</tr>\n<tr>\n<td><code>block_id</code></td>\n<td>-</td>\n<td>Identifier for each uninterrupted data sequence</td>\n</tr>\n<tr>\n<td><code>{uas}_u</code></td>\n<td>m/s</td>\n<td>COMP+NN zonal wind component</td>\n</tr>\n<tr>\n<td><code>{uas}_v</code></td>\n<td>m/s</td>\n<td>COMP+NN meridional wind component</td>\n</tr>\n<tr>\n<td><code>{uas}_w_original</code></td>\n<td>m/s</td>\n<td>COMP+NN vertical wind component (not time-shifted)</td>\n</tr>\n<tr>\n<td><code>sully_u</code></td>\n<td>m/s</td>\n<td>Sonic zonal wind component</td>\n</tr>\n<tr>\n<td><code>sully_v</code></td>\n<td>m/s</td>\n<td>Sonic meridional wind component</td>\n</tr>\n<tr>\n<td><code>sully_w</code></td>\n<td>m/s</td>\n<td>Sonic vertical wind component</td>\n</tr>\n</tbody>\n</table>\n<h3>Radiosonde Comparison File</h3>\n<table>\n<thead>\n<tr>\n<th>Column</th>\n<th>Unit</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>alt_bin</code></td>\n<td>m</td>\n<td>Altitude range of the 50 m altitude bin (a.s.l.)</td>\n</tr>\n<tr>\n<td><code>flight_id</code></td>\n<td>-</td>\n<td>Identifier for each UAS flight</td>\n</tr>\n<tr>\n<td><code>drone_flik_dji_wind_compnn_model_u[m/s]</code></td>\n<td>m/s</td>\n<td>Mean COMP+NN zonal wind per bin</td>\n</tr>\n<tr>\n<td><code>drone_flik_dji_wind_compnn_model_v[m/s]</code></td>\n<td>m/s</td>\n<td>Mean COMP+NN meridional wind per bin</td>\n</tr>\n<tr>\n<td><code>drone_flik_dji_wind_compnn_model_w[m/s]</code></td>\n<td>m/s</td>\n<td>Mean COMP+NN vertical wind per bin</td>\n</tr>\n<tr>\n<td><code>drone_flik_stinger_temperature-median[&deg;C]</code></td>\n<td>&deg;C</td>\n<td>Mean temperature per bin (Stinger sensor)</td>\n</tr>\n<tr>\n<td><code>radiosonde_Speed</code></td>\n<td>m/s</td>\n<td>Radiosonde horizontal wind speed</td>\n</tr>\n<tr>\n<td><code>radiosonde_Dir</code></td>\n<td>degrees</td>\n<td>Radiosonde wind direction</td>\n</tr>\n<tr>\n<td><code>radiosonde_Temp</code></td>\n<td>&deg;C</td>\n<td>Radiosonde air temperature</td>\n</tr>\n<tr>\n<td><code>radiosonde_RH</code></td>\n<td>%</td>\n<td>Radiosonde relative humidity</td>\n</tr>\n<tr>\n<td><code>radiosonde_P</code></td>\n<td>hPa</td>\n<td>Radiosonde pressure</td>\n</tr>\n</tbody>\n</table>\n<h4>Radiosonde Flight Reference Table</h4>\n<p>The following table lists the UAS flight IDs included in the radiosonde comparison dataset with their corresponding radiosonde launch times.</p>\n<table>\n<thead>\n<tr>\n<th>flight_id</th>\n<th>Date</th>\n<th>Radiosonde Launch Time (UTC)</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>flik-0031</td>\n<td>2024-08-12</td>\n<td>13:50</td>\n</tr>\n<tr>\n<td>flik-0036</td>\n<td>2024-08-13</td>\n<td>09:46</td>\n</tr>\n<tr>\n<td>flik-0039</td>\n<td>2024-08-13</td>\n<td>12:33</td>\n</tr>\n<tr>\n<td>flik-0044</td>\n<td>2024-08-14</td>\n<td>09:35</td>\n</tr>\n<tr>\n<td>flik-0048</td>\n<td>2024-08-15</td>\n<td>05:00</td>\n</tr>\n<tr>\n<td>flik-0051</td>\n<td>2024-08-15</td>\n<td>06:06</td>\n</tr>\n<tr>\n<td>flik-0054</td>\n<td>2024-08-15</td>\n<td>07:10</td>\n</tr>\n<tr>\n<td>flik-0057</td>\n<td>2024-08-15</td>\n<td>08:15</td>\n</tr>\n<tr>\n<td>flik-0059</td>\n<td>2024-08-15</td>\n<td>09:20</td>\n</tr>\n<tr>\n<td>flik-0065</td>\n<td>2024-08-15</td>\n<td>12:23</td>\n</tr>\n<tr>\n<td>flik-0079</td>\n<td>2024-08-15</td>\n<td>20:00</td>\n</tr>\n<tr>\n<td>flik-0084</td>\n<td>2024-08-19</td>\n<td>04:59</td>\n</tr>\n<tr>\n<td>flik-0086</td>\n<td>2024-08-19</td>\n<td>06:06</td>\n</tr>\n<tr>\n<td>flik-0087</td>\n<td>2024-08-19</td>\n<td>07:18</td>\n</tr>\n<tr>\n<td>flik-0089</td>\n<td>2024-08-19</td>\n<td>08:21</td>\n</tr>\n<tr>\n<td>flik-0090</td>\n<td>2024-08-19</td>\n<td>09:38</td>\n</tr>\n<tr>\n<td>flik-0092</td>\n<td>2024-08-19</td>\n<td>10:55</td>\n</tr>\n<tr>\n<td>flik-0097</td>\n<td>2024-08-19</td>\n<td>16:11</td>\n</tr>\n<tr>\n<td>flik-0098</td>\n<td>2024-08-19</td>\n<td>19:01</td>\n</tr>\n</tbody>\n</table>\n<h2>Wind Convention</h2>\n<p>All wind components represent the direction the air is moving <strong>toward</strong> (standard physics convention):</p>\n<ul>\n<li><strong>u</strong>: Zonal component (positive = air moving eastward)</li>\n<li><strong>v</strong>: Meridional component (positive = air moving northward)</li>\n<li><strong>w</strong>: Vertical component (positive = air moving upward)</li>\n</ul>\n<p>Wind direction (in <code>*_direction_*</code> columns and <code>radiosonde_Dir</code>) is reported as the direction <strong>from</strong> which the wind is blowing, in degrees clockwise from north (0&deg; = North, 90&deg; = East).</p>\n<h2>Acknowledgments</h2>\n<p>The authors acknowledge the operational support provided by the staff at the Meteorological Observatory Lindenberg - Richard A&szlig;mann Observatory (MOL-RAO) and the Forschungszentrum J&uuml;lich. The J&uuml;lich campaign was part of the HIRES-APP research project funded by the Hans-Ertel-Center for Weather Research (HErZ) and the German Meteorological Service (DWD), Grant number 4823DWDP5A</p>",
+    "access_right": "open",
+    "creators": [
+      {
+        "name": "Schön, Martin",
+        "affiliation": "University of Tübingen",
+        "orcid": "0000-0002-8572-933X"
+      },
+      {
+        "name": "Büchau, Yann",
+        "affiliation": "University of Bonn",
+        "orcid": "0000-0003-2472-2051"
+      },
+      {
+        "name": "zum Berge, Kjell",
+        "affiliation": "University of Tübingen",
+        "orcid": "0000-0002-7410-7121"
+      },
+      {
+        "name": "Bange, Jens",
+        "affiliation": "Eberhard Karls Universität Tübingen Mathematisch-Naturwissenschaftliche Fakultät",
+        "orcid": "0000-0003-4075-1573"
+      },
+      {
+        "name": "Platis, Andreas",
+        "affiliation": "University of Tübingen",
+        "orcid": "0000-0002-9276-3587"
+      }
+    ],
+    "keywords": [
+      "UAS",
+      "wind measurement",
+      "meteorology"
+    ],
+    "version": "1.0",
+    "resource_type": {
+      "title": "Dataset",
+      "type": "dataset"
+    },
+    "license": {
+      "id": "cc-by-4.0"
+    },
+    "grants": [
+      {
+        "code": "4823DWDP5A",
+        "internal_id": "02nrqs528::4823DWDP5A",
+        "funder": {
+          "name": "German Meteorological Service"
+        }
+      }
+    ],
+    "relations": {
+      "version": [
+        {
+          "index": 0,
+          "is_last": true,
+          "parent": {
+            "pid_type": "recid",
+            "pid_value": "18268507"
+          }
+        }
+      ]
+    }
+  },
+  "title": "PARASITE UAS wind measurement and ultrasonic anemometer/radiosonde reference measurements (Jülich 08/2024, Falkenberg 02/2025)",
+  "links": {
+    "self": "https://zenodo.org/api/records/18268508",
+    "self_html": "https://zenodo.org/records/18268508",
+    "preview_html": "https://zenodo.org/records/18268508?preview=1",
+    "doi": "https://doi.org/10.5281/zenodo.18268508",
+    "self_doi": "https://doi.org/10.5281/zenodo.18268508",
+    "self_doi_html": "https://zenodo.org/doi/10.5281/zenodo.18268508",
+    "reserve_doi": "https://zenodo.org/api/records/18268508/draft/pids/doi",
+    "parent": "https://zenodo.org/api/records/18268507",
+    "parent_html": "https://zenodo.org/records/18268507",
+    "parent_doi": "https://doi.org/10.5281/zenodo.18268507",
+    "parent_doi_html": "https://zenodo.org/doi/10.5281/zenodo.18268507",
+    "self_iiif_manifest": "https://zenodo.org/api/iiif/record:18268508/manifest",
+    "self_iiif_sequence": "https://zenodo.org/api/iiif/record:18268508/sequence/default",
+    "files": "https://zenodo.org/api/records/18268508/files",
+    "media_files": "https://zenodo.org/api/records/18268508/media-files",
+    "archive": "https://zenodo.org/api/records/18268508/files-archive",
+    "archive_media": "https://zenodo.org/api/records/18268508/media-files-archive",
+    "latest": "https://zenodo.org/api/records/18268508/versions/latest",
+    "latest_html": "https://zenodo.org/records/18268508/latest",
+    "versions": "https://zenodo.org/api/records/18268508/versions",
+    "draft": "https://zenodo.org/api/records/18268508/draft",
+    "access_links": "https://zenodo.org/api/records/18268508/access/links",
+    "access_grants": "https://zenodo.org/api/records/18268508/access/grants",
+    "access_users": "https://zenodo.org/api/records/18268508/access/users",
+    "access_request": "https://zenodo.org/api/records/18268508/access/request",
+    "access": "https://zenodo.org/api/records/18268508/access",
+    "communities": "https://zenodo.org/api/records/18268508/communities",
+    "communities-suggestions": "https://zenodo.org/api/records/18268508/communities-suggestions",
+    "request_deletion": "https://zenodo.org/api/records/18268508/request-deletion",
+    "file_modification": "https://zenodo.org/api/records/18268508/file-modification",
+    "quota_increase": "https://zenodo.org/api/records/18268508/quota-increase",
+    "requests": "https://zenodo.org/api/records/18268508/requests"
+  },
+  "updated": "2026-02-13T13:30:51.364076+00:00",
+  "recid": "18268508",
+  "revision": 6,
+  "files": [
+    {
+      "id": "4eb182c5-2fde-45c9-a69f-6d4286111595",
+      "key": "hopper_sully_combined.csv",
+      "size": 13108525,
+      "checksum": "md5:31df517dc3a615b7192a2af2d3df223a",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/hopper_sully_combined.csv/content"
+      }
+    },
+    {
+      "id": "2e78ea91-d13b-4c0c-931a-a3891e4d306b",
+      "key": "flik_gustl_combined.csv",
+      "size": 12163976,
+      "checksum": "md5:462c2cac2201d2e3f0a28b70f49308bc",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/flik_gustl_combined.csv/content"
+      }
+    },
+    {
+      "id": "d6e36dda-9c44-46a2-8bda-980ce95ebac6",
+      "key": "hopper_sully_spectra_sections.csv",
+      "size": 5618069,
+      "checksum": "md5:7cdf206950b6ac819aeaeaceaaa25dbb",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/hopper_sully_spectra_sections.csv/content"
+      }
+    },
+    {
+      "id": "60218a03-1b4d-45d7-9723-103b9b1f61fb",
+      "key": "flik_mike_combined.csv",
+      "size": 10413402,
+      "checksum": "md5:db75f891a36cc5cc25b376c2af9f1f17",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/flik_mike_combined.csv/content"
+      }
+    },
+    {
+      "id": "e31d340a-2eb1-46da-adbb-873ed11fcd07",
+      "key": "hopper_gustl_combined.csv",
+      "size": 16381726,
+      "checksum": "md5:ce024cd226f4b0c9480690ba4b5392f1",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/hopper_gustl_combined.csv/content"
+      }
+    },
+    {
+      "id": "19f7e19e-bb69-4cae-a0e1-d98b23ce3efe",
+      "key": "flik_sully_combined.csv",
+      "size": 19144411,
+      "checksum": "md5:f7004811ad802b1c028d1246f270357b",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/flik_sully_combined.csv/content"
+      }
+    },
+    {
+      "id": "3f81823b-6e25-41cd-afae-cd929d0185ba",
+      "key": "flik_radiosonde_comparison.csv",
+      "size": 122960,
+      "checksum": "md5:ae8f11e0f330cf6cb1bdaa173505943e",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/flik_radiosonde_comparison.csv/content"
+      }
+    },
+    {
+      "id": "ef3cb126-921b-47f6-83c1-5a4be77010ae",
+      "key": "hopper_mike_combined.csv",
+      "size": 8399285,
+      "checksum": "md5:fd033468ef6e0ddd2a76666b78b1c65b",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/hopper_mike_combined.csv/content"
+      }
+    },
+    {
+      "id": "533a913b-e655-4c93-af47-c0686342e147",
+      "key": "flik_sully_spectra_sections.csv",
+      "size": 3540139,
+      "checksum": "md5:e50eec89009ace0cb961906dcb78c076",
+      "links": {
+        "self": "https://zenodo.org/api/records/18268508/files/flik_sully_spectra_sections.csv/content"
+      }
+    }
+  ],
+  "swh": {},
+  "owners": [
+    {
+      "id": "1490114"
+    }
+  ],
+  "status": "published",
+  "stats": {
+    "downloads": 324,
+    "unique_downloads": 320,
+    "views": 74,
+    "unique_views": 69,
+    "version_downloads": 324,
+    "version_unique_downloads": 320,
+    "version_unique_views": 69,
+    "version_views": 74
+  },
+  "state": "done",
+  "submitted": true
+}

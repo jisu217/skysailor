@@ -1,0 +1,85 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:                                        |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    object          controlDict;
+}
+
+application     simpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         800;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   100;
+
+purgeWrite      2;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    drag
+    {
+        type            forceCoeffs;
+        libs            ( "libforces.so" );
+        patches         ( dome );
+        rho             rhoInf;
+        rhoInf          1.225;
+        CofR            ( 0 0 0 );
+        liftDir         ( 1 0 0 );
+        dragDir         ( 0 0 1 );
+        pitchAxis       ( 0 1 0 );
+        magUInf         1.6;
+        lRef            0.24;
+        Aref            0.0452389;
+        writeControl    timeStep;
+        writeInterval   1;
+    }
+    yPlus
+    {
+        type            yPlus;
+        libs            ( "libfieldFunctionObjects.so" );
+        writeControl    writeTime;
+    }
+    planes
+    {
+        type            surfaces;
+        libs            ( "libsampling.so" );
+        writeControl    writeTime;
+        surfaceFormat   raw;
+        fields          ( p U );
+        interpolationScheme cellPoint;
+        surfaces        ( midplane { type cuttingPlane ; planeType pointAndNormal ; pointAndNormalDict { basePoint ( 0 0 0 ) ; normalVector ( 0 1 0 ) ; } interpolate true ; } );
+    }
+}
+
+
+// ************************************************************************* //

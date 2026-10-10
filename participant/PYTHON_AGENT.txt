@@ -1,0 +1,29 @@
+Python Agent submission v1
+==========================
+ZIP root: agent.py, optional model weights/helper modules, optional requirements.txt.
+agent.py exports Agent. reset(self) initializes each flight; act(self, observation)
+returns two finite numbers in [-1,1]. Observation is the same float32[17] vector
+in README.txt. Episodes use fresh processes; no simulator access or future wind.
+
+No fixed controller architecture: PID, MPC, RNN, neural networks, etc. are allowed.
+The server runs your policy, not your training loop. Train before submission.
+
+Common runtime (not installed from user-provided requirements):
+Python 3.12, numpy 2.5.3, torch 2.8.0 CPU. Standard library available.
+requirements.txt, if present, must contain only those names or exact versions.
+Additional package installs, internet access and GPU are unavailable.
+Weights can be loaded from /agent or paths relative to agent.py.
+The submission directory is read-only. /tmp provides 64MB temporary space.
+
+Limits: CPU 1, RAM 1GB, processes 64, ZIP 20MB, extracted 100MB / 256 entries.
+Initialization incl. imports/reset: 20 seconds. act response: 0.25 seconds.
+Total wall-clock time per flight: 60 seconds. stdout is reserved for protocol;
+ordinary prints are redirected, not shown in the dashboard. Errors are reported.
+The simulation remains on the host; it advances 0.02 simulated seconds per action.
+Time limits are wall-clock and may include scheduling/IPC overhead.
+
+Zip the CONTENTS of python-example (not the folder), then submit on /arena/.
+Both current metrics keep their physical conditions and public seed set 0–4.
+The server computes scores. Failed/time-limited submissions are shown as failed,
+not ranked. Names are self-declared. This is a trusted-participant pilot deployment;
+a container shares the host kernel and is not a dedicated VM security boundary.

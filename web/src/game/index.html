@@ -1,0 +1,39 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Skysailor · 직접 조종</title><link rel="stylesheet" href="style.css"><body><script>if(new URLSearchParams(location.search).has("embed"))document.body.classList.add("embedded");</script>
+<div id="view"></div><header><a href="/">← 실험실</a><b>SKYSAILOR / 직접 조종</b><a href="/training/">학습 대시보드 ↗</a><span>3인칭 · 무게추 제어</span></header>
+<aside><h1>천천히, 뒤집히지 않게.</h1><p>무게추를 움직여 돔의 자세를 잡아보세요.<br>직접 조종하거나 자동 전략의 비행을 계산해 다시보세요.</p>
+<details open id="strategyPanel"><summary>자동 전략 · 계산 후 다시보기</summary>
+<label>전략<select id="strategy"><option value="mpc">예측 제어 · MPC v1</option><option value="center">비교 기준 · 추 중앙 고정</option></select></label>
+<label>예측 계산<select id="strategyQuality"><option value="fast">빠르게 · 5ms 예측</option><option value="fine">정밀하게 · 1ms 예측</option></select></label>
+<button id="runStrategy">현재 설정으로 계산</button><small>C 회전 레일 전용 · 높이 3m / 초기 5° / 최대 10초. 아래 바람·질량·레일 설정을 사용합니다. 0.1초마다 0.3초 앞을 예측하며 미래 바람은 알지 못합니다.</small>
+<div id="strategyStatus" role="status">결과는 서버에 저장되며 다시 재생할 수 있습니다.</div><div id="strategySummary"></div>
+<section class="replay"><b>비행 다시보기</b><div><button id="replay" disabled>처음부터 재생</button><button id="live" disabled>조종으로</button></div><input id="seek" type="range" min="0" max="0" step="0.02" value="0" disabled aria-label="리플레이 시간"><small id="replayTime">비행하면 자동으로 기록됩니다.</small></section>
+<button id="refreshStrategies">저장된 결과 새로고침</button><div id="strategyHistory"></div></details>
+<label>돔 크기<select id="domeDiameter"><option value="240">240 × 60mm · 기존 CFD</option><option value="380" selected>380 × 80mm · 공기력 잠정 환산</option></select></label><label>돔 질량 · 필름 포함 (g)<input id="domeMass" type="number" min="1" max="200" step="any" value="25" required></label><small>380mm는 새 CFD가 아닌 기존 계수 환산입니다. 돔 25g은 임시값입니다. 크기 선택은 C 레일 모델에 적용됩니다.</small><label>기체 모델<select id="mechanism"><option value="A">A · 자유 추 / 3줄</option><option value="B3">B · 평면 구속 / 3줄</option><option value="B4">B · 평면 구속 / 4줄</option><option value="C">C · 회전 레일 + 추</option></select></label>
+<label>최대 줄 속도 (mm/s)<input id="driveSpeed" type="number" min="5" max="300" value="40" required></label><small id="mechanismInfo"></small>
+<details id="railSettings" hidden open><summary>레일 설정 · 임시값 / 새 낙하 시 적용</summary>
+<label>회전 레일 질량 (g)<input id="railMass" type="number" min="0.1" max="100" step="any" value="5" required></label>
+<label>축·가이드 질량 (g)<input id="supportMass" type="number" min="0.1" max="100" step="any" value="3" required></label>
+<label>축 길이 (mm)<input id="railDrop" type="number" min="5" max="300" step="any" value="40" required></label>
+<label>직선 최대속도 (mm/s)<input id="railLinear" type="number" min="1" max="500" step="any" value="80" required></label>
+<label>회전 토크 한도 (mN·m)<input id="railTorque" type="number" min="0.01" max="100" step="any" value="2" required></label>
+<label>회전 속도 지령 상한 (°/s)<input id="railAngular" type="number" min="1" max="720" step="any" value="180" required></label>
+<small>직선 속도는 레일에 대한 추의 상대속도입니다. 회전은 관성과 토크 한도로 가감속하며, 외력에 의한 회전 속도 초과는 가능합니다. 직선 구동은 힘·가속도 제한이 없는 이상적 장치입니다. 레일·축·가이드의 공기저항과 마찰은 제외합니다.</small></details>
+<label>바람<select id="preset"><option value="calm">연습 · 무풍</option><option value="gust">약한 랜덤 횡풍</option><option value="measured">실측 강풍 · 50m 관측</option></select></label>
+<label>시간 속도<select id="rate"><option value="0.25">0.25× · 천천히</option><option value="0.5" selected>0.5×</option><option value="1">1×</option></select></label>
+<label>기본 줄 길이 (mm)<input id="lineLength" type="number" min="120" max="400" step="any" value="169.7"></label>
+<label>추의 질량 (g)<input id="payloadMass" type="number" min="0.1" max="100" step="any" value="4"></label>
+<small id="freeInfo">중앙에서 세 줄이 같은 길이인 기준입니다. 최소 120mm에서는 목표가 고정점 평면에 놓입니다. 줄만으로 실제 추를 그 평면에 가둘 수는 없습니다. 설정 후 ‘새 낙하’를 눌러 적용하세요.</small>
+<button id="reset">새 낙하 · R</button><button id="play" disabled>시작 · Space</button>
+<button id="rewind" disabled>← / A · 설정 간격 되돌리기</button><button id="advance">설정 간격 진행 · D / →</button><small id="rewindInfo">최근 2초의 물리 상태를 보관합니다.</small>
+<div id="status" role="status">연결 중…</div><div id="stats"></div>
+<label>목표 이동 시간 <select id="duration"><option value="0">즉시</option><option value="0.2">0.2초</option><option value="0.5" selected>0.5초</option><option value="1">1초</option><option value="2">2초</option><option value="3">3초</option></select></label>
+<label>진행·되돌리기 간격 (초)<input id="stepInterval" type="number" min="0.01" max="2" step="0.01" value="0.1" required></label><label>패드 최대 지령속도 (mm/s)<input id="padSpeed" type="number" min="1" max="500" value="80" required></label><label><span id="clickStepLabel">패드 클릭 시 설정 간격 진행</span><input id="clickAdvance" type="checkbox"></label>
+<canvas id="pad" width="300" height="230" aria-label="줄 고정점 목표 조종 패드"></canvas>
+<button id="closeView">기체 가까이 보기</button><button id="center">정지 · C</button><div id="lengths"></div>
+<p>패드는 카메라에서 보이는 기체 방향과 기울기에 맞춰 표시됩니다. 클릭하거나 드래그하세요. A/B의 꼭짓점은 줄 고정점이며 C의 원은 가이드, 주황 선은 회전 레일입니다. 노랑은 방향·속도 입력, 민트는 구동 목표, 분홍은 실제 추입니다. 중앙은 정지, 바깥쪽은 최대 지령속도이며 입력은 클릭 후 유지됩니다. 실제 속도는 각 모델의 구동 한도에 따라 달라집니다.<br>A는 줄의 탄성과 모터 힘 제한을 적용합니다. B는 추를 평면에 구속하고 가장 빠른 줄이 속도 상한을 넘지 않게 이동합니다. C는 가까운 회전 방향을 선택하고, 추가 중심을 통과해 레일 양쪽으로 이동합니다.</p>
+<p>비행 로그는 서버에 자동 저장됩니다. <a id="currentLog" hidden>현재 로그 다운로드</a></p><details id="logHistory"><summary>저장된 비행 로그 (최근 100개)</summary><button id="refreshLogs">목록 새로고침</button><div id="savedLogs"></div></details>
+
+<p><b>← / A</b>: 설정 간격 되돌리기 · <b>→ / D</b>: 설정 간격 진행<br><b>Space</b>: 재생 / 일시정지 · <b>R</b>: 새 낙하<br>새 낙하 시 화면의 다시보기는 초기화되지만, 저장된 로그 파일은 유지됩니다.</p>
+<small>패드 입력은 화면 방향에서 돔의 X/Y 좌표로 변환됩니다. 카메라는 뒤쪽에서 수평을 유지하며 따라갑니다. 마우스 드래그로 시점 회전, 휠로 확대.<br>3m / 초기 5°. A/B는 반지름 120mm, C는 선택한 돔의 반지름 범위에서 이동합니다. 느슨한 줄은 밀 수 없습니다.</small><p id="source"></p>
+<details><summary>왜 바로 뒤집힐까?</summary><p>정지 상태로 놓아도 횡풍과의 상대속도는 이미 큽니다. 공기 토크가 먼저 생기고 줄·무게추는 늦게 반응할 수 있습니다. 먼저 무풍에서 작은 조작으로 반응 방향과 지연을 익혀보세요. 강풍에서는 조작만으로 회복하지 못할 수도 있습니다.</p><p>예비 CFD와 회전 감쇠 근사입니다. 실제 기체의 안정성을 검증한 게임은 아닙니다.</p></details>
+</aside><div id="legend">노랑: 목표 무게추 · 분홍: 실제 무게추 · 파랑 입체 화살표: 바람이 흐르는 방향<br><span id="windReadout"></span><br>풍선과 지면 격자로 이동 거리와 높이를 가늠해보세요.</div><script type="module" src="app.js"></script></body></html>

@@ -1,0 +1,11 @@
+services:
+  solver:
+    build: .
+    image: skysailor-cfd:bookworm
+    cpus: 1.0
+    mem_limit: 2300m
+    working_dir: /case
+    volumes:
+      - ./cases:/case
+      - ./:/scripts:ro
+    command: ["echo 'Run with: docker compose -f cfd/compose.yaml run --rm solver <command>'"]

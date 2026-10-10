@@ -1,0 +1,13 @@
+services:
+  dashboard:
+    build: .
+    ports:
+      - "127.0.0.1:${CLOVER_PORT:-8080}:8000"
+    volumes:
+      - ./outputs/benchmarks:/app/outputs/benchmarks
+      - ./outputs/rl-380-altitude-v1:/app/outputs/rl-380-altitude-v1:ro
+      - ./outputs/strategy_runs:/app/outputs/strategy_runs
+      - ./outputs/flight_logs:/app/outputs/flight_logs
+      - ./web/src/cfd:/app/web/dist/cfd:ro
+    restart: unless-stopped
+    init: true

@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "speed_m_s": 1.6,
+    "diameter_m": 0.24,
+    "rise_m": 0.04,
+    "shell_thickness_m": 0.001,
+    "air_density": 1.225,
+    "nu": 1.5e-05,
+    "reynolds": 25600.0,
+    "surface_size_m": 0.008,
+    "solver": "simpleFoam / steady incompressible RANS kOmegaSST",
+    "inlet_turbulence_intensity": 0.01,
+    "inlet_length_scale_m": 0.024,
+    "domain": [
+      [
+        -0.96,
+        -0.96,
+        -0.96
+      ],
+      [
+        0.96,
+        0.96,
+        1.92
+      ]
+    ],
+    "limitations": [
+      "Fixed dome only; no payload or cables",
+      "Assumed 1 mm shell thickness",
+      "Steady RANS cannot resolve unsteady wake",
+      "No boundary-layer prism inflation in initial mesh; yPlus and mesh sensitivity must be evaluated",
+      "Do not calibrate MuJoCo until force and grid convergence are assessed"
+    ],
+    "rim_size_m": 0.0015,
+    "mesh_method": "Gmsh Delaunay with rim refinement, barycentric tetrahedron-to-hexahedron subdivision",
+    "nodes_before_hex_subdivision": 13787
+  },
+  "solver_finished": true,
+  "y_plus": {
+    "iteration": 800.0,
+    "patch": "dome",
+    "minimum": 0.305579063,
+    "maximum": 36.4813587,
+    "average": 4.25754641
+  },
+  "cells": 255524,
+  "iterations": 800,
+  "last_iteration": 800.0,
+  "mean_cd_last_100": 1.4738952039999995,
+  "cd_relative_std": 0.0013242602030412733,
+  "cd_relative_drift": 0.002205577432627183,
+  "drag_N": 0.10455023872849943,
+  "weight_N": 0.08044200000000001,
+  "approximate_terminal_speed_if_cd_constant": 1.4034563121366002,
+  "force_stable": true,
+  "residual_pass": false,
+  "last_initial_residuals": {
+    "Ux": 0.0011593788,
+    "Uy": 0.0010071099,
+    "Uz": 5.0849185e-05,
+    "p": 0.002638908,
+    "omega": 2.2377549e-06,
+    "k": 0.00024165867
+  },
+  "mesh_check_pass": true,
+  "status": "preliminary_not_converged",
+  "warning": "A single-speed fixed-body steady RANS result is not a validated terminal velocity. Grid/domain/time dependence, unsteady wake, shell thickness, and real-world calibration remain unresolved.",
+  "field_iteration": 800.0
+}

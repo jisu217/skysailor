@@ -1,0 +1,813 @@
+{
+  "cases": [
+    {
+      "name": "coarse",
+      "label": "기존 기본 격자",
+      "result": {
+        "metadata": {
+          "speed_m_s": 1.6,
+          "diameter_m": 0.24,
+          "rise_m": 0.04,
+          "shell_thickness_m": 0.001,
+          "air_density": 1.225,
+          "nu": 1.5e-05,
+          "reynolds": 25600.0,
+          "surface_size_m": 0.008,
+          "solver": "simpleFoam / steady incompressible RANS kOmegaSST",
+          "inlet_turbulence_intensity": 0.01,
+          "inlet_length_scale_m": 0.024,
+          "domain": [
+            [
+              -0.96,
+              -0.96,
+              -0.96
+            ],
+            [
+              0.96,
+              0.96,
+              1.92
+            ]
+          ],
+          "limitations": [
+            "Fixed dome only; no payload or cables",
+            "Assumed 1 mm shell thickness",
+            "Steady RANS cannot resolve unsteady wake",
+            "No boundary-layer prism inflation in initial mesh; yPlus and mesh sensitivity must be evaluated",
+            "Do not calibrate MuJoCo until force and grid convergence are assessed"
+          ],
+          "rim_size_m": 0.0015,
+          "mesh_method": "Gmsh Delaunay with rim refinement, barycentric tetrahedron-to-hexahedron subdivision",
+          "nodes_before_hex_subdivision": 13787
+        },
+        "solver_finished": true,
+        "y_plus": {
+          "iteration": 800.0,
+          "patch": "dome",
+          "minimum": 0.305579063,
+          "maximum": 36.4813587,
+          "average": 4.25754641
+        },
+        "cells": 255524,
+        "iterations": 800,
+        "last_iteration": 800.0,
+        "mean_cd_last_100": 1.4738952039999995,
+        "cd_relative_std": 0.0013242602030412733,
+        "cd_relative_drift": 0.002205577432627183,
+        "drag_N": 0.10455023872849943,
+        "weight_N": 0.08044200000000001,
+        "approximate_terminal_speed_if_cd_constant": 1.4034563121366002,
+        "force_stable": true,
+        "residual_pass": false,
+        "last_initial_residuals": {
+          "Ux": 0.0011593788,
+          "Uy": 0.0010071099,
+          "Uz": 5.0849185e-05,
+          "p": 0.002638908,
+          "omega": 2.2377549e-06,
+          "k": 0.00024165867
+        },
+        "mesh_check_pass": true,
+        "status": "preliminary_not_converged",
+        "warning": "A single-speed fixed-body steady RANS result is not a validated terminal velocity. Grid/domain/time dependence, unsteady wake, shell thickness, and real-world calibration remain unresolved.",
+        "field_iteration": 800.0
+      }
+    },
+    {
+      "name": "fine",
+      "label": "기존 세분 격자",
+      "result": {
+        "metadata": {
+          "speed_m_s": 1.6,
+          "diameter_m": 0.24,
+          "rise_m": 0.04,
+          "shell_thickness_m": 0.001,
+          "air_density": 1.225,
+          "nu": 1.5e-05,
+          "reynolds": 25600.0,
+          "surface_size_m": 0.004,
+          "rim_size_m": 0.0015,
+          "mesh_method": "Gmsh Delaunay with rim refinement, barycentric tetrahedron-to-hexahedron subdivision",
+          "nodes_before_hex_subdivision": 21433,
+          "solver": "simpleFoam / steady incompressible RANS kOmegaSST",
+          "inlet_turbulence_intensity": 0.01,
+          "inlet_length_scale_m": 0.024,
+          "domain": [
+            [
+              -0.96,
+              -0.96,
+              -0.96
+            ],
+            [
+              0.96,
+              0.96,
+              1.92
+            ]
+          ],
+          "limitations": [
+            "Fixed dome only; no payload or cables",
+            "Assumed 1 mm shell thickness",
+            "Steady RANS cannot resolve unsteady wake",
+            "No boundary-layer prism inflation in initial mesh; yPlus and mesh sensitivity must be evaluated",
+            "Do not calibrate MuJoCo until force and grid convergence are assessed"
+          ]
+        },
+        "solver_finished": true,
+        "y_plus": {
+          "iteration": 400.0,
+          "patch": "dome",
+          "minimum": 0.0738884029,
+          "maximum": 26.447886,
+          "average": 2.89185655
+        },
+        "cells": 395388,
+        "iterations": 400,
+        "last_iteration": 400.0,
+        "mean_cd_last_100": 1.3531384847000003,
+        "cd_relative_std": 0.027247828369293573,
+        "cd_relative_drift": 0.04742586462924183,
+        "drag_N": 0.09598440324940839,
+        "weight_N": 0.08044200000000001,
+        "approximate_terminal_speed_if_cd_constant": 1.4647418086550785,
+        "force_stable": false,
+        "residual_pass": false,
+        "last_initial_residuals": {
+          "Ux": 0.00041779695,
+          "Uy": 0.0007454408,
+          "Uz": 9.2257844e-05,
+          "p": 0.0063939477,
+          "omega": 4.7245236e-06,
+          "k": 0.00053866231
+        },
+        "mesh_check_pass": true,
+        "status": "preliminary_not_converged",
+        "warning": "A single-speed fixed-body steady RANS result is not a validated terminal velocity. Grid/domain/time dependence, unsteady wake, shell thickness, and real-world calibration remain unresolved.",
+        "field_iteration": 400.0
+      }
+    },
+    {
+      "name": "layered-v6",
+      "label": "경계층 · 직립",
+      "result": {
+        "metadata": {
+          "speed_m_s": 1.6,
+          "tilt_deg": 0,
+          "diameter_m": 0.24,
+          "rise_m": 0.04,
+          "shell_thickness_m": 0.001,
+          "air_density": 1.225,
+          "nu": 1.5e-05,
+          "reynolds": 25600,
+          "solver": "simpleFoam / steady incompressible RANS kOmegaSST",
+          "inlet_turbulence_intensity": 0.01,
+          "inlet_length_scale_m": 0.024,
+          "wall_treatment": "nutUSpaldingWallFunction + kLowReWallFunction + omegaWallFunction",
+          "moment_origin_m": [
+            0,
+            0,
+            0
+          ],
+          "reference_com_m": [
+            0,
+            0,
+            -0.04829268292682927
+          ],
+          "positive_pitch": "Dome +z leans towards world +x; negative My is restoring at positive tilt",
+          "limitations": [
+            "Fixed dome only; no payload or cables in flow",
+            "Assumed 1 mm shell thickness",
+            "Steady RANS cannot resolve unsteady wake",
+            "Full 3D mesh; angular and domain resolution require sensitivity checks",
+            "Do not calibrate MuJoCo until force, moment and grid convergence are assessed"
+          ],
+          "mesh_method": "Full 3D revolution of a meridional boundary-layer mesh",
+          "cells": 137880,
+          "sectors": 40,
+          "meridian_cells": 3447,
+          "meridian_quads": 561,
+          "surface_size_m": 0.003,
+          "first_layer_m": 0.0005,
+          "boundary_layer_thickness_m": 0.003,
+          "layer_growth": 1.25,
+          "domain_shape": "cylinder",
+          "domain_radius_m": 0.96,
+          "linear_solver_refinement": {
+            "after_iteration": 1962,
+            "p_tolerance": 1e-09,
+            "p_relTol": 0,
+            "other_tolerance": 1e-10,
+            "other_relTol": 0.01,
+            "reason": "Test whether approximate linear solves limit outer residual reduction"
+          },
+          "coefficient_axes": {
+            "dragDir": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "sideDir": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "liftDir": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "rollAxis": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "pitchAxis": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "yawAxis": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "solver_finished": true,
+        "y_plus": {
+          "iteration": 2200.0,
+          "patch": "dome",
+          "minimum": 0.156977274,
+          "maximum": 4.53279339,
+          "average": 1.2017934
+        },
+        "cells": 137880,
+        "iterations": 2200,
+        "last_iteration": 2200.0,
+        "mean_cd_last_100": 1.3721869463000003,
+        "cd_relative_std": 6.62647498008057e-05,
+        "cd_relative_drift": 3.6173642472210755e-05,
+        "drag_N": 0.09733559918402157,
+        "weight_N": 0.08044200000000001,
+        "approximate_terminal_speed_if_cd_constant": 1.4545396326218498,
+        "force_stable": true,
+        "residual_pass": false,
+        "last_initial_residuals": {
+          "Ux": 0.00014806189,
+          "Uy": 0.00014749552,
+          "Uz": 5.5744041e-06,
+          "p": 0.001586957,
+          "omega": 2.8339946e-07,
+          "k": 4.7348567e-06
+        },
+        "mesh_check_pass": true,
+        "status": "preliminary_not_converged",
+        "warning": "A single-speed fixed-body steady RANS result is not a validated terminal velocity. Grid/domain/time dependence, unsteady wake, shell thickness, and real-world calibration remain unresolved.",
+        "aero_loads": {
+          "force_body_N": [
+            2.0765295255079523e-06,
+            2.679107749040404e-06,
+            0.0973355991840215
+          ],
+          "pitch_moment_origin_Nm": -1.540632870667594e-07,
+          "pitch_moment_com_Nm": -5.378210510320463e-08,
+          "reference_com_m": [
+            0.0,
+            0.0,
+            -0.04829268292682927
+          ],
+          "positive_pitch": "dome axis towards world +x",
+          "pitch_tendency": "upright_reference",
+          "load_stability": {
+            "Cl": {
+              "mean": 2.927383950369e-05,
+              "std": 4.123057386645164e-05,
+              "drift": 4.42341005689999e-06,
+              "limit": 0.001,
+              "stable": true
+            },
+            "Cs": {
+              "mean": -3.776867571354e-05,
+              "std": 4.4286014899015225e-05,
+              "drift": 1.5146169868920003e-05,
+              "limit": 0.001,
+              "stable": true
+            },
+            "CmPitch": {
+              "mean": 9.049602320446998e-06,
+              "std": 2.5690360893804458e-05,
+              "drift": 4.417172318706001e-06,
+              "limit": 0.0001,
+              "stable": true
+            }
+          },
+          "all_loads_stable": true,
+          "note": "Static force/moment only. COM tendency assumes a centred payload at the stated reference; dynamic stability is not proven."
+        },
+        "field_iteration": 2200.0
+      }
+    },
+    {
+      "name": "layered-refined",
+      "label": "경계층 세분 · 직립",
+      "result": {
+        "metadata": {
+          "speed_m_s": 1.6,
+          "tilt_deg": 0,
+          "diameter_m": 0.24,
+          "rise_m": 0.04,
+          "shell_thickness_m": 0.001,
+          "air_density": 1.225,
+          "nu": 1.5e-05,
+          "reynolds": 25600,
+          "solver": "simpleFoam / steady incompressible RANS kOmegaSST",
+          "inlet_turbulence_intensity": 0.01,
+          "inlet_length_scale_m": 0.024,
+          "wall_treatment": "nutUSpaldingWallFunction + kLowReWallFunction + omegaWallFunction",
+          "moment_origin_m": [
+            0,
+            0,
+            0
+          ],
+          "reference_com_m": [
+            0,
+            0,
+            -0.04829268292682927
+          ],
+          "positive_pitch": "Dome +z leans towards world +x; negative My is restoring at positive tilt",
+          "limitations": [
+            "Fixed dome only; no payload or cables in flow",
+            "Assumed 1 mm shell thickness",
+            "Steady RANS cannot resolve unsteady wake",
+            "Full 3D mesh; angular and domain resolution require sensitivity checks",
+            "Do not calibrate MuJoCo until force, moment and grid convergence are assessed"
+          ],
+          "mesh_method": "Full 3D revolution of a meridional boundary-layer mesh",
+          "cells": 175320,
+          "sectors": 40,
+          "meridian_cells": 4383,
+          "meridian_quads": 781,
+          "surface_size_m": 0.002,
+          "first_layer_m": 0.0005,
+          "boundary_layer_thickness_m": 0.003,
+          "layer_growth": 1.25,
+          "domain_shape": "cylinder",
+          "domain_radius_m": 0.96,
+          "coefficient_axes": {
+            "dragDir": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "sideDir": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "liftDir": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "rollAxis": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "pitchAxis": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "yawAxis": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "solver_finished": true,
+        "y_plus": {
+          "iteration": 1200.0,
+          "patch": "dome",
+          "minimum": 0.0228457915,
+          "maximum": 4.77852823,
+          "average": 1.17557793
+        },
+        "cells": 175320,
+        "iterations": 1200,
+        "last_iteration": 1200.0,
+        "mean_cd_last_100": 1.375555936,
+        "cd_relative_std": 0.0007410917096716479,
+        "cd_relative_drift": 0.0013077438386336628,
+        "drag_N": 0.09757457728534988,
+        "weight_N": 0.08044200000000001,
+        "approximate_terminal_speed_if_cd_constant": 1.4527573229955562,
+        "force_stable": true,
+        "residual_pass": false,
+        "last_initial_residuals": {
+          "Ux": 0.00028666345,
+          "Uy": 0.00030382899,
+          "Uz": 1.5786822e-05,
+          "p": 0.00259558,
+          "omega": 2.9378418e-07,
+          "k": 1.992273e-05
+        },
+        "mesh_check_pass": true,
+        "status": "preliminary_not_converged",
+        "warning": "A single-speed fixed-body steady RANS result is not a validated terminal velocity. Grid/domain/time dependence, unsteady wake, shell thickness, and real-world calibration remain unresolved.",
+        "aero_loads": {
+          "force_body_N": [
+            2.3893511213510244e-06,
+            -6.168426253759876e-05,
+            0.09757457728534985
+          ],
+          "pitch_moment_origin_Nm": -3.821472771039856e-07,
+          "pitch_moment_com_Nm": -2.667591009997168e-07,
+          "reference_com_m": [
+            0.0,
+            0.0,
+            -0.04829268292682927
+          ],
+          "positive_pitch": "dome axis towards world +x",
+          "pitch_tendency": "upright_reference",
+          "load_stability": {
+            "Cl": {
+              "mean": 3.368383660583e-05,
+              "std": 2.297728392898758e-05,
+              "drift": 1.766703911634e-05,
+              "limit": 0.001,
+              "stable": true
+            },
+            "Cs": {
+              "mean": 0.0008695928371100002,
+              "std": 5.0887720737585054e-05,
+              "drift": 8.31419343e-05,
+              "limit": 0.001,
+              "stable": true
+            },
+            "CmPitch": {
+              "mean": 2.244714462138e-05,
+              "std": 1.4583752048638126e-05,
+              "drift": 1.0956567297240001e-05,
+              "limit": 0.0001,
+              "stable": true
+            }
+          },
+          "all_loads_stable": true,
+          "note": "Static force/moment only. COM tendency assumes a centred payload at the stated reference; dynamic stability is not proven."
+        },
+        "field_iteration": 1200.0
+      }
+    },
+    {
+      "name": "tilt-minus10",
+      "label": "경계층 · −10°",
+      "result": {
+        "metadata": {
+          "speed_m_s": 1.6,
+          "tilt_deg": -10.0,
+          "diameter_m": 0.24,
+          "rise_m": 0.04,
+          "shell_thickness_m": 0.001,
+          "air_density": 1.225,
+          "nu": 1.5e-05,
+          "reynolds": 25600,
+          "solver": "simpleFoam / steady incompressible RANS kOmegaSST",
+          "inlet_turbulence_intensity": 0.01,
+          "inlet_length_scale_m": 0.024,
+          "wall_treatment": "nutUSpaldingWallFunction + kLowReWallFunction + omegaWallFunction",
+          "moment_origin_m": [
+            0,
+            0,
+            0
+          ],
+          "reference_com_m": [
+            0,
+            0,
+            -0.04829268292682927
+          ],
+          "positive_pitch": "Dome +z leans towards world +x; negative My is restoring at positive tilt",
+          "limitations": [
+            "Fixed dome only; no payload or cables in flow",
+            "Assumed 1 mm shell thickness",
+            "Steady RANS cannot resolve unsteady wake",
+            "Full 3D mesh; angular and domain resolution require sensitivity checks",
+            "Do not calibrate MuJoCo until force, moment and grid convergence are assessed"
+          ],
+          "mesh_method": "Full 3D revolution of a meridional boundary-layer mesh",
+          "cells": 137880,
+          "sectors": 40,
+          "meridian_cells": 3447,
+          "meridian_quads": 561,
+          "surface_size_m": 0.003,
+          "first_layer_m": 0.0005,
+          "boundary_layer_thickness_m": 0.003,
+          "layer_growth": 1.25,
+          "domain_shape": "cylinder",
+          "domain_radius_m": 0.96,
+          "initial_solution": {
+            "case": "layered-v6",
+            "iteration": 1200.0,
+            "note": "Internal fields reused; target boundary conditions retained"
+          },
+          "coefficient_axes": {
+            "dragDir": [
+              0.173648178,
+              0.0,
+              0.984807753
+            ],
+            "sideDir": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "liftDir": [
+              0.984807753,
+              0.0,
+              -0.173648178
+            ],
+            "rollAxis": [
+              0.173648178,
+              0.0,
+              0.984807753
+            ],
+            "pitchAxis": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "yawAxis": [
+              0.984807753,
+              0.0,
+              -0.173648178
+            ]
+          }
+        },
+        "solver_finished": true,
+        "y_plus": {
+          "iteration": 1600.0,
+          "patch": "dome",
+          "minimum": 0.114170191,
+          "maximum": 4.67055535,
+          "average": 1.30234237
+        },
+        "cells": 137880,
+        "iterations": 1600,
+        "last_iteration": 1600.0,
+        "mean_cd_last_100": 1.3923528909000005,
+        "cd_relative_std": 4.8610552147818505e-05,
+        "cd_relative_drift": 3.8837998867608805e-05,
+        "drag_N": 0.09876606338282883,
+        "weight_N": 0.08044200000000001,
+        "approximate_terminal_speed_if_cd_constant": 1.4439679057797736,
+        "force_stable": true,
+        "residual_pass": false,
+        "last_initial_residuals": {
+          "Ux": 1.8915919e-05,
+          "Uy": 0.00012027718,
+          "Uz": 5.3537684e-06,
+          "p": 0.00095077182,
+          "omega": 1.2509413e-07,
+          "k": 4.8787184e-06
+        },
+        "mesh_check_pass": true,
+        "status": "preliminary_not_converged",
+        "warning": "A single-speed fixed-body steady RANS result is not a validated terminal velocity. Grid/domain/time dependence, unsteady wake, shell thickness, and real-world calibration remain unresolved.",
+        "aero_loads": {
+          "force_body_N": [
+            -0.001590873465243421,
+            -1.709359570421509e-06,
+            0.10057020303590834
+          ],
+          "pitch_moment_origin_Nm": 0.0002584724068990991,
+          "pitch_moment_com_Nm": 0.0001816448590653925,
+          "reference_com_m": [
+            0.0,
+            0.0,
+            -0.04829268292682927
+          ],
+          "positive_pitch": "dome axis towards world +x",
+          "pitch_tendency": "restoring",
+          "load_stability": {
+            "Cl": {
+              "mean": -0.26828267072999995,
+              "std": 1.779179759544101e-05,
+              "drift": 3.6938999999902578e-06,
+              "limit": 0.005365653414599999,
+              "stable": true
+            },
+            "Cs": {
+              "mean": 2.4097667335780002e-05,
+              "std": 1.725851180242665e-05,
+              "drift": 4.471499741640002e-06,
+              "limit": 0.001,
+              "stable": true
+            },
+            "CmPitch": {
+              "mean": -0.015182543082000002,
+              "std": 6.68913989752623e-06,
+              "drift": 8.655023999996209e-06,
+              "limit": 0.00030365086164000005,
+              "stable": true
+            }
+          },
+          "all_loads_stable": true,
+          "note": "Static force/moment only. COM tendency assumes a centred payload at the stated reference; dynamic stability is not proven."
+        },
+        "field_iteration": 1600.0
+      }
+    },
+    {
+      "name": "tilt-plus10",
+      "label": "경계층 · +10°",
+      "result": {
+        "metadata": {
+          "speed_m_s": 1.6,
+          "tilt_deg": 10.0,
+          "diameter_m": 0.24,
+          "rise_m": 0.04,
+          "shell_thickness_m": 0.001,
+          "air_density": 1.225,
+          "nu": 1.5e-05,
+          "reynolds": 25600,
+          "solver": "simpleFoam / steady incompressible RANS kOmegaSST",
+          "inlet_turbulence_intensity": 0.01,
+          "inlet_length_scale_m": 0.024,
+          "wall_treatment": "nutUSpaldingWallFunction + kLowReWallFunction + omegaWallFunction",
+          "moment_origin_m": [
+            0,
+            0,
+            0
+          ],
+          "reference_com_m": [
+            0,
+            0,
+            -0.04829268292682927
+          ],
+          "positive_pitch": "Dome +z leans towards world +x; negative My is restoring at positive tilt",
+          "limitations": [
+            "Fixed dome only; no payload or cables in flow",
+            "Assumed 1 mm shell thickness",
+            "Steady RANS cannot resolve unsteady wake",
+            "Full 3D mesh; angular and domain resolution require sensitivity checks",
+            "Do not calibrate MuJoCo until force, moment and grid convergence are assessed"
+          ],
+          "mesh_method": "Full 3D revolution of a meridional boundary-layer mesh",
+          "cells": 137880,
+          "sectors": 40,
+          "meridian_cells": 3447,
+          "meridian_quads": 561,
+          "surface_size_m": 0.003,
+          "first_layer_m": 0.0005,
+          "boundary_layer_thickness_m": 0.003,
+          "layer_growth": 1.25,
+          "domain_shape": "cylinder",
+          "domain_radius_m": 0.96,
+          "initial_solution": {
+            "case": "layered-v6",
+            "iteration": 1200.0,
+            "note": "Internal fields reused; target boundary conditions retained"
+          },
+          "coefficient_axes": {
+            "dragDir": [
+              -0.173647963,
+              0.0,
+              0.984807791
+            ],
+            "sideDir": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "liftDir": [
+              0.984807791,
+              0.0,
+              0.173647963
+            ],
+            "rollAxis": [
+              -0.173647963,
+              0.0,
+              0.984807791
+            ],
+            "pitchAxis": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "yawAxis": [
+              0.984807791,
+              0.0,
+              0.173647963
+            ]
+          }
+        },
+        "solver_finished": true,
+        "y_plus": {
+          "iteration": 1600.0,
+          "patch": "dome",
+          "minimum": 0.0941418831,
+          "maximum": 4.66890093,
+          "average": 1.29980112
+        },
+        "cells": 137880,
+        "iterations": 1600,
+        "last_iteration": 1600.0,
+        "mean_cd_last_100": 1.3915519637,
+        "cd_relative_std": 0.0003520510799163654,
+        "cd_relative_drift": 0.0005742188727724743,
+        "drag_N": 0.09870924989314724,
+        "weight_N": 0.08044200000000001,
+        "approximate_terminal_speed_if_cd_constant": 1.4443833939677357,
+        "force_stable": true,
+        "residual_pass": false,
+        "last_initial_residuals": {
+          "Ux": 1.8493504e-05,
+          "Uy": 0.00010641407,
+          "Uz": 5.587502e-06,
+          "p": 0.0010932584,
+          "omega": 3.3385507e-07,
+          "k": 5.2670791e-06
+        },
+        "mesh_check_pass": true,
+        "status": "preliminary_not_converged",
+        "warning": "A single-speed fixed-body steady RANS result is not a validated terminal velocity. Grid/domain/time dependence, unsteady wake, shell thickness, and real-world calibration remain unresolved.",
+        "aero_loads": {
+          "force_body_N": [
+            0.0015803146510878247,
+            5.099410833356747e-06,
+            0.10051064709712092
+          ],
+          "pitch_moment_origin_Nm": -0.00025759216931932745,
+          "pitch_moment_com_Nm": -0.0001812745349497203,
+          "reference_com_m": [
+            0.0,
+            0.0,
+            -0.04829268292682927
+          ],
+          "positive_pitch": "dome axis towards world +x",
+          "pitch_tendency": "restoring",
+          "load_stability": {
+            "Cl": {
+              "mean": 0.26798998251999995,
+              "std": 0.0003802330604844254,
+              "drift": 0.000611548480000057,
+              "limit": 0.005359799650399999,
+              "stable": true
+            },
+            "Cs": {
+              "mean": -7.188885708839001e-05,
+              "std": 0.00013353138234614652,
+              "drift": 0.00024681528718322,
+              "limit": 0.001,
+              "stable": true
+            },
+            "CmPitch": {
+              "mean": 0.015130838356000001,
+              "std": 0.00019480293622334974,
+              "drift": 0.0003108780079999988,
+              "limit": 0.00030261676712000003,
+              "stable": false
+            }
+          },
+          "all_loads_stable": false,
+          "note": "Static force/moment only. COM tendency assumes a centred payload at the stated reference; dynamic stability is not proven."
+        },
+        "field_iteration": 1600.0
+      }
+    }
+  ],
+  "comparison_note": "경계층 · 직립 / 경계층 세분 · 직립 Cd 차이: 0.24%. 미수렴 계산이 포함되어 있어 격자 독립성을 판정할 수 없습니다.",
+  "assessment": {
+    "upright_converged": false,
+    "meridian_comparison": {
+      "relative_cd_difference": 0.002449184080290116,
+      "tolerance": 0.03,
+      "both_converged": false,
+      "within_tolerance": true,
+      "note": "Meridional surface refinement only; same first layer and azimuthal resolution. Not a grid-independence proof."
+    },
+    "tilt_comparison": {
+      "both_converged": false,
+      "mirror_cd_difference": 0.0005752329062805031,
+      "mirror_moment_error": 0.002038726103109193,
+      "both_static_restoring": true,
+      "negative_my_com_Nm": 0.0001816448590653925,
+      "positive_my_com_Nm": -0.0001812745349497203,
+      "note": "Static tendency at a centred reference COM only; no dynamic stability conclusion."
+    },
+    "free_flight_calibration_ready": false,
+    "remaining_validation": [
+      "Wall-normal and azimuthal refinement",
+      "Domain-size sensitivity",
+      "Speed dependence",
+      "Unsteady wake and moving-body coupling"
+    ]
+  },
+  "baseline": {
+    "model": "B current independent-panel drag",
+    "speed_m_s": 1.6,
+    "drag_N": 0.07607821164633775,
+    "cd": 1.0725112887175854,
+    "weight_N": 0.08044200000000001,
+    "conditions": "Upright fixed dome, no angular motion, default coefficients. No payload/cable aero."
+  }
+}

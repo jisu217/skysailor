@@ -1,0 +1,15 @@
+{
+  "name": "clover-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --minify --outfile=dist/app.js && cp src/index.html src/style.css dist/ && cp -R src/cfd dist/ && mkdir -p dist/game && esbuild src/game/main.js --bundle --minify --outfile=dist/game/app.js && cp src/game/index.html src/game/style.css dist/game/ && mkdir -p dist/training && cp src/training/* dist/training/ && mkdir -p dist/participate && cp src/participate/* dist/participate/ && mkdir -p dist/arena && cp src/arena/* dist/arena/ && mkdir -p dist/platform && esbuild src/platform/main.js --bundle --minify --outfile=dist/platform/app.js && cp src/platform/index.html dist/platform/",
+    "build:cap": "esbuild src/cap/main.js --bundle --minify --outfile=dist/cap/app.js && cp src/cap/index.html src/cap/style.css dist/cap/ && cp src/cap/dashboard.html src/cap/dashboard.css src/cap/dashboard.js dist/cap/ && esbuild src/cap/pose.js --bundle --minify --outfile=dist/cap/pose.js && cp src/cap/pose.html src/cap/pose.css dist/cap/ && esbuild src/cap/flow.js --bundle --minify --outfile=dist/cap/flow.js && cp src/cap/flow.html src/cap/flow.css dist/cap/"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
