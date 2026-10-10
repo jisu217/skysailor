@@ -20,7 +20,7 @@ from clover import CloverSim, Config
 from leaf import SEGMENTS
 from dome import DomeSim
 from rail import RailSim
-from hanging import HangingSim
+from hanging import HangingSim, DirectSim
 from b_control import BController, project_triangle
 
 
@@ -52,6 +52,8 @@ class Experiment(BaseModel):
     rail_linear_mm_s: float = Field(80,ge=1,le=500)
     rail_torque_mnm: float = Field(2,ge=.01,le=100)
     rail_angular_deg_s: float = Field(180,ge=1,le=720)
+    connector_drop_mm: float = Field(60,ge=40)
+    actuator_speed_mm_s: float = Field(30,ge=5)
     payload_mass_g: float = Field(4,ge=.1)
     drive_speed_mm_s: float = Field(40, ge=5, le=300)
     target_x_mm: float = Field(0, ge=-120, le=120)
@@ -141,6 +143,8 @@ def make_sim(params):
     config=Config(height=params.height,kp=params.kp,kd=params.kd,air_density=params.air_density)
     if params.variant == 'B':
         config.spool_speed=params.drive_speed_mm_s/1000
+        if params.mechanism=='P':
+            return DirectSim(payload_mass_g=params.payload_mass_g,connector_drop_mm=params.connector_drop_mm,actuator_speed_mm_s=params.actuator_speed_mm_s,config=config)
         if params.mechanism=='C':
             return RailSim(config,payload_mass=params.payload_mass_g/1000,rail_mass=params.rail_mass_g/1000,
                 support_mass=params.support_mass_g/1000,drop=params.rail_drop_mm/1000,
@@ -260,13 +264,14 @@ class GameCommand(BaseModel):
     input_mode: Literal['position','velocity'] = 'position'
     velocity_mm_s: float = Field(80,ge=1,le=500)
     interval_s: float | None = Field(None,ge=.001,le=2)
+    z: float = Field(0,ge=-1,le=1)
     x: float = Field(0,ge=-1,le=1)
     y: float = Field(0,ge=-1,le=1)
     preset: Literal['calm','gust','measured'] = 'calm'
     move_seconds: float = Field(.5,ge=0,le=3)
     drive_speed_mm_s: float = Field(40,ge=5,le=300)
     line_length_mm: float = Field(float(np.hypot(.12,.12)*1000),ge=120,le=400)
-    mechanism: Literal['A','B3','B4','C'] = 'A'
+    mechanism: Literal['A','B3','B4','C','P'] = 'A'
     dome_diameter_mm: Literal[240,380] = 240
     dome_mass_g: float = Field(4.2,ge=1,le=200)
     rail_mass_g: float = Field(5,ge=.1,le=100)
@@ -275,6 +280,8 @@ class GameCommand(BaseModel):
     rail_linear_mm_s: float = Field(80,ge=1,le=500)
     rail_torque_mnm: float = Field(2,ge=.01,le=100)
     rail_angular_deg_s: float = Field(180,ge=1,le=720)
+    connector_drop_mm: float = Field(60,ge=40)
+    actuator_speed_mm_s: float = Field(30,ge=5)
     payload_mass_g: float = Field(4,ge=.1)
 
 
@@ -336,11 +343,13 @@ async def game_socket(socket: WebSocket):
                 params=Experiment(variant='B',seconds=10,height=3,tilt=5,
                     line_length_mm=command.line_length_mm,payload_mass_g=command.payload_mass_g,
                     mechanism=command.mechanism,drive_speed_mm_s=command.drive_speed_mm_s,
+                    connector_drop_mm=command.connector_drop_mm,actuator_speed_mm_s=command.actuator_speed_mm_s,
                     dome_diameter_mm=command.dome_diameter_mm,dome_mass_g=command.dome_mass_g,rail_mass_g=command.rail_mass_g,support_mass_g=command.support_mass_g,
                     rail_drop_mm=command.rail_drop_mm,rail_linear_mm_s=command.rail_linear_mm_s,
                     rail_torque_mnm=command.rail_torque_mnm,rail_angular_deg_s=command.rail_angular_deg_s,
                     wind_mode={'calm':'constant','gust':'gust','measured':'measured'}[command.preset],
                     wind_x=.2 if command.preset=='gust' else 0)
+                if command.mechanism=='P':params=params.model_copy(update={'dome_diameter_mm':380,'dome_mass_g':25})
                 sim=make_sim(params);sim.reset(5,0);wind=WindProfile(params)
                 sim.wind=wind.at(0);peak=5.;ended=False
                 goal=np.zeros(2);start=goal.copy();target=goal.copy();started=0.;duration=.5
@@ -377,7 +386,18 @@ async def game_socket(socket: WebSocket):
                         raw=current+direction*command.velocity_mm_s/1000*sim.c.dt
                         target=raw/max(1.,np.linalg.norm(raw)/radius) if isinstance(sim,RailSim) else project_triangle(raw,sim.attachments[:,:2])
                         goal=target.copy()
-                    if command.input_mode=='velocity' and isinstance(sim,RailSim):
+                    if isinstance(sim,DirectSim):
+                        local=np.r_[sim.data.qpos[7:9],sim.data.qpos[9]-sim.hang]
+                        delta=local-sim.attachments
+                        jacobian=delta/np.maximum(np.linalg.norm(delta,axis=1)[:,None],1e-12)
+                        velocity=np.array([command.x,command.y,command.z],dtype=float)
+                        velocity/=max(1.,np.linalg.norm(velocity))
+                        rates=jacobian@velocity*command.velocity_mm_s/1000
+                        action=rates/max(sim.motor_speed,float(np.max(np.abs(rates))))
+                        sim.step(action,sim.wind)
+                        goal=local[:2]+velocity[:2]*command.velocity_mm_s/1000*sim.c.dt
+                        target=goal.copy();sim.active_target_xy=goal.copy()
+                    elif command.input_mode=='velocity' and isinstance(sim,RailSim):
                         sim.step(target/radius,sim.wind,velocity=direction*command.velocity_mm_s/1000)
                     else:sim.step(target/radius,sim.wind)
                     peak=max(peak,float(sim.record()[2]))
@@ -386,7 +406,7 @@ async def game_socket(socket: WebSocket):
                 sim.wind=wind.at(min(10,sim.data.time))
                 ended=bool(sim.landed() or sim.data.time>=10-1e-9)
             await emit({'frame':snapshot(sim),'ended':ended,'max_tilt':peak,
-                'goal_xy':goal.tolist(),'goal_lengths':sim.lengths_for_target(goal).tolist(),
+                'goal_xy':goal.tolist(),'goal_lengths':(sim.target_lengths if isinstance(sim,DirectSim) else sim.lengths_for_target(goal)).tolist(),
                 'move_remaining':max(0.,duration-(sim.data.time-started)),
                 'rewound':command.kind=='rewind','move_seconds':duration,
                 'termination':('ground' if sim.landed() else 'timeout') if ended else None},command)

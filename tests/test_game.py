@@ -115,3 +115,24 @@ def test_velocity_input_and_variable_interval(tmp_path,monkeypatch):
         assert np.isclose(r['payload_local'][0],.003,atol=1e-9)
         ws.send_json({'kind':'rewind','interval_s':.15})
         assert ws.receive_json()['frame']['t']==.05
+
+
+def test_direct_game_actuator_speed_and_rewind(tmp_path,monkeypatch):
+    import dashboard
+    monkeypatch.setattr(dashboard,'FLIGHT_LOG_DIR',tmp_path)
+    with TestClient(app).websocket_connect('/api/game') as ws:
+        ws.send_json({'kind':'reset','mechanism':'P','payload_mass_g':18,'connector_drop_mm':250,'actuator_speed_mm_s':350})
+        initial=ws.receive_json()['frame']
+        assert initial['mechanism']=='P' and initial['hang']==.25
+        step={'kind':'step','input_mode':'velocity','x':.8,'y':.4,'z':-.5,'velocity_mm_s':500,'interval_s':.1}
+        ws.send_json(step);result=ws.receive_json()
+        f=result['frame']
+        assert np.isclose(f['t'],.1)
+        assert np.max(np.abs(np.array(f['line_target'])-initial['line_target']))<=.035+1e-9
+        assert not np.allclose(f['line_target'],initial['line_target'])
+        assert f['line_target']==result['goal_lengths']
+        ws.send_json({'kind':'rewind','interval_s':.1});rewound=ws.receive_json()['frame']
+        assert rewound['t']==0 and rewound['line_target']==initial['line_target']
+        ws.send_json(step);repeated=ws.receive_json()['frame']
+        assert np.allclose(repeated['position'],f['position'])
+        assert np.allclose(repeated['line_target'],f['line_target'])

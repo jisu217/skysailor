@@ -10,10 +10,10 @@ from clover import Config
 from dome import DomeSim, patches, model_xml
 
 class HangingSim(DomeSim):
-    def __init__(self,payload_mass_g=18,ring_radius_mm=80,connector_drop_mm=60,pendulum_length_mm=50,actuator_speed_mm_s=30,direct=False):
+    def __init__(self,payload_mass_g=18,ring_radius_mm=80,connector_drop_mm=60,pendulum_length_mm=50,actuator_speed_mm_s=30,direct=False,config=None):
         self.direct=direct
         if direct:ring_radius_mm=190
-        self.c=Config();self.radius=.19;self.depth=.08;self.dome_mass=.025
+        self.c=config if config is not None else Config();self.radius=.19;self.depth=.08;self.dome_mass=.025
         self.payload_mass=payload_mass_g/1000;self.ring_radius=ring_radius_mm/1000
         self.hang=connector_drop_mm/1000;self.pendulum_length=pendulum_length_mm/1000;self.motor_speed=actuator_speed_mm_s/1000
         self.planar=False;self.cable_count=3;self.force_limit=.5
@@ -113,8 +113,8 @@ class HangingEnv:
     def close(self):pass
 
 class DirectSim(HangingSim):
-    def __init__(self,payload_mass_g=18,connector_drop_mm=60,actuator_speed_mm_s=30):
-        super().__init__(payload_mass_g=payload_mass_g,connector_drop_mm=connector_drop_mm,actuator_speed_mm_s=actuator_speed_mm_s,direct=True)
+    def __init__(self,payload_mass_g=18,connector_drop_mm=60,actuator_speed_mm_s=30,config=None):
+        super().__init__(payload_mass_g=payload_mass_g,connector_drop_mm=connector_drop_mm,actuator_speed_mm_s=actuator_speed_mm_s,direct=True,config=config)
 
 class DirectEnv(HangingEnv):
     sim_class=DirectSim
