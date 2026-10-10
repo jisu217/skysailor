@@ -55,13 +55,25 @@ open prototypes/c-uas-ops.html                                   # 가상 애니
 
 `prototypes/data/replay.js`가 있으면 프로토타입이 파이프라인 계산 결과(노드·궤적·식별·위협도·방향선)와 rag 대응 카드(유사 사례·조문 인용·권고 수위)를 재생합니다.
 
+## 영상 검출 (② 찾기)
+
+```sh
+python -m ops.perception.run_video 영상.mp4 --out detections.jsonl       # 기본: 가벼운 하늘 대비 검출기 (OpenCV, CPU)
+python -m ops.perception.synth_eval                                      # 합성 하늘로 크기·대비별 검출률 측정
+python -m ops.perception.evaluate 이미지폴더 라벨폴더                       # YOLO 형식 정답으로 측정
+```
+
+검출은 "무언가 있다"만 알리고, 종류는 ⑤ 식별이 판단합니다. 학습·GPU가 필요 없습니다. OpenCV가 필요하며(프로젝트 의존성 미포함), 딥러닝 모델은 `--detector torchvision`으로 선택할 수 있습니다(torch 필요). 결과와 한계: [docs/DESIGN.md](docs/DESIGN.md) §5.2.
+
 ## 진행 상태
 
-| 단계 | 내용 | 상태 |
-|---|---|---|
-| 1차 | 가상 입력 + 삼각측량 + 추적 + Remote ID 융합 | **완료**. 결과: [docs/DESIGN.md](docs/DESIGN.md) §8.1 |
-| 2차 | 식별 + 위협도 + 풍선 낙하 예측 | **완료**. 결과: [docs/DESIGN.md](docs/DESIGN.md) §8.2 |
-| 3차 | rag 카드 연동, 결정·기록 | **완료**. 카드: `rag/generation/recommend.py`, 결정 기록: `service/decisions.py` |
-| 4차 | 실물 연결 (카메라 영상 검출, Remote ID 수신) | 미착수 |
+| 단계 | 내용 | 상태 | 산출물 |
+|---|---|---|---|
+| 1차 | 가상 입력 + 삼각측량 + 추적 + Remote ID 융합 | **완료** | [docs/DESIGN.md](docs/DESIGN.md) §8.1 |
+| 2차 | 식별 + 위협도 + 풍선 낙하 예측 | **완료** | [docs/DESIGN.md](docs/DESIGN.md) §8.2 |
+| 3차 | rag 카드 연동, 결정·기록 | **완료** | `rag/generation/recommend.py`, `service/decisions.py` |
+| 4차 | 실물 연결: 카메라 영상 검출, Remote ID 수신 | **진행 중**: 소프트웨어 준비 완료, 실제 장비 연결은 기기 팀 정보·장비 필요 | `sources/remote_id.py`, `perception/detector.py`, `service/server.py` (`/api/ops/ingest`, `/api/ops/ingest/remote-id`) |
 
-현재 동작하는 것: ①~⑥ (`nodes/`, `perception/bearing.py`, `localization/`, `tracking/`, `assessment/`, `sources/scenario.py`, `service/pipeline.py`). 참조 정보(보호구역·인구·허가 목록) 형식은 `core/reference.py`. 영상 검출(`perception/detector.py`)은 실제 모델이 필요해 가상 검출로 대신합니다. 기존 앱(`dashboard.py`)에는 아직 연결하지 않았습니다.
+현재 브랜치는 1~3차까지 시연 가능한 가상/로컬 파이프라인을 완성한 상태입니다. 4차는 실제 카메라 영상과 Remote ID 수신기를 연결하는 단계이며, 아직 장비 입력과 프로젝트 의존성은 확정하지 않았습니다.
+
+현재 동작하는 것: ①~⑧ (`nodes/`, `perception/bearing.py`, `localization/`, `tracking/`, `assessment/`, `sources/scenario.py`, `service/pipeline.py`, `service/decisions.py`, `rag/generation/recommend.py`). 참조 정보(보호구역·인구·허가 목록) 형식은 `core/reference.py`. 영상 검출(`perception/detector.py`)은 실제 학습 모델이 필요해 기본 검출기 틀과 가상 입력으로 검증합니다. 기존 앱(`dashboard.py`)에는 아직 연결하지 않았습니다.

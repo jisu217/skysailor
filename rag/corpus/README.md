@@ -1,6 +1,6 @@
 # Corpus
 
-공개 문서만 넣습니다.
+RAG가 참조하는 원문 데이터 작성 규칙입니다. 공개 문서만 넣고, 진행 상태나 구현 설명은 [rag/README.md](../README.md)와 [rag/docs/DESIGN.md](../docs/DESIGN.md)에 둡니다.
 
 ```
 kr/      한국 (사례·법령·판례·절차)
