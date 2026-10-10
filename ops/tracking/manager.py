@@ -50,7 +50,7 @@ class _Track:
         self.sources.add(det.source)
         if det.rid is not None:
             self.rid = det.rid
-        if det.label:
+        if det.label and det.label != 'unknown':          # class-agnostic detections carry no image cue
             self.labels[det.label] += det.confidence or 1.0
 
     def schema(self) -> Track:

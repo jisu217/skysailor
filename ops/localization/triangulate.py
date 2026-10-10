@@ -1,6 +1,6 @@
 """Bearing rays from two or more domes → target positions (weighted least squares).
 
-Rays from the same time window are paired greedily: same label, different domes, wide enough
+Rays from the same time window are paired greedily: compatible label ('unknown' fits any), different domes, wide enough
 crossing angle, and a closest-approach gap within the combined angular uncertainty. Other rays
 that pass close to a fix join it. Rays left unpaired stay bearing-only (direction known,
 range unknown) and are returned separately for display.
@@ -42,7 +42,8 @@ class Fix:
 
     def detection(self) -> Detection:
         nodes = sorted({r.det.node_id for r in self.rays})
-        labels = [r.det.label for r in self.rays if r.det.label]
+        labels = [r.det.label for r in self.rays if r.det.label and r.det.label != 'unknown'] or \
+            [r.det.label for r in self.rays if r.det.label]
         conf = [r.det.confidence for r in self.rays if r.det.confidence is not None]
         return Detection(t=self.t, node_id='+'.join(nodes), node_pos=tuple(self.rays[0].p), source='camera',
                          measurement=Measurement(kind='position', z=self.pos.tolist(), R=self.cov.tolist()),
@@ -91,6 +92,11 @@ def intersect(rays, iters: int = 3):
     return x, cov, float(res)
 
 
+def _same_kind(a: Ray, b: Ray) -> bool:
+    la, lb = a.det.label, b.det.label
+    return la in (None, 'unknown') or lb in (None, 'unknown') or la == lb
+
+
 def _crossing_ok(a: Ray, b: Ray):
     return np.arccos(np.clip(abs(a.d@b.d), -1, 1)) >= MIN_ANGLE
 
@@ -102,7 +108,7 @@ def triangulate(bearings):
     for i in range(len(rays)):
         for j in range(i+1, len(rays)):
             a, b = rays[i], rays[j]
-            if a.det.node_id == b.det.node_id or (a.det.label and b.det.label and a.det.label != b.det.label):
+            if a.det.node_id == b.det.node_id or not _same_kind(a, b):
                 continue
             if not _crossing_ok(a, b):
                 continue
@@ -128,7 +134,7 @@ def triangulate(bearings):
         for k, rk in enumerate(rays):
             if k in used or k in (i, j) or rk.det.node_id in nodes:
                 continue
-            if rays[i].det.label and rk.det.label and rk.det.label != rays[i].det.label:
+            if not _same_kind(rays[i], rk):
                 continue
             rng = (x-rk.p)@rk.d
             if rng <= 0:

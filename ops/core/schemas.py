@@ -52,7 +52,7 @@ class CameraDetection(_Model):
     camera_id: int = 0
     bbox: tuple[float, float, float, float] = Field(description='x, y, w, h (px)')
     image_size: tuple[int, int]
-    label: Literal['drone', 'balloon', 'bird']
+    label: Literal['drone', 'balloon', 'bird', 'unknown'] = Field(description="'unknown' from class-agnostic detectors; ⑤ decides")
     confidence: float = Field(ge=0, le=1)
 
 
@@ -75,7 +75,7 @@ class Detection(_Model):
     node_pos: Vec3 = Field(description='sensor node ENU position (m)')
     measurement: Measurement
     source: Literal['camera', 'remote_id', 'external']
-    label: Literal['drone', 'balloon', 'bird'] | None = Field(None, description='camera classifier output')
+    label: Literal['drone', 'balloon', 'bird', 'unknown'] | None = Field(None, description='camera classifier output')
     confidence: float | None = None
     rid: RemoteID | None = None
 
