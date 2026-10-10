@@ -1,0 +1,28 @@
+{
+  "case_id": "fr-2014-10-nuclear-drones",
+  "title": "프랑스 원전 다수 상공 미확인 드론 비행",
+  "date": "2014-10",
+  "country": "fr",
+  "target_class": "drone",
+  "count": null,
+  "region": "프랑스 EDF 원전 7곳 이상",
+  "zone_type": "power",
+  "population": "low",
+  "rid": "unknown",
+  "actions_taken": [
+    "탐지",
+    "EDF 고소",
+    "내무부 수사"
+  ],
+  "max_action": "report",
+  "outcome": "원전 안전·운전에 영향 없음 (EDF). 조종자 확인 보도 없음",
+  "constraints": [
+    "원전 반경 5km 비행 금지 규정이 있었으나 비행을 막지 못함"
+  ],
+  "sources": [
+    "https://globalvoices.org/2014/12/09/drones-flying-over-nuclear-power-stations-in-france-raise-concerns/"
+  ],
+  "notes": [
+    "영향받은 원전 수와 날짜는 출처마다 다름"
+  ]
+}

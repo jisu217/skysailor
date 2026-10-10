@@ -1,0 +1,31 @@
+{
+  "case_id": "dk-2025-09-copenhagen-drone",
+  "title": "코펜하겐 공항 대형 드론 목격으로 이착륙 중단",
+  "date": "2025-09-22",
+  "country": "dk",
+  "target_class": "drone",
+  "count": 3,
+  "region": "덴마크 코펜하겐 공항 (같은 날 오슬로 공항도 중단)",
+  "zone_type": "airport",
+  "population": "medium",
+  "rid": "unknown",
+  "actions_taken": [
+    "이착륙 전면 중단 (약 4시간)",
+    "경찰 수사"
+  ],
+  "max_action": "alert",
+  "outcome": "약 4시간 뒤 운항 재개. 드론 출처 미확인",
+  "collateral": "다수 항공편 회항·취소",
+  "constraints": [
+    "드론 정체·출처 특정 못 함"
+  ],
+  "sources": [
+    "https://www.adaderana.lk/news/112802/denmarks-copenhagen-airport-reopens-after-nearly-four-hour-drone-disruption",
+    "https://www.travelpulse.com/news/impacting-travel/two-busy-airports-issue-ground-stops-due-to-drones"
+  ],
+  "notes": [
+    "드론 수는 경찰 발표 2~3대",
+    "회항 편수는 보도마다 15~50편으로 다름",
+    "국가 배후 여부는 확인되지 않음"
+  ]
+}

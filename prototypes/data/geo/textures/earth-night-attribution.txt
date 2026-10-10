@@ -1,0 +1,6 @@
+NASA Earth Observatory / Black Marble 2016 (Suomi NPP VIIRS)
+https://science.nasa.gov/earth/earth-observatory/earth-at-night/maps/
+Source: https://assets.science.nasa.gov/content/dam/science/esd/eo/images/imagerecords/144000/144897/BlackMarble_2016_01deg_gray_geo.tif
+Source SHA-256: 35fd04c07eb69605e037ecca8f7ce43442a4a109bcac3a84df713661455c1ec8
+3600 x 1800 grayscale RGB GeoTIFF re-encoded as grayscale PNG, preserving all brightness values and geographic extent. Warm light coloring and day/night masking are applied at render time.
+Historical 2016 composite; not live lighting or outage data.

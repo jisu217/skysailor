@@ -1,0 +1,6 @@
+Sun texture: Solar System Scope / INOVE.
+https://www.solarsystemscope.com/textures/
+https://www.solarsystemscope.com/textures/download/2k_sun.jpg
+Licensed under Creative Commons Attribution 4.0 International:
+https://creativecommons.org/licenses/by/4.0/
+Source describes the texture collection as based on NASA imagery with adjusted colors. This is a surface visualization texture, not a live solar observation.

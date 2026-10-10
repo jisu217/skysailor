@@ -1,0 +1,5 @@
+Natural Earth 1:10m Cultural Vectors — Admin 1 States, Provinces (public domain).
+https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-1-states-provinces/
+https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_admin_1_states_provinces.geojson
+Filtered to the Republic of Korea and the United States, simplified (Douglas–Peucker ~0.0008° KR / ~0.004° US),
+coordinates rounded to 4 decimals. Generalized cartographic boundaries; not survey-grade.

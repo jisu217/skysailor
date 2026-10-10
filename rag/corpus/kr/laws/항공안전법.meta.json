@@ -1,0 +1,11 @@
+{
+  "doc": "항공안전법",
+  "doc_type": "law",
+  "country": "kr",
+  "effective_date": "2026-09-17",
+  "promulgated": "2026-06-16",
+  "law_id": "012524",
+  "source_url": "https://www.law.go.kr/법령/항공안전법",
+  "retrieved": "2026-10-10",
+  "note": "국가법령정보센터 공개 API 원문. 부칙 제외"
+}

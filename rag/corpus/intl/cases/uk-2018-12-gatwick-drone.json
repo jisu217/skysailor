@@ -1,0 +1,31 @@
+{
+  "case_id": "uk-2018-12-gatwick-drone",
+  "title": "개트윅 공항 드론 목격으로 활주로 폐쇄",
+  "date": "2018-12-19",
+  "country": "uk",
+  "target_class": "drone",
+  "count": null,
+  "region": "영국 런던 개트윅 공항",
+  "zone_type": "airport",
+  "population": "medium",
+  "rid": "unknown",
+  "actions_taken": [
+    "활주로 폐쇄·운항 중단",
+    "재개 시도마다 추가 목격으로 재폐쇄",
+    "경찰 헬기·드론 수색",
+    "군 투입, 조종 신호 차단 가능 장비 배치"
+  ],
+  "max_action": "alert",
+  "outcome": "약 33시간 운항 차질, 약 1,000편 취소·지연. 기소된 사람 없음",
+  "collateral": "승객 약 14만 명 영향, 항공사 손실 추정 약 5천만 파운드",
+  "constraints": [
+    "조종자·기체를 끝내 특정하지 못함"
+  ],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Gatwick_Airport_drone_incident"
+  ],
+  "notes": [
+    "영향 규모 수치는 출처마다 차이 있음 (BBC Panorama 인용 수치 사용)",
+    "신호 차단 장비가 실제로 사용됐는지는 확인되지 않음"
+  ]
+}

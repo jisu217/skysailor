@@ -1,0 +1,29 @@
+{
+  "case_id": "us-2023-12-langley-drones",
+  "title": "랭글리 공군기지 상공 반복 드론 침범",
+  "date": "2023-12-06",
+  "country": "us",
+  "target_class": "drone",
+  "count": null,
+  "region": "미국 버지니아 랭글리 공군기지",
+  "zone_type": "military",
+  "population": "medium",
+  "rid": "unknown",
+  "actions_taken": [
+    "관측 (17일 밤)",
+    "F-22 일부를 인근 기지로 이전",
+    "FBI·국방부 합동 조사"
+  ],
+  "max_action": "alert",
+  "outcome": "출처 미확인. 적대 의도는 보이지 않았다는 기지 설명",
+  "constraints": [
+    "제한 공역 비행이 비행 안전을 위협하나 출처·조종자 특정 못 함"
+  ],
+  "sources": [
+    "https://www.twz.com/air/mysterious-drones-swarmed-langley-afb-for-weeks%20",
+    "https://thehill.com/policy/defense/4937166-drone-flights-virginia-base/amp/"
+  ],
+  "notes": [
+    "드론 수와 크기는 일정하지 않았다고 기지가 설명"
+  ]
+}

@@ -1,0 +1,4 @@
+Natural Earth 1:50m Admin 0 – Boundary Lines, public domain.
+https://www.naturalearthdata.com/downloads/50m-cultural-vectors/50m-admin-0-boundary-lines-2/
+https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_admin_0_boundary_lines_land.geojson
+Cartographic boundaries are generalized and are not live conflict/control lines.

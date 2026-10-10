@@ -1,0 +1,30 @@
+{
+  "case_id": "us-2024-12-new-jersey-drones",
+  "title": "뉴저지 드론 목격 급증과 핵심 기반시설 비행 제한",
+  "date": "2024-12-18",
+  "country": "us",
+  "target_class": "drone",
+  "count": null,
+  "region": "미국 뉴저지 핵심 기반시설 22곳",
+  "zone_type": "power",
+  "population": "high",
+  "rid": "unknown",
+  "actions_taken": [
+    "목격 신고 접수",
+    "연방 기관 합동 평가",
+    "FAA 임시 비행 제한(TFR) 22곳 발령"
+  ],
+  "max_action": "alert",
+  "outcome": "DHS는 공공 안전 위협 없다고 평가. 상당수는 합법 드론·유인기·별 오인으로 설명",
+  "constraints": [
+    "임박한 보안 위협이면 무력 사용 가능하다고 고지했으나 실제 사용 보도 없음"
+  ],
+  "sources": [
+    "https://www.lakeshorepublicmedia.org/npr-news/2024-12-19/federal-regulators-prohibit-drone-flights-in-dozens-of-locations-across-new-jersey",
+    "https://6abc.com/post/drones-restrictions-effect-amid-ongoing-sightings-new-jersey/15675675/"
+  ],
+  "notes": [
+    "비행 제한 기간은 보도마다 30일 / 2025.1.17까지로 다름",
+    "목격 다수가 오인 신고였다는 점이 특징"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "case_id": "kr-2014-03-baengnyeong-drone",
+  "title": "북한 무인기 백령도 추락 (벌컨포 대응 사격)",
+  "date": "2014-03-31",
+  "country": "kr",
+  "target_class": "drone",
+  "count": 1,
+  "region": "인천 옹진군 백령도",
+  "zone_type": "military",
+  "population": "low",
+  "rid": "none",
+  "actions_taken": [
+    "대응 사격 (벌컨포 약 300발)",
+    "격추 실패",
+    "연료 부족으로 추락 후 수거"
+  ],
+  "max_action": "kinetic",
+  "outcome": "격추 실패. 소청도·대청도 군 시설 촬영 후 추락",
+  "constraints": [
+    "고도가 높아 대공포 사격으로 격추하지 못함"
+  ],
+  "sources": [
+    "https://m.seoul.co.kr/news/2014/04/03/20140403500150",
+    "https://twig24.com/news/diplomacy/2014/04/04/20140404003007"
+  ]
+}

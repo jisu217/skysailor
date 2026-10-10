@@ -1,0 +1,32 @@
+{
+  "case_id": "us-2023-02-china-balloon",
+  "title": "중국 정찰 풍선 미국 본토 횡단 후 해상 격추",
+  "date": "2023-02-04",
+  "country": "us",
+  "target_class": "balloon",
+  "count": 1,
+  "region": "미국 본토 횡단 → 사우스캐롤라이나 연안",
+  "zone_type": "military",
+  "population": "medium",
+  "rid": "none",
+  "actions_taken": [
+    "탐지·추적 (1.28 알래스카 인근 진입)",
+    "격추 승인 (2.1)",
+    "육상 통과 동안 격추 보류",
+    "인근 공항 3곳 이착륙 중단",
+    "F-22 AIM-9X 1발로 해상 격추 (연안 약 6해리)",
+    "잔해 수거"
+  ],
+  "max_action": "kinetic",
+  "outcome": "해상 격추 성공, 얕은 해역에서 잔해 수거",
+  "collateral": "격추 직전 윌밍턴·머틀비치·찰스턴 공항 이착륙 중단. 육상 피해 없음",
+  "constraints": [
+    "육상 격추 시 잔해 낙하로 민간 피해 위험 → 해상 진출까지 대기"
+  ],
+  "sources": [
+    "https://www.af.mil/News/Article-Display/Article/3288579/f-22-safely-shoots-down-chinese-spy-balloon-off-south-carolina-coast/"
+  ],
+  "notes": [
+    "격추 지연에 대해 정치적 비판이 있었으나 공식 설명은 민간 안전"
+  ]
+}

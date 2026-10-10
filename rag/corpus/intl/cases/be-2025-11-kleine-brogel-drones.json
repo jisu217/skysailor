@@ -1,0 +1,31 @@
+{
+  "case_id": "be-2025-11-kleine-brogel-drones",
+  "title": "클라이네-브로헬 공군기지 상공 연속 드론 비행",
+  "date": "2025-11",
+  "country": "be",
+  "target_class": "drone",
+  "count": 6,
+  "region": "벨기에 클라이네-브로헬 공군기지",
+  "zone_type": "military",
+  "population": "low",
+  "rid": "unknown",
+  "actions_taken": [
+    "관측·경찰 확인",
+    "전파 차단 장비 운용",
+    "군에 미확인 드론 격추 권한 부여"
+  ],
+  "max_action": "rf_jam",
+  "outcome": "조종자 미확인. 국방장관은 정찰 활동으로 평가",
+  "constraints": [
+    "소형 드론이 차단 주파수를 탐색한 뒤 대형 드론이 다른 주파수로 회피했다는 국방장관 설명"
+  ],
+  "sources": [
+    "https://kyivindependent.com/belgium-shuts-down-brussels-airport-due-to-suspicious-drone-sighting/",
+    "https://english.nv.ua/nation/unidentified-drones-shut-down-belgian-airports-50558076.html"
+  ],
+  "notes": [
+    "주민은 6대를 신고했으나 경찰 확인은 2대",
+    "격추 권한 부여 후 실제 격추 보도는 확인하지 못함",
+    "전파 차단 장비 운용은 국방장관 발언에 근거"
+  ]
+}

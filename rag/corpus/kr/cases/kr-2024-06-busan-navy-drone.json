@@ -1,0 +1,31 @@
+{
+  "case_id": "kr-2024-06-busan-navy-drone",
+  "title": "중국인 유학생 드론으로 부산 해군기지·미 항공모함 촬영",
+  "date": "2024-06-25",
+  "country": "kr",
+  "target_class": "drone",
+  "count": 1,
+  "region": "부산 해군작전사령부 일대",
+  "zone_type": "military",
+  "population": "high",
+  "rid": "unknown",
+  "actions_taken": [
+    "비행 당시 제지 못 함",
+    "언론 보도 후 수사",
+    "체포·구속",
+    "일반이적 혐의 기소"
+  ],
+  "max_action": "report",
+  "outcome": "2023.3~2024.6 9차례 촬영(사진 172장·동영상 22개). 1심 유죄 (2026.6)",
+  "constraints": [
+    "상용 소형 드론의 불법 촬영을 비행 중 탐지·차단하지 못함"
+  ],
+  "sources": [
+    "https://www.twig24.com/news/local_bs/2025/06/26/20250626500073",
+    "https://www.twig24.com/news/local_bs/2026/06/10/20260610500074"
+  ],
+  "notes": [
+    "가담자 수는 초기 보도 3명, 기소 2명",
+    "1심은 군함을 군사시설로 보지 않음"
+  ]
+}

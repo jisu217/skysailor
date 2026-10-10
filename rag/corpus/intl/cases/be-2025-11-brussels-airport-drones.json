@@ -1,0 +1,27 @@
+{
+  "case_id": "be-2025-11-brussels-airport-drones",
+  "title": "브뤼셀·리에주 공항 드론 목격으로 운항 중단",
+  "date": "2025-11-04",
+  "country": "be",
+  "target_class": "drone",
+  "count": null,
+  "region": "벨기에 브뤼셀·리에주 공항",
+  "zone_type": "airport",
+  "population": "medium",
+  "rid": "unknown",
+  "actions_taken": [
+    "운항 2차례 중단",
+    "항공편 회항",
+    "다음 날 수십 편 취소",
+    "총리 긴급 회의"
+  ],
+  "max_action": "alert",
+  "outcome": "브뤼셀 공항이 드론으로 폐쇄된 첫 사례. 조종자 미확인",
+  "constraints": [
+    "조종자·출처 특정 못 함"
+  ],
+  "sources": [
+    "https://www.ksat.com/news/world/2025/11/05/drone-sightings-force-fresh-flight-cancellations-at-belgiums-main-airport/",
+    "https://brusselstimes.com/belgium/1825792/brussels-airport-shut-down-after-drone-sighting-tbtb/"
+  ]
+}

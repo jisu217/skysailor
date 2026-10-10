@@ -1,0 +1,27 @@
+{
+  "case_id": "us-2023-02-alaska-yukon-objects",
+  "title": "알래스카·유콘 상공 미확인 비행체 격추",
+  "date": "2023-02-10",
+  "country": "us",
+  "target_class": "balloon",
+  "count": 2,
+  "region": "미국 알래스카, 캐나다 유콘 (인구 희박 지역)",
+  "zone_type": "military",
+  "population": "low",
+  "rid": "none",
+  "actions_taken": [
+    "추적",
+    "F-22 격추 (알래스카 2.10, 유콘 2.11)"
+  ],
+  "max_action": "kinetic",
+  "outcome": "2건 모두 격추. 발사 주체 미확인",
+  "constraints": [
+    "민항기 비행에 위협이 될 수 있는 고도(약 4만 피트)"
+  ],
+  "sources": [
+    "https://abc7news.com/amp/post/unidentified-object-shot-down-north-america/12805407/"
+  ],
+  "notes": [
+    "정찰 풍선(2.4)과의 연관성은 확인되지 않음"
+  ]
+}
