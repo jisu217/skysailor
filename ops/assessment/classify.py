@@ -1,9 +1,12 @@
 """⑤ Identification from three cues. See ops/docs/DESIGN.md §5.5.
 
-1. Camera label  — the track's averaged detector output (Track.image_label).
+1. Camera label  — the track's averaged detector output (Track.image_label); absent with the
+                   default class-agnostic detector.
 2. Motion        — horizontal airspeed v_air = v_track − w, tested against "moves with the wind":
                    T = v_airᵀ (P_v + P_w)⁻¹ v_air  ~ χ²(2) for a balloon. T is averaged over a
-                   window; straight vs. erratic heading separates drones from birds.
+                   window. Motion separates balloon from self-propelled; it cannot separate drone
+                   from bird (turn rates overlap in tests), so self-propelled leans to drone —
+                   a missed drone costs more than a bird the operator dismisses.
 3. Remote ID     — a broadcasting aircraft is a drone; the permit list says whether it is allowed.
 
 Cues are combined as independent likelihoods (naive Bayes, uniform prior). 'unknown' keeps the
@@ -19,8 +22,7 @@ CLASSES = ('drone', 'balloon', 'bird')
 KO = dict(drone='드론', balloon='풍선', bird='조류', unknown='미상')
 CHI2_2DOF_95 = 5.991
 MOTION_BALLOON = np.array([.10, .80, .10])
-MOTION_STRAIGHT = np.array([.70, .05, .25])
-MOTION_ERRATIC = np.array([.30, .05, .65])
+MOTION_POWERED = np.array([.70, .05, .25])         # self-propelled: drone or bird, leaning drone
 RID = np.array([.97, .015, .015])
 UNKNOWN_BY_CUES = {0: 1.0, 1: .35, 2: .12, 3: .05}
 
@@ -32,21 +34,9 @@ def airspeed_statistic(track, wind):
     return v, float(v@np.linalg.solve(S, v))
 
 
-def heading_change(history, min_step: float = 2.0):
-    """Mean absolute heading change (rad) between successive history segments, or None if too short."""
-    if len(history) < 4:
-        return None
-    seg = np.diff(np.asarray(history, float)[:, :2], axis=0)
-    seg = seg[np.linalg.norm(seg, axis=1) > min_step]
-    if len(seg) < 3:
-        return None
-    h = np.arctan2(seg[:, 1], seg[:, 0])
-    return float(np.mean(np.abs(np.angle(np.exp(1j*np.diff(h))))))
-
-
 class WindowClassifier:
-    def __init__(self, window_s: float = 5.0, turn_erratic: float = 0.35):
-        self.window_s, self.turn_erratic = window_s, turn_erratic
+    def __init__(self, window_s: float = 5.0):
+        self.window_s = window_s
         self.hist = {}
 
     def update(self, track, wind, permits=frozenset()):
@@ -74,11 +64,8 @@ class WindowClassifier:
                 cues.append(MOTION_BALLOON); motion_top = 'balloon'
                 basis.append(f'움직임: 바람을 따라 흐름 (대기 기준 속도 {air:.1f} m/s)')
             else:
-                turn = heading_change(track.history)
-                erratic = turn is not None and turn > self.turn_erratic
-                cues.append(MOTION_ERRATIC if erratic else MOTION_STRAIGHT)
-                motion_top = 'bird' if erratic else 'drone'
-                basis.append(f'움직임: 스스로 이동 (대기 기준 속도 {air:.1f} m/s, {"방향 불규칙" if erratic else "직진"})')
+                cues.append(MOTION_POWERED); motion_top = 'drone'
+                basis.append(f'움직임: 스스로 이동 (대기 기준 속도 {air:.1f} m/s) · 드론/조류는 영상 분류 없이 구분 불가 → 드론 가정')
         else:
             basis.append('움직임: 판정 대기')
 

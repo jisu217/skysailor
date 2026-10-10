@@ -89,6 +89,7 @@ class Scenario:
     targets: list
     cameras: list
     wind: np.ndarray
+    class_labels: bool = False         # False: class-agnostic detector (SkyBlobDetector) → label 'unknown'
     reference: Reference = field(default_factory=Reference)
     enu: ENU = field(default_factory=lambda: ENU(*REF))
 
@@ -103,7 +104,8 @@ class Frame:
     truth: list
 
 
-def generate(name: str = 'mixed', seed: int = 0, quality: float = 0.95, cameras=None, spacing: float = 250.0) -> Scenario:
+def generate(name: str = 'mixed', seed: int = 0, quality: float = 0.95, cameras=None, spacing: float = 250.0,
+             class_labels: bool = False) -> Scenario:
     """Presets: 'mixed' (2 balloons, 2 m fixed-wing, 0.4 m quadcopter, permitted drone, bird) around three domes.
 
     spacing: dome-to-dome distance (m). Small drones are only seen within a few hundred metres,
@@ -130,7 +132,8 @@ def generate(name: str = 'mixed', seed: int = 0, quality: float = 0.95, cameras=
                Zone('Z2', '변전소 (가상)', tuple(c[:2]+[420., -250.]), 100., .8, 'power')],
         population=Population([(*(c[:2]+[-250., -150.]), 250., 1.0), (*(c[:2]+[600., 300.]), 300., .7)]),
         permits={'KR-UAS-24817'})
-    return Scenario(name, seed, 120.0, nodes, targets, cameras or ring_cameras(), wind, reference)
+    return Scenario(name, seed, 120.0, nodes, targets, cameras or ring_cameras(), wind,
+                    class_labels=class_labels, reference=reference)
 
 
 def replay(scenario: Scenario, dt: float = 0.5):
@@ -160,6 +163,8 @@ def replay(scenario: Scenario, dt: float = 0.5):
                         continue
                     u, v = uv[0]+rng.normal(0, cam.pixel_sigma), uv[1]+rng.normal(0, cam.pixel_sigma)
                     label = tg.cls if rng.random() < .9 else rng.choice([c for c in SIZE if c != tg.cls])
+                    if not scenario.class_labels:
+                        label = 'unknown'
                     conf = float(np.clip(.35+.6*min(px/30, 1)+rng.normal(0, .05), 0, 1))
                     dets.append(CameraDetection(t=t, node_id=n.id, camera_id=ci, bbox=(u-px/2, v-px/2, px, px),
                                                 image_size=(cam.width, cam.height), label=label, confidence=conf))
