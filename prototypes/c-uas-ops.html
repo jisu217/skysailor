@@ -6,45 +6,63 @@
 <title>Skysailor C-UAS 결심지원</title>
 <style>
 :root{
-  --bg:#0c1821;--panel:#10202a;--panel2:#132833;--line:#2b424d;--line2:#22363f;
-  --text:#dcebed;--muted:#819ca9;--accent:#8bdfc4;--accent-ink:#0b2925;--warn:#b9a86a;
+  /* palette adapted from EBS (Earth Broadcasting System); critical text kept ≥ 11–12 px for operators */
+  --bg:#03070d;--panel:#0a1521;--panel2:#0d1b29;--line:#88b8e329;--line2:#88b8e31a;--border:#88b8e329;
+  --text:#dce7f4;--muted:#7d93aa;--accent:#90d4b1;--accent-ink:#06231a;--warn:#d1b47a;--blue:#a9d9ff;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --low:#7d8f97;--med:#e6c84f;--high:#f0974a;--crit:#ef5b5b;
   --balloon:#c9a3f0;--drone:#f06a6a;--bird:#9bc9e0;--unknown:#cfd8dc;
-  font-family:system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;color-scheme:dark;
+  font-family:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color-scheme:dark;
+  font-feature-settings:"ss06";letter-spacing:-.1px;
 }
+/* Pretendard (SIL OFL 1.1, vendor/pretendard/LICENSE.txt), bundled so the demo works offline */
+@font-face{font-family:"Pretendard Variable";font-weight:45 920;font-style:normal;font-display:swap;src:url(vendor/pretendard/PretendardVariable.woff2) format("woff2-variations")}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column}
-a{color:#83ddc1;text-decoration:none}
-button,select,input{font:inherit;font-size:12px;background:#1b303c;color:#dfeded;border:1px solid #35515e;border-radius:7px;padding:7px 11px}
-button{cursor:pointer}button:hover{background:#2c4d59}
+a{color:var(--blue);text-decoration:none}
+button,select,input{font:inherit;font-size:12px;background:#0b1826;color:#cfe0f2;border:1px solid var(--border);border-radius:5px;padding:7px 11px}
+button{cursor:pointer}button:hover{background:#13263a;border-color:#88b8e355}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 button.primary{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
 button.ghost{background:transparent}
 h1{font-size:22px;margin:0}h2{font-size:14px;margin:0}h3{font-size:11px;letter-spacing:1px;color:var(--accent);margin:0 0 8px;font-weight:600}
 small,.muted{color:var(--muted);font-size:11px}
-.num{font-variant-numeric:tabular-nums}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.2px}
 
 /* top bar */
-header{display:flex;align-items:center;gap:22px;padding:0 22px;height:60px;border-bottom:1px solid var(--line);flex-shrink:0}
+header{display:flex;align-items:center;gap:22px;padding:0 22px;height:60px;border-bottom:1px solid var(--border);flex-shrink:0;background:#03070de6;backdrop-filter:blur(10px);position:relative;z-index:5}
 header .brand{font-size:14px;letter-spacing:2px;font-weight:700;white-space:nowrap;cursor:pointer}
 header .brand span{color:#7b9da8;font-weight:400}
-.flow{display:flex;gap:4px;list-style:none;margin:0;padding:0;font-size:11px}
-.flow li{padding:5px 10px;border-radius:999px;background:#13252f;color:#6f919f;white-space:nowrap}
-.flow li.on{background:#1f3f3a;color:var(--accent)}
+
 .status{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;white-space:nowrap}
 .status .alert{color:var(--crit);font-weight:700}
 .status .tti{color:var(--high)}
 .simctl{display:flex;gap:6px;align-items:center}
 .simctl select,.simctl button{padding:5px 8px;font-size:11px}
-.banner{font-size:11px;color:var(--warn);background:#1d1d14;padding:5px 22px;border-bottom:1px solid #3a3622}
-.tabs{display:flex;gap:2px;padding:0 22px;border-bottom:1px solid var(--line)}
-.tabs a{font-size:13px;padding:11px 16px;color:var(--muted);border-bottom:2px solid transparent}
+.mode-chip{font-size:11px;color:#9cbbd6;border:1px solid var(--border);border-radius:3px;padding:3px 8px;white-space:nowrap}
+.mode-chip.live{color:#90d4b1;border-color:#90d4b155}.mode-chip.live::before{content:'● ';color:#90d4b1}
+.info-btn{display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:none;color:#8298ad}
+.info-btn:hover{color:#d1e7fc;background:#13223599}
+#siteInfo{position:fixed;inset:64px 22px auto auto;margin:0;width:340px;max-width:calc(100vw - 28px);padding:16px 40px 16px 18px;border:1px solid #88b8e333;border-radius:7px;background:#091320f5;color:#a9bed2;box-shadow:0 10px 30px #0006}
+#siteInfo ul{margin:0;padding-left:16px;font-size:12px;line-height:1.8}
+#siteInfo button{position:absolute;top:6px;right:6px;width:28px;height:28px;padding:0;border:0;background:none;color:#8298ad;font-size:19px}
+#ctrlNote:empty{display:none}
+.tabs{display:flex;gap:2px;align-self:stretch;margin-left:8px}
+.tabs a{display:flex;align-items:center;gap:0;font-size:13px;font-weight:500;padding:0 14px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.tabs a:hover{color:#b8cce1}
+.tbadge{font:600 10px/1 var(--mono);margin-left:7px;padding:3px 5px;border-radius:3px;background:#13263a;color:#9cbbd6}
+.tbadge:empty{display:none}
+.tbadge.hot{background:var(--high);color:#06101b;animation:symflash 1.4s infinite}
+@media (prefers-reduced-motion:reduce){.tbadge.hot{animation:none}}
+#simMenu{position:fixed;inset:64px 64px auto auto;margin:0;padding:12px 14px;border:1px solid #88b8e333;border-radius:7px;background:#091320f5;color:#a9bed2;box-shadow:0 10px 30px #0006}
+#simMenu .simctl{margin:8px 0 6px}
 .tabs a.on{color:var(--text);border-bottom-color:var(--accent)}
 .tabs a b{color:var(--accent);margin-right:6px}
 
 main{flex:1;min-height:0;padding:18px 22px;display:flex;flex-direction:column;gap:16px}
 .screen{display:none;flex:1;min-height:0}
 .screen.on{display:flex;flex-direction:column;gap:16px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.panel{background:linear-gradient(135deg,#0a1521ed,#06101bea);border:1px solid var(--border);border-radius:8px;padding:14px 16px;min-width:0;backdrop-filter:blur(14px);box-shadow:0 8px 35px #0003}
 
 /* main hub */
 .hubgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -58,7 +76,7 @@ main{flex:1;min-height:0;padding:18px 22px;display:flex;flex-direction:column;ga
 .feed{list-style:none;margin:0;padding:0;font-size:12px;overflow:auto;max-height:100%}
 .feed li{padding:6px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px}
 .feed li .t{color:var(--muted);min-width:58px}
-.stage{position:relative;flex:1;min-height:220px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0a151c}
+.stage{position:relative;flex:1;min-height:220px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#050d16}
 .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .legend{position:absolute;left:8px;bottom:8px;display:flex;flex-wrap:wrap;gap:10px;font-size:10px;color:var(--muted);background:#0a151ccc;padding:5px 9px;border-radius:7px;pointer-events:none}
 .legend span{display:flex;align-items:center;gap:5px}
@@ -66,6 +84,138 @@ main{flex:1;min-height:0;padding:18px 22px;display:flex;flex-direction:column;ga
 .ring{width:10px;height:10px;border-radius:50%;border:1px dashed var(--accent);display:inline-block}
 .zonek{width:10px;height:10px;border-radius:50%;border:1px solid #ef8f8f;background:#ef5b5b22;display:inline-block}
 .fp{width:10px;height:10px;border-radius:50%;border:1px dotted var(--balloon);display:inline-block}
+
+/* main: 3D globe overview */
+body.is-main main,body.full-map main{padding:0}
+/* ① ② full-screen city map with floating panels (same pattern as the main globe) */
+.screen.fullmap.on{position:relative;flex:1;display:block;min-height:560px}
+.fullmap>.stage{position:absolute;inset:0;border:0;border-radius:0;max-height:none!important;min-height:0!important}
+.float-r,.float-l{position:absolute;top:14px;bottom:14px;width:340px;display:flex;flex-direction:column;gap:12px;z-index:3;pointer-events:none}
+.float-r{right:14px}.float-l{left:14px}
+.float-r>*,.float-l>*{pointer-events:auto}
+.fullmap .city-wrap{--rpad:0px;--lpad:0px}
+#s-targets .city-wrap{--rpad:354px}
+#s-nodes .city-wrap{--lpad:384px}
+.tlist-p{max-height:38%;flex-shrink:0}
+.tdetail{flex:0 1 auto;min-height:0}
+/* map chrome kept minimal: no city name, height legend, view-angle or layer buttons (defaults per screen) */
+.city-name,.city-legend,.city-tools .view-switch,.city-layers{display:none!important}
+.city-tools{justify-content:flex-end}
+.tdetail .dsec{border-top:1px solid var(--line2);margin-top:14px;padding-top:12px}
+.cls-top{font-size:13px;font-weight:600}.cls-top .muted{font-weight:400;font-size:11px}
+.basis{margin:8px 0 0;padding-left:16px;font-size:12px;color:#b8cce1;line-height:1.7}
+.factors .fk{color:#b8cce1}
+.dmeta{font-size:11px;color:var(--muted);margin-top:12px}
+.gonext{width:100%;margin-top:14px}
+.hero-sub{font-size:13px;font-weight:500;color:#9fb1c5;margin-left:4px}
+.ntable{width:100%;border-collapse:collapse;font-size:12px}
+.ntable th{text-align:left;color:var(--muted);font-weight:500;font-size:11px;padding:4px 6px;border-bottom:1px solid var(--line2)}
+.ntable td{padding:8px 6px;border-bottom:1px solid var(--line2)}
+.ntable tr:not(:first-child){cursor:pointer}.ntable tr:not(:first-child):hover{background:#13263a80}
+.st{font-size:11px;padding:2px 7px;border-radius:3px}
+.st.good{color:#7fb2ff;background:#3d7bff22}.st.warn{color:var(--med);background:#e6c84f22}.st.bad{color:var(--crit);background:#ef5b5b22}
+details.ctrlp summary{display:flex;align-items:baseline;gap:12px;cursor:pointer;list-style:none}
+details.ctrlp summary::-webkit-details-marker{display:none}
+details.ctrlp summary::before{content:'▸';color:var(--muted);font-size:11px}
+details.ctrlp[open] summary::before{content:'▾'}
+details.ctrlp[open] summary{margin-bottom:10px}
+details.ctrlp .kv{margin:10px 0}
+.globe-stage{position:relative;flex:1;min-height:520px;overflow:hidden;background:#000}
+#globe,#mapMain{position:absolute;inset:0;width:100%;height:100%;display:block;outline:none}
+#globe[hidden],#mapMain[hidden],.globe-stage [hidden]{display:none!important}
+#globe{touch-action:none;cursor:grab}#globe:active{cursor:grabbing}
+.map-tools{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:18px;align-items:center;white-space:nowrap;font-size:11px;color:#698098}
+.map-tools button{color:#9cbbd6;font-size:11px;padding:5px 9px;border:1px solid var(--border);border-radius:3px;background:#07111bd9}
+.globe-sites{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.globe-site{position:absolute;left:0;top:0;margin:-7px 0 0 -7px;pointer-events:auto;background:none;border:0;padding:0;display:flex;align-items:center;gap:9px;color:var(--text);transition:opacity .2s}
+.globe-site:hover{background:none}
+.globe-site[hidden]{display:none}
+.globe-site i{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px #90d4b130,0 0 16px #90d4b199;flex-shrink:0}
+.globe-site[data-level=HIGH] i{background:var(--high);animation:sitepulse 1.4s infinite}
+.globe-site[data-level=CRITICAL] i{background:var(--crit);animation:sitepulse 1s infinite}
+.globe-site[data-live=false] i{background:transparent;border:1px dashed #a9c2dd;box-shadow:none}
+.globe-site span{display:flex;flex-direction:column;align-items:flex-start;padding:6px 10px;border-radius:5px;background:#07111bdd;border:1px solid var(--border);backdrop-filter:blur(8px)}
+.globe-site b{font-size:12px;font-weight:600}.globe-site small{font-size:11px;color:var(--muted)}
+.globe-site.dim{opacity:.45}
+@keyframes sitepulse{0%{box-shadow:0 0 0 0 #ef5b5baa}100%{box-shadow:0 0 0 16px #ef5b5b00}}
+@media (prefers-reduced-motion:reduce){.globe-site i{animation:none!important}}
+.globe-top{position:absolute;top:16px;left:50%;transform:translateX(-50%);display:flex;gap:14px;align-items:center;white-space:nowrap}
+.view-switch{display:flex;gap:3px;padding:3px;border:1px solid var(--border);border-radius:5px;background:#07111bcc;backdrop-filter:blur(8px)}
+.view-switch button{padding:5px 14px;color:var(--muted);font-size:12px;border:0;background:none;border-radius:3px}
+.view-switch button[aria-pressed=true]{color:var(--blue);background:#2a496e50;box-shadow:inset 0 0 0 1px #5a9ec048}
+.globe-hint{font-size:11px;color:var(--muted)}
+.hub-float{position:absolute;left:20px;top:20px;bottom:20px;width:294px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.hub-float .hubcard{gap:9px;padding:13px 15px}
+.hub-float .hubcard .big{font-size:22px;font-family:inherit;letter-spacing:0}
+.feed-float{position:absolute;right:20px;top:20px;bottom:20px;width:294px;display:flex;flex-direction:column}
+.feed-float .feed{flex:1}
+.region-note{position:absolute;left:50%;bottom:64px;transform:translateX(-50%);max-width:560px;font-size:12px;color:var(--warn);border-color:#b79d7655!important}
+.kicker{font-size:10px;letter-spacing:1.3px;color:#6c88a4;text-transform:uppercase}
+
+/* city tactical view (① ②) */
+.city-wrap{position:absolute;inset:0;background:#000}
+.city-wrap [hidden]{display:none!important}
+.stage:has(.city-wrap){max-height:calc(100dvh - 300px);min-height:380px}
+.city-wrap::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 62%,#000a 100%)}
+.city-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;outline:none;touch-action:none;cursor:grab}
+.city-canvas:active{cursor:grabbing}
+.city-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.city-labels>*{position:absolute;left:0;top:0;will-change:transform}
+.city-tools{position:absolute;top:10px;left:calc(10px + var(--lpad,0px));right:calc(10px + var(--rpad,0px));display:flex;gap:10px;align-items:center;z-index:2;pointer-events:none}
+.city-tools>*{pointer-events:auto}
+.city-name{font-size:11px;color:#9cbbd6;padding:5px 9px;border:1px solid var(--border);border-radius:4px;background:#07111bd9;margin-right:auto;pointer-events:none}
+.city-tools .view-switch{background:#07111bd9}
+.city-reset{padding:5px 10px;font-size:12px;background:#07111bd9;color:#9cbbd6}
+.city-compass{position:absolute;right:calc(12px + var(--rpad,0px));bottom:26px;width:58px;height:58px;border-radius:50%;border:1px solid var(--border);background:#07111bcc;z-index:2}
+.city-compass i{position:absolute;left:50%;top:50%;transform-origin:0 0}
+.city-compass .n{width:0;height:0;font-style:normal;font-size:10px;color:#a9d9ff}
+.city-compass .n::before{content:'N';position:absolute;left:-4px;top:-27px}
+.city-compass .w{width:0;height:0}
+.city-compass .w::before{content:'';position:absolute;left:-1px;top:-20px;width:2px;height:34px;background:#90d4b1}
+.city-compass .w::after{content:'';position:absolute;left:-5px;top:-22px;border:5px solid transparent;border-bottom:8px solid #90d4b1;border-top:0}
+.city-compass .wtxt{position:absolute;top:62px;right:0;white-space:nowrap;font-size:10px;color:#90d4b1}
+.city-attr{position:absolute;right:calc(84px + var(--rpad,0px));bottom:6px;font-size:10px;color:#6c839b;z-index:2}
+.city-maplabels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.city-maplabels .ml{position:absolute;left:0;top:0;white-space:nowrap;text-shadow:0 0 3px #000,0 1px 4px #000;will-change:transform}
+.ml-road{font-size:10px;color:#7f9cbc;letter-spacing:.3px}
+.ml-station{font-size:11px;color:#cfe0f2;display:flex;align-items:center;gap:5px}
+.ml-station i{width:7px;height:7px;border-radius:50%;border:1.5px solid #a9d9ff;background:#07111b}
+.ml-building{font-size:10px;color:#b8cce1}.ml-building small{color:#7d93aa}
+.ml-place{font-size:11px;color:#5d7690;letter-spacing:1.5px}
+.city-foot{position:absolute;left:calc(10px + var(--lpad,0px));bottom:8px;display:flex;flex-direction:column;gap:5px;z-index:2;pointer-events:none}
+.city-scale{display:flex;align-items:flex-end;gap:6px;font-size:10px;color:#9cbbd6}
+.city-scale i{display:block;height:6px;border:1.5px solid #9cbbd6;border-top:0}
+.city-coord{font-size:10px;color:#8ea4bd;background:#07111bcc;padding:3px 6px;border-radius:3px;border:1px solid var(--border)}
+.city-legend{position:absolute;left:calc(10px + var(--lpad,0px));top:48px;display:flex;align-items:center;gap:8px;font-size:10px;color:#8ea4bd;padding:5px 8px;border-radius:4px;background:#07111bcc;border:1px solid var(--border);z-index:2;cursor:help}
+.city-legend b{font-weight:600;color:#b8cce1;font-size:10px}
+.city-legend span{display:flex;align-items:center;gap:6px}
+.city-legend i{width:12px;height:9px;border:1px solid #4a73a3;background:#263d63}
+.city-legend i.e{opacity:.5;border-color:#2e4a6c}
+.city-labels .sym{display:block;flex-shrink:0;filter:drop-shadow(0 0 4px var(--glow)) drop-shadow(0 1px 3px #000)}
+.city-node{display:flex;align-items:center;margin:-8px 0 0 26px}
+.city-node .nlabel{font-size:10px;color:#9cc4e4;text-shadow:0 1px 3px #000,0 0 2px #000}
+.city-truth{width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:#5d6b78}
+.city-track{pointer-events:auto;display:flex;align-items:center;margin:-23px 0 0 -23px;padding:0;background:none;border:0;color:#cfe0f2;cursor:pointer}
+.city-track:hover{background:none}.city-track:hover .tag{border-color:#88b8e366}
+.city-track .leader{width:12px;height:1px;opacity:.7;flex-shrink:0;transform-origin:0 50%}
+.city-track .tag{display:flex;flex-direction:column;gap:1px;font:10px/1.35 var(--mono);white-space:nowrap;background:#07111bdd;border:1px solid #88b8e326;border-left:2px solid;padding:2px 6px;border-radius:2px}
+.city-track .tag em{font-style:normal;color:#5d7690}
+.city-track .tag .l2{color:#8ea4bd}
+.city-track .ty{font-weight:600}
+.city-track .hit{width:46px;height:46px;flex-shrink:0;border-radius:50%}
+.city-track.sel .tag{border-color:#ffffffaa;background:#0d1d2ee6}
+.city-track .chip{font:600 9px/1 var(--mono);color:#06101b;padding:2px 4px;border-radius:2px;margin-right:6px;letter-spacing:.5px}
+.city-track.lvl-HIGH .chip,.city-track.lvl-CRITICAL .chip{animation:symflash 1.4s infinite}
+.city-track.lvl-CRITICAL .chip{animation-duration:.9s}
+@keyframes symflash{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.city-track .chip{animation:none!important}}
+.city-zonetag,.city-fptag{font:10px/1 var(--mono);letter-spacing:.6px;white-space:nowrap;text-shadow:0 1px 3px #000,0 0 2px #000;translate:-50% -140%}
+.city-zonetag.alert{font-weight:600}
+.city-layers{position:absolute;top:44px;right:calc(10px + var(--rpad,0px));display:flex;gap:4px;z-index:2}
+.city-layers button{font-size:10px;padding:4px 8px;color:#6c839b;background:#07111bd9;border:1px solid var(--border);border-radius:3px}
+.city-layers button[aria-pressed=true]{color:#a9d9ff;border-color:#5a9ec060;background:#13263ad9}
+.city-legend a{font-size:10px;color:#7fb2dd;pointer-events:auto;margin-top:2px}
+.us-note{border-color:#b79d7655!important;color:var(--warn);font-size:12px}
 
 /* levels */
 .lvl{font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;color:#0c1821;display:inline-block;min-width:66px;text-align:center}
@@ -108,6 +258,33 @@ main{flex:1;min-height:0;padding:18px 22px;display:flex;flex-direction:column;ga
 .cons{font-size:12px;line-height:1.6;margin:0;padding-left:16px}
 .tag{font-size:10px;color:var(--warn)}
 .ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+/* ③ decision layout: conclusion → recommendation + decision → evidence (folded) */
+#rCard{gap:12px}
+.hero{display:flex;align-items:flex-start;gap:20px}
+.hero-l{flex:1;min-width:0}
+.hero-t{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;letter-spacing:-.3px;margin-top:2px}
+.hero-s{font-size:13px;color:#9fb1c5;margin-top:4px}
+.hero-n{font-size:12px;color:var(--med);margin-top:6px}
+.hero-r{text-align:right;flex-shrink:0}
+.dl{font-size:28px;font-weight:700;line-height:1.1;margin-top:2px}
+.recp .rec-big{font-size:20px;font-weight:700;margin:2px 0 12px;color:var(--accent)}
+.recp .why{font-size:12px;color:#9fb1c5;line-height:1.7;margin:10px 0 14px}
+.decide .big{padding:9px 18px;font-size:13px}
+.decide .alt{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.hitl{font-size:11px;color:var(--muted);margin-top:10px}
+.evs-panel{padding-bottom:6px}
+details.ev{border-top:1px solid var(--line2)}
+details.ev summary{display:flex;align-items:baseline;gap:12px;padding:11px 0;cursor:pointer;list-style:none}
+details.ev summary::-webkit-details-marker{display:none}
+details.ev summary::before{content:'▸';color:var(--muted);font-size:11px;transition:transform .15s}
+details.ev[open] summary::before{transform:rotate(90deg)}
+.evt{font-size:13px;font-weight:600;white-space:nowrap}
+.evs{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.evb{padding:0 0 12px 20px;font-size:12px}
+.evb table{width:100%;border-collapse:collapse}.evb th,.evb td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line2)}
+.evb th{color:var(--muted);font-weight:500;font-size:11px}
+.rec-row{background:#90d4b114}
+.quote{font-size:11px;color:var(--muted);margin:3px 0 8px;line-height:1.6}.quote .ok{color:var(--accent)}
 .ladder div{text-align:center;font-size:11px;padding:8px 4px;border-radius:7px;background:#18272f;color:#4f6873;line-height:1.4}
 .ladder div small{display:block;font-size:10px}
 .ladder .allowed{background:#1d3640;color:#a9c2cb}
@@ -134,104 +311,103 @@ dialog::backdrop{background:#0009}
 
 @media (max-width:1000px){
   header{flex-wrap:wrap;height:auto;padding:10px 16px;gap:10px}
-  .flow{order:3;flex-wrap:wrap}.status{margin-left:0}
+  .status{margin-left:0}
   main{padding:16px}
-  .tabs{padding:0 16px;overflow-x:auto}
+  .tabs{order:3;width:100%;margin:0;overflow-x:auto}
   .hubgrid,.hubbottom,.split,.split.rev{grid-template-columns:1fr}
   .stage{min-height:320px}
+  .globe-stage{display:flex;flex-direction:column;min-height:auto}
+  #globe,#mapMain{position:relative;height:56vh;flex-shrink:0}
+  .globe-top{position:absolute;top:10px;flex-wrap:wrap;justify-content:center}.globe-hint{display:none}
+  .hub-float,.feed-float{position:static;width:auto;margin:12px 16px 0}
+  .feed-float{max-height:40vh;margin-bottom:16px}
 }
 </style>
 </head>
 <body>
 <header>
-  <div class="brand" data-go="main">SKYSAILOR <span>C-UAS 결심지원</span></div>
-  <ol class="flow" id="flow">
-    <li data-s="nodes">탐지</li><li data-s="targets">추적</li><li data-s="targets">식별</li><li data-s="targets">위협도</li><li data-s="response">대응 추천</li><li data-s="response">결정</li>
-  </ol>
+  <div class="brand" data-go="main">SKYSAILOR</div>
+  <nav class="tabs" id="tabs">
+    <a href="#main" data-go="main">메인</a>
+    <a href="#nodes" data-go="nodes"><b>①</b>기기 성능<span class="tbadge" id="tbNodes"></span></a>
+    <a href="#targets" data-go="targets"><b>②</b>표적 판단<span class="tbadge" id="tbTargets"></span></a>
+    <a href="#response" data-go="response"><b>③</b>대응 결심<span class="tbadge" id="tbQueue"></span></a>
+  </nav>
   <div class="status">
-    <span id="stAlert" class="alert">경보 0</span>
     <span id="stTti" class="tti">최단 TTI —</span>
     <span class="num" id="stClock">T+00:00</span>
-    <div class="simctl">
-      <select id="speed" aria-label="시뮬레이션 속도"><option value="5">5×</option><option value="10" selected>10×</option><option value="20">20×</option></select>
-      <button id="pause">일시정지</button><button id="restart">처음부터</button>
-    </div>
+    <span class="mode-chip" id="modeChip">시뮬레이션</span>
+    <button type="button" class="info-btn" popovertarget="simMenu" aria-label="시연 제어" title="시연 제어 (스페이스: 일시정지)"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></button>
+    <button type="button" class="info-btn" popovertarget="siteInfo" aria-label="시연 안내" title="시연 안내"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></button>
   </div>
 </header>
-<div class="banner">프로토타입 · 가상 지역·가상 표적 · 사례와 조문은 예시이며 출처 확인 전입니다 · 시간은 시뮬레이션 시간</div>
-<nav class="tabs" id="tabs">
-  <a href="#main" data-go="main">메인</a>
-  <a href="#nodes" data-go="nodes"><b>①</b>기기 성능</a>
-  <a href="#targets" data-go="targets"><b>②</b>표적 판단</a>
-  <a href="#response" data-go="response"><b>③</b>대응 결심</a>
-</nav>
+<div id="simMenu" popover aria-label="시연 제어">
+  <div class="kicker">시연 제어</div>
+  <div class="simctl">
+    <select id="speed" aria-label="시뮬레이션 속도"><option value="5">5×</option><option value="10" selected>10×</option><option value="20">20×</option></select>
+    <button id="pause">일시정지</button><button id="restart">처음부터</button>
+  </div>
+  <small>스페이스바: 일시정지 / 재개</small>
+</div>
+<aside id="siteInfo" popover aria-label="시연 안내">
+  <ul id="siteInfoList">
+    <li>프로토타입입니다. 지역·표적은 가상 입력이며 시간은 시뮬레이션 시간입니다.</li>
+    <li>사례·조문은 공개 자료 기준이며, 법적 근거는 후보로 법률 검토가 필요합니다.</li>
+    <li>부수 피해 인원은 가상 추정입니다.</li>
+  </ul>
+  <button type="button" popovertarget="siteInfo" popovertargetaction="hide" aria-label="닫기">×</button>
+</aside>
 
 <main>
 <!-- ============ MAIN ============ -->
 <section class="screen" id="s-main">
-  <div class="hubgrid">
-    <article class="panel hubcard" data-go="nodes">
-      <h3>① 기기 성능</h3><div class="q">잘 보고 있나?</div>
-      <div class="big num" id="hNodes">—</div>
-      <dl class="kv"><dt>평균 자세 안정도</dt><dd id="hStab">—</dd><dt>관측 범위 합</dt><dd id="hCov">—</dd><dt>탑재 제어기</dt><dd id="hCtrl">—</dd><dt>바람</dt><dd id="hWind">—</dd></dl>
-    </article>
-    <article class="panel hubcard" data-go="targets">
-      <h3>② 표적 판단</h3><div class="q">무엇이고 얼마나 위험한가?</div>
-      <div class="big num" id="hTargets">—</div>
-      <dl class="kv"><dt>유형</dt><dd id="hTypes">—</dd><dt>최고 위협</dt><dd id="hTop">—</dd><dt>판정 대기</dt><dd id="hPending">—</dd></dl>
-    </article>
-    <article class="panel hubcard" data-go="response">
-      <h3>③ 대응 결심</h3><div class="q">무엇을, 언제까지 해야 하나?</div>
-      <div class="big num" id="hQueue">—</div>
-      <dl class="kv"><dt>가장 급한 결정</dt><dd id="hNext">—</dd><dt>권고</dt><dd id="hRec">—</dd><dt>결정 완료</dt><dd id="hDone">—</dd></dl>
-    </article>
-  </div>
-  <div class="hubbottom">
-    <div class="panel col"><h3>상황도</h3><div class="stage"><canvas id="mapMain"></canvas>
-      <div class="legend"><span><i class="dot" style="background:var(--balloon)"></i>풍선</span><span><i class="dot" style="background:var(--drone)"></i>드론</span><span><i class="dot" style="background:var(--bird)"></i>조류</span><span><i class="dot" style="background:var(--unknown)"></i>미상</span><span><i class="ring"></i>돔 관측 범위</span><span><i class="zonek"></i>보호구역</span></div></div></div>
-    <div class="panel col"><h3>이벤트</h3><ul class="feed" id="feed"></ul></div>
+  <div class="globe-stage" id="globeStage">
+    <canvas id="globe" tabindex="0" aria-label="3D 지구: 드래그로 회전, 휠로 확대. 대한민국과 미국 운용 지역 표시"></canvas>
+    <canvas id="mapMain" hidden aria-label="2D 상황도"></canvas>
+    <div id="globeSites" class="globe-sites" aria-label="운용 지역"></div>
+    <div class="globe-top">
+      <div class="view-switch" role="group" aria-label="운용 지역 전환"><button type="button" data-region="kr" aria-pressed="true">대한민국</button><button type="button" data-region="us" aria-pressed="false">미국</button></div>
+      <div class="view-switch" role="group" aria-label="지구 표시 방식"><button type="button" data-view="vector" aria-pressed="true">벡터</button><button type="button" data-view="photo" aria-pressed="false">실제</button></div>
+    </div>
+    <div class="map-tools"><button type="button" id="resetView" aria-label="지구 전체 보기로 돌아가기">↺ 전체 보기</button></div>
+    <div class="panel feed-float"><h3>이벤트</h3><ul class="feed" id="feed"></ul></div>
+    <div id="regionNote" class="panel region-note" hidden></div>
   </div>
 </section>
 
 <!-- ============ ① NODES ============ -->
-<section class="screen" id="s-nodes">
-  <div class="split">
-    <div class="col scroll">
-      <div class="panel ctrl">
-        <h3>탑재 제어기</h3>
-        <select id="ctrlSel" aria-label="탑재 제어기"></select>
-        <div id="ctrlInfo" class="kv"></div>
-        <div id="ctrlNote" class="note"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="replayBtn">근거: Arena 3D 다시보기</button>
-          <a class="badge" href="http://100.120.214.39:8080/arena/" target="_blank" rel="noopener">Arena ↗</a>
-          <a class="badge" href="http://100.120.214.39:8080/platform/" target="_blank" rel="noopener">기체 구조 ↗</a>
-          <a class="badge" href="http://100.120.214.39:8080/cfd/" target="_blank" rel="noopener">CFD ↗</a>
-        </div>
+<section class="screen fullmap" id="s-nodes">
+  <div class="stage"><canvas id="mapNodes"></canvas></div>
+  <div class="float-l">
+    <div class="panel" id="nSum"></div>
+    <div class="panel"><h3>돔</h3><table class="ntable" id="nodeList"></table></div>
+    <details class="panel ctrlp">
+      <summary><span class="evt">탑재 제어기</span><span class="evs" id="ctrlBrief"></span></summary>
+      <select id="ctrlSel" aria-label="탑재 제어기"></select>
+      <div id="ctrlInfo" class="kv"></div>
+      <div id="ctrlNote" class="note"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="replayBtn">근거: Arena 3D 다시보기</button>
+        <a class="badge" href="http://100.120.214.39:8080/arena/" target="_blank" rel="noopener">Arena ↗</a>
+        <a class="badge" href="http://100.120.214.39:8080/platform/" target="_blank" rel="noopener">기체 구조 ↗</a>
+        <a class="badge" href="http://100.120.214.39:8080/cfd/" target="_blank" rel="noopener">CFD ↗</a>
       </div>
-      <div class="panel"><h3>센서 돔 노드</h3><div id="nodeList" style="display:flex;flex-direction:column;gap:10px"></div></div>
-      <div class="panel"><h3>환경</h3><dl class="kv"><dt>바람</dt><dd id="nWind">—</dd><dt>바람 불확실성</dt><dd>±0.8 m/s (가정)</dd></dl></div>
-    </div>
-    <div class="panel col"><h3>관측 범위</h3><div class="muted">자세 안정도가 낮으면 센서가 흔들려 관측 범위가 줄고, 범위 밖 표적은 탐지되지 않습니다.</div>
-      <div class="stage"><canvas id="mapNodes"></canvas>
-      <div class="legend"><span><i class="ring"></i>관측 범위</span><span><i class="zonek"></i>보호구역</span><span><i class="dot" style="background:#555"></i>미탐지 표적(참값, 프로토타입 표시용)</span></div></div></div>
+    </details>
   </div>
 </section>
 
 <!-- ============ ② TARGETS ============ -->
-<section class="screen" id="s-targets">
-  <div class="split rev">
-    <div class="panel col"><h3>상황도</h3><div class="stage"><canvas id="mapTargets"></canvas>
-      <div class="legend"><span><i class="dot" style="background:var(--balloon)"></i>풍선</span><span><i class="dot" style="background:var(--drone)"></i>드론</span><span><i class="dot" style="background:var(--bird)"></i>조류</span><span><i class="dot" style="background:var(--unknown)"></i>미상</span><span><i class="fp"></i>낙하 예상 범위</span><span><i class="zonek"></i>보호구역</span></div></div></div>
-    <div class="col">
-      <div class="panel scroll" style="max-height:42%"><h3>표적 · 위험 순</h3><ol class="tlist" id="tList"></ol></div>
-      <div class="panel scroll" style="flex:1" id="tDetail"><div class="empty">표적을 선택하세요.</div></div>
-    </div>
+<section class="screen fullmap" id="s-targets">
+  <div class="stage"><canvas id="mapTargets"></canvas></div>
+  <div class="float-r">
+    <div class="panel scroll tlist-p"><h3>표적 · 위협 순</h3><ol class="tlist" id="tList"></ol></div>
+    <div class="panel scroll tdetail" id="tDetail"><div class="empty">표적을 선택하세요.</div></div>
   </div>
 </section>
 
 <!-- ============ ③ RESPONSE ============ -->
 <section class="screen" id="s-response">
+  <div class="panel us-note" id="usNote" hidden style="margin-bottom:12px">뉴욕(미국) 지역: 미국 법령·사례(FAA 등)는 아직 넣지 않았습니다. 아래 대응 추천은 한국 법령 기준이라 뉴욕에는 적용되지 않으며, 화면 흐름 확인용입니다.</div>
   <div class="split">
     <div class="col">
       <div class="panel scroll" style="flex:1"><h3>결정 대기 · 마감 순</h3><ol class="tlist queue" id="qList"></ol></div>
@@ -243,9 +419,9 @@ dialog::backdrop{background:#0009}
 </main>
 
 <dialog id="replayDlg"><div class="dhead"><h2 id="replayTitle">Arena 비행 다시보기</h2><button id="replayClose" aria-label="닫기">✕</button></div>
-<p class="muted" style="margin:0 0 10px">라이브 서버(100.120.214.39)의 /game/ 리플레이를 불러옵니다. Tailscale 연결이 필요합니다.</p>
 <div class="rstage"><iframe id="replayFrame" title="Arena 비행 다시보기"></iframe></div></dialog>
 
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
 <script src="data/replay.js" onerror="void 0"></script>
 <script>
 'use strict';
@@ -502,6 +678,7 @@ function collateral(tr,a){
 
 /* ---------------- map rendering ---------------- */
 const COL={balloon:'#c9a3f0',drone:'#f06a6a',bird:'#9bc9e0',unknown:'#cfd8dc'};
+const TYPE_COL={balloon:'#c58bff',drone:'#38e8f0',bird:'#9be36b',unknown:'#d5dee8'};   // same as symbols.js TOK.type
 const LCOL={LOW:'#7d8f97',MEDIUM:'#e6c84f',HIGH:'#f0974a',CRITICAL:'#ef5b5b'};
 function drawMap(cv,opt={}){
   const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
@@ -515,12 +692,12 @@ function drawMap(cv,opt={}){
   // grid
   g.strokeStyle='#16303a';g.lineWidth=1;for(let x=0;x<=W;x+=GRID){g.beginPath();g.moveTo(X(x),Y(0));g.lineTo(X(x),Y(H));g.stroke()}for(let y=0;y<=H;y+=GRID){g.beginPath();g.moveTo(X(0),Y(y));g.lineTo(X(W),Y(y));g.stroke()}
   // zones
-  for(const z of ZONES){g.fillStyle='rgba(239,91,91,.12)';g.strokeStyle='#ef8f8f';g.lineWidth=1.2;g.beginPath();g.arc(X(z.x),Y(z.y),z.r*s,0,7);g.fill();g.stroke();g.fillStyle='#ef9f9f';g.font='11px system-ui';g.fillText(z.name,X(z.x)-z.r*s*.6,Y(z.y)-z.r*s-4)}
+  for(const z of ZONES){g.fillStyle='rgba(239,91,91,.12)';g.strokeStyle='#ef8f8f';g.lineWidth=1.2;g.beginPath();g.arc(X(z.x),Y(z.y),z.r*s,0,7);g.fill();g.stroke();g.fillStyle='#ef9f9f';g.font='11px Pretendard Variable,system-ui';g.fillText(z.name,X(z.x)-z.r*s*.6,Y(z.y)-z.r*s-4)}
   // nodes + coverage
   for(const n of NODES){const R=nodeR(n),q=nodeQ(n);g.setLineDash([5,5]);g.strokeStyle=q>.8?'#8bdfc4':q>.5?'#e6c84f':'#ef5b5b';g.globalAlpha=.8;g.beginPath();g.arc(X(n.x),Y(n.y),R*s,0,7);g.stroke();g.setLineDash([]);g.globalAlpha=.06;g.fillStyle=g.strokeStyle;g.fill();g.globalAlpha=1;
-    g.fillStyle='#8bdfc4';g.beginPath();g.moveTo(X(n.x),Y(n.y)-7);g.lineTo(X(n.x)+6,Y(n.y)+4);g.lineTo(X(n.x)-6,Y(n.y)+4);g.closePath();g.fill();g.fillStyle='#a9c2cb';g.font='10px system-ui';g.fillText(n.id,X(n.x)+8,Y(n.y)+4)}
+    g.fillStyle='#8bdfc4';g.beginPath();g.moveTo(X(n.x),Y(n.y)-7);g.lineTo(X(n.x)+6,Y(n.y)+4);g.lineTo(X(n.x)-6,Y(n.y)+4);g.closePath();g.fill();g.fillStyle='#a9c2cb';g.font='10px Pretendard Variable,system-ui';g.fillText(n.id,X(n.x)+8,Y(n.y)+4)}
   // wind arrow
-  const wx=X(W*.92),wy=Y(H*.9),wm=Math.hypot(S.wind.x,S.wind.y);g.strokeStyle='#83ddc1';g.fillStyle='#83ddc1';g.lineWidth=2;const ux=S.wind.x/wm,uy=S.wind.y/wm;arrow(g,wx-ux*22,wy+uy*22,wx+ux*22,wy-uy*22);g.font='11px system-ui';g.fillText(`바람 ${wm.toFixed(1)}m/s`,wx-30,wy+34);
+  const wx=X(W*.92),wy=Y(H*.9),wm=Math.hypot(S.wind.x,S.wind.y);g.strokeStyle='#83ddc1';g.fillStyle='#83ddc1';g.lineWidth=2;const ux=S.wind.x/wm,uy=S.wind.y/wm;arrow(g,wx-ux*22,wy+uy*22,wx+ux*22,wy-uy*22);g.font='11px Pretendard Variable,system-ui';g.fillText(`바람 ${wm.toFixed(1)}m/s`,wx-30,wy+34);
   // undetected truths
   if(RP)for(const r of S.rays||[]){const n=NODES.find(m=>m.id===r.node);if(!n)continue;const L=Math.min(W,H)*.45;g.setLineDash([3,4]);g.strokeStyle='rgba(207,216,220,.4)';g.lineWidth=1;g.beginPath();g.moveTo(X(n.x),Y(n.y));g.lineTo(X(n.x+Math.sin(r.az)*L),Y(n.y+Math.cos(r.az)*L));g.stroke();g.setLineDash([])}
   if(opt.truth)for(const o of S.truths){const seen=RP?active().some(t=>Math.hypot(t.x-o.x,t.y-o.y)<50):(S.tracks[o.id]&&S.tracks[o.id].status!=='lost');if(S.t<o.t0||o.landed||seen)continue;g.fillStyle='#555';g.beginPath();g.arc(X(o.x),Y(o.y),3,0,7);g.fill()}
@@ -534,7 +711,7 @@ function drawMap(cv,opt={}){
     g.globalAlpha=tr.status==='tentative'?.45:1;g.fillStyle=c;g.beginPath();g.arc(x,y,tr.cls==='balloon'?5:4.5,0,7);g.fill();g.globalAlpha=1;
     if(tr.level!=='LOW'){g.strokeStyle=LCOL[tr.level];g.lineWidth=2;g.beginPath();g.arc(x,y,9,0,7);g.stroke()}
     if(opt.sel===tr.id){g.strokeStyle='#fff';g.lineWidth=1.5;g.beginPath();g.arc(x,y,13,0,7);g.stroke()}
-    if(!opt.compact){g.fillStyle='#dcebed';g.font='10px system-ui';g.fillText(tr.id,x+8,y-8)}
+    if(!opt.compact){g.fillStyle='#dcebed';g.font='10px Pretendard Variable,system-ui';g.fillText(tr.id,x+8,y-8)}
   }
 }
 function arrow(g,x1,y1,x2,y2){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();const a=Math.atan2(y2-y1,x2-x1);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-6*Math.cos(a-.45),y2-6*Math.sin(a-.45));g.lineTo(x2-6*Math.cos(a+.45),y2-6*Math.sin(a+.45));g.closePath();g.fill()}
@@ -571,33 +748,26 @@ const needsDecision=()=>RP
   ?Object.values(S.pending||{}).filter(p=>!S.decided[p.id]).map(p=>Object.assign(Object.create(p.track),{stale:p.stale,staleFor:S.t-p.seen,prevId:p.prevId}))
   :ranked().filter(t=>(t.level==='HIGH'||t.level==='CRITICAL')&&!S.decided[t.id]);
 let screen='main';
-function go(s){screen=s;for(const sc of document.querySelectorAll('.screen'))sc.classList.toggle('on',sc.id==='s-'+s);for(const a of document.querySelectorAll('.tabs a'))a.classList.toggle('on',a.dataset.go===s);for(const li of $('flow').children)li.classList.toggle('on',li.dataset.s===s);if(location.hash!=='#'+s)history.replaceState(null,'','#'+s);renderDom(true)}
+function go(s){screen=s;document.body.classList.toggle('is-main',s==='main');document.body.classList.toggle('full-map',s==='nodes'||s==='targets');
+  $('usNote').hidden=window.OPS_UI?.region!=='us';window.OPS_GLOBE?.setActive(s==='main');
+  if(window.OPS_CITY){const st=s==='nodes'?$('mapNodes').parentElement:s==='targets'?$('mapTargets').parentElement:null;if(st)OPS_CITY.attach(st);OPS_CITY.setActive(!!st)}
+for(const sc of document.querySelectorAll('.screen'))sc.classList.toggle('on',sc.id==='s-'+s);for(const a of document.querySelectorAll('.tabs a'))a.classList.toggle('on',a.dataset.go===s);if(location.hash!=='#'+s)history.replaceState(null,'','#'+s);renderDom(true)}
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go)}});
 
 function renderTop(){
   const alerts=active().filter(t=>t.level==='HIGH'||t.level==='CRITICAL');
-  $('stAlert').textContent='경보 '+alerts.length;
+  const order=['LOW','MEDIUM','HIGH','CRITICAL'],worst=active().reduce((m,t)=>order.indexOf(t.level)>order.indexOf(m)?t.level:m,'LOW');
+  window.OPS_GLOBE?.setAlerts({[window.OPS_UI?.region==='us'?'us-nyc':'kr-gangnam']:worst});
   const m=Math.min(...alerts.map(t=>t.tti),Infinity);$('stTti').textContent='최단 TTI '+fmtTTI(m);
   $('stClock').textContent='T+'+fmtT(S.t);
 }
+function renderTabs(){
+  // tab badges replace the old summary cards: degraded domes, targets tracked, decisions waiting
+  const bad=NODES.filter(n=>nodeQ(n)<=.8).length;$('tbNodes').textContent=bad?`저하 ${bad}`:'';$('tbNodes').classList.toggle('hot',bad>0);
+  $('tbTargets').textContent=active().length||'';
+  const nd=needsDecision().length;$('tbQueue').textContent=nd||'';$('tbQueue').classList.toggle('hot',nd>0);
+}
 function renderMain(){
-  const q=NODES.map(nodeQ),avg=q.reduce((a,b)=>a+b,0)/q.length;
-  $('hNodes').textContent=`${NODES.length}/${NODES.length} 노드 운용`;
-  $('hStab').textContent=Math.round(avg*100)+'%';
-  $('hCov').textContent=(NODES.reduce((s,n)=>s+Math.PI*(nodeR(n)/1000)**2,0)).toFixed(1)+' km²';
-  $('hCtrl').textContent=RP?'기록된 시나리오 (재생)':ctrl().name;
-  $('hWind').textContent=windTxt();
-  const a=active();const by={};for(const t of a)by[t.cls]=(by[t.cls]||0)+1;
-  $('hTargets').textContent=`${a.length} 표적 추적 중`;
-  $('hTypes').textContent=Object.entries(by).map(([k,v])=>`${CLS[k]} ${v}`).join(' · ')||'—';
-  const top=ranked()[0];$('hTop').replaceChildren(top?el('span',{},el('span',{class:'lvl '+top.level},top.level),` ${top.id} · ${CLS[top.cls]}`):'—');
-  $('hPending').textContent=a.filter(t=>t.cls==='unknown').length+' 표적';
-  const nd=needsDecision();
-  $('hQueue').textContent=`${nd.length} 건 결정 대기`;
-  const next=nd.map(t=>({t,r:cardFor(t)})).sort((x,y)=>x.r.deadline-y.r.deadline)[0];
-  $('hNext').textContent=next?`${next.t.id} · 마감 ${fmtDL(next.r.deadline)}`:'—';
-  $('hRec').textContent=next?ACT[next.r.rec]:'—';
-  $('hDone').textContent=DECISIONS.length+' 건';
   const f=$('feed');f.replaceChildren(...S.events.slice(0,30).map(e=>el('li',{},el('span',{class:'t num'},'T+'+fmtT(e.t)),el('span',{style:e.kind==='alert'?'color:var(--high)':e.kind==='warn'?'color:var(--med)':''},e.text))));
 }
 const windTxt=()=>{const m=Math.hypot(S.wind.x,S.wind.y);const deg=(90-Math.atan2(S.wind.y,S.wind.x)*180/Math.PI+360)%360;const dirs=['북','북동','동','남동','남','남서','서','북서'];return `${m.toFixed(1)} m/s · ${dirs[Math.round(((deg+180)%360)/45)%8]}풍`};
@@ -606,7 +776,7 @@ function renderNodes(full){
   if(full&&RP){
     const sel=$('ctrlSel');sel.replaceChildren(new Option(`기록된 시나리오 · 안정도 ${RP.meta.quality}`,'rp'));sel.disabled=true;
     const info=$('ctrlInfo');info.replaceChildren(el('dt',{},'입력'),el('dd',{},RP.meta.source),el('dt',{},'카메라'),el('dd',{},`돔당 ${RP.meta.cameras.count}대 · ${RP.meta.cameras.width}px · 화각 ${RP.meta.cameras.hfov}°`),el('dt',{},'돔 간격'),el('dd',{},RP.meta.spacing+' m'),el('dt',{},'관측 범위 기준'),el('dd',{},RP.meta.coverage_ref));
-    $('ctrlNote').textContent='재생 모드에서는 제어기를 바꿀 수 없습니다. 안정도·돔 간격을 바꾸려면 python -m ops.service.export --quality --spacing 으로 다시 생성합니다. 점선은 돔 1대만 본 방향(위치 미확정)입니다.';
+    $('ctrlNote').textContent='';
     $('replayBtn').disabled=true;
   }
   else if(full){
@@ -616,50 +786,59 @@ function renderNodes(full){
     const kv=(k,v)=>info.append(el('dt',{},k),el('dd',{},v));
     if(c.arena){kv('지표',c.arena.metric);kv('참가자',c.arena.p);kv('점수',c.arena.score.toFixed(3)+' m·s');kv('평균 체공',c.arena.dur.toFixed(2)+'초');kv('뒤집힘',Math.round(c.arena.flip*100)+'%');kv('평균 최대 기울기',c.arena.tilt+'°');kv('관측 안정도',Math.round(c.q*100)+'% (기울기 기반 환산)')}
     else{kv('관측 안정도',Math.round(c.q*100)+'% (가정값)');kv('근거','실측 아님 · 목표 성능 가정')}
-    $('ctrlNote').textContent=c.arena?'현재 Arena 제출 Agent는 시뮬레이션에서 모두 약 1초 안에 뒤집혀(뒤집힘 100%) 관측 안정도가 매우 낮습니다. 관측 범위가 크게 줄어 표적 대부분을 놓치는 것을 확인할 수 있습니다.':'가상 가정값입니다. 실제 제어기 성능이 확보되면 Arena 결과로 교체합니다.';
+    $('ctrlNote').textContent='';
     $('replayBtn').disabled=!c.arena;
   }
-  const list=$('nodeList');list.replaceChildren(...NODES.map(n=>{const q=nodeQ(n);const tilt=RP?(S.nodeState[n.id]?.tilt??0):(1-q)*(ctrl().arena?170:40)+Math.abs(gaussSafe())*(1-q)*6;const st=q>.8?['좋음','good']:q>.5?['저하','warn']:['불안정','bad'];const seen=active().filter(t=>Math.hypot(t.x-n.x,t.y-n.y)<nodeR(n)).length;
-    return el('div',{class:'node'},el('header',{},el('b',{},n.id),el('span',{class:'badge '+st[1]},'관측 '+st[0]),n.note?el('span',{class:'badge'},n.note):null),
-      el('dl',{class:'kv'},el('dt',{},'자세 안정도'),el('dd',{},el('div',{class:'bar'},el('i',{style:`width:${Math.round(q*100)}%;background:${q>.8?'var(--accent)':q>.5?'var(--med)':'var(--crit)'}`}))),el('dt',{},'현재 기울기'),el('dd',{class:'num'},Math.min(180,tilt).toFixed(0)+'°'),el('dt',{},'관측 범위'),el('dd',{class:'num'},(nodeR(n)/1000).toFixed(2)+' km'),el('dt',{},'고도'),el('dd',{},n.alt+' m'),el('dt',{},'탐지 중'),el('dd',{},seen+' 표적')))}));
-  $('nWind').textContent=windTxt();
+  // ① conclusion first: how many domes work, how stable, how much of the area is seen
+  const qs=NODES.map(nodeQ),avg=qs.reduce((a,b)=>a+b,0)/qs.length,ok=qs.filter(q=>q>.5).length;
+  let seenPts=0,N=0;for(let i=0;i<40;i++)for(let j=0;j<30;j++){const x=(i+.5)/40*W,y=(j+.5)/30*H;N++;if(NODES.some(n=>Math.hypot(x-n.x,y-n.y)<nodeR(n)))seenPts++}
+  const cover=seenPts/N;
+  $('nSum').replaceChildren(el('div',{class:'kicker'},'관측 상태'),
+    el('div',{class:'hero-t'},`운용 ${ok}/${NODES.length}`,el('span',{class:'hero-sub num'},`평균 안정도 ${Math.round(avg*100)}%`)),
+    el('div',{class:'hero-s'},`작전 지역 관측 ${Math.round(cover*100)}% · 바람 ${windTxt()}`));
+  $('ctrlBrief').textContent=RP?`기록된 시나리오 · 안정도 ${RP.meta.quality}`:ctrl().name;
+  const row=n=>{const q=nodeQ(n);const tilt=RP?(S.nodeState[n.id]?.tilt??0):(1-q)*(ctrl().arena?170:40);const st=q>.8?['정상','good']:q>.5?['저하','warn']:['불안정','bad'];const seen=active().filter(t=>Math.hypot(t.x-n.x,t.y-n.y)<nodeR(n)).length;
+    return el('tr',{onpointerdown:()=>window.OPS_CITY?.focusNode(n.id),title:'지도에서 보기'},el('td',{},el('b',{},n.id)),el('td',{},el('span',{class:'st '+st[1]},st[0])),el('td',{class:'num'},Math.round(q*100)+'%'),el('td',{class:'num'},Math.min(180,tilt).toFixed(0)+'°'),el('td',{class:'num'},Math.round(nodeR(n))+' m'),el('td',{class:'num'},seen))};
+  $('nodeList').replaceChildren(el('tr',{},...['돔','상태','안정도','기울기','반경','탐지'].map(h=>el('th',{},h))),...NODES.map(row));
 }
 function gaussSafe(){return Math.sqrt(-2*Math.log(Math.random()+1e-9))*Math.cos(6.283*Math.random())}
 
 function renderTargets(){
   const list=ranked().concat(active().filter(t=>t.status==='tentative'));
   if(!S.sel||!S.tracks[S.sel]||!active().includes(S.tracks[S.sel]))S.sel=ranked()[0]?.id||null;
-  $('tList').replaceChildren(...list.map(t=>el('li',{class:t.id===S.sel?'on':'',onclick:()=>{S.sel=t.id;renderDom(true)}},
+  const pick=t=>{S.sel=t.id;renderDom(true);const m=mapState().tracks.find(x=>x.id===t.id);if(m)window.OPS_CITY?.focus(m.e,m.n)};
+  $('tList').replaceChildren(...(list.length?list.map(t=>el('li',{class:t.id===S.sel?'on':'',onpointerdown:()=>pick(t)},
     el('span',{class:'lvl '+t.level},t.status==='tentative'?'확인 중':t.level),
-    el('div',{},el('div',{},`${t.id} · ${CLS[t.cls]}`,t.rid?' · RID':''),el('div',{class:'sub'},`TTI ${fmtTTI(t.tti)} · ${t.zone?t.zone.name:'—'}`)),
-    el('span',{class:'num muted'},t.score))));
+    el('div',{},el('div',{},`${t.id} · ${CLS[t.cls]}`,t.rid?el('span',{class:'muted'},' · RID'):''),el('div',{class:'sub'},t.zone&&isFinite(t.tti)?`${t.zone.name}까지 ${fmtTTI(t.tti)}`:'접근 안 함')),
+    el('span',{class:'num muted'},Math.round(t.score)))):[el('li',{class:'muted',style:'cursor:default'},'추적 중인 표적이 없습니다.')]));
   const d=$('tDetail');const t=S.tracks[S.sel];
   if(!t){d.replaceChildren(el('div',{class:'empty'},'표적을 선택하세요.'));return}
-  const p=t.probs;const tot=Object.values(p).reduce((a,b)=>a+b,0);
-  const speed=Math.hypot(t.vx,t.vy);
+  const p=t.probs;const tot=Object.values(p).reduce((a,b)=>a+b,0)||1;
+  const top=['drone','balloon','bird','unknown'].reduce((a,k)=>p[k]>p[a]?k:a,'unknown');
+  const basis=t.basis?t.basis.filter(b=>!/^Remote ID/.test(b)):[t.cls==='unknown'?`움직임: 판정 대기 (관측 ${Math.round(S.t-t.first)}/35초)`:t.rid?'Remote ID 수신':`움직임: 바람 대비 ${t.airMean?.toFixed(1)} m/s ${t.cls==='balloon'?'→ 바람을 따라 흐름':'→ 스스로 이동'}`];
+  const f=(k,v,why)=>el('div',{},el('b',{class:'num'},v.toFixed(2)),el('small',{class:'fk'},k),el('small',{},why));
   d.replaceChildren(
-    el('div',{style:'display:flex;align-items:center;gap:10px'},el('h2',{},t.id),el('span',{class:'lvl '+t.level},t.level),el('span',{class:'muted num'},'점수 '+t.score)),
-    el('h3',{style:'margin-top:14px'},'식별'),
-    el('div',{class:'classbar'},...['balloon','drone','bird','unknown'].map(k=>el('i',{style:`width:${p[k]/tot*100}%;background:${COL[k]}`,title:CLS[k]}))),
-    el('div',{style:'font-size:12px'},['balloon','drone','bird','unknown'].map(k=>`${CLS[k]} ${Math.round(p[k]/tot*100)}%`).join(' · ')),
-    el('dl',{class:'kv',style:'margin-top:8px'},
-      el('dt',{},'근거'),t.basis?el('dd',{},...t.basis.map(b=>el('div',{},b))):el('dd',{},t.cls==='unknown'?`판정 대기 (관측 ${Math.round(S.t-t.first)}/35초)`:t.rid?'Remote ID 수신':`바람 대비 속도 ${t.airMean?.toFixed(1)} m/s ${t.cls==='balloon'?'≈ 0 → 바람을 따라 흐름':'→ 스스로 이동'}`),
-      el('dt',{},'Remote ID'),el('dd',{},t.rid||'없음 (신원 미상)'),
-      el('dt',{},'속도·고도'),el('dd',{class:'num'},`${speed.toFixed(1)} m/s · ${Math.round(t.alt)} m`),
-      el('dt',{},'위치 오차'),el('dd',{class:'num'},`±${Math.round(t.sig)} m (노드 안정도 ${Math.round(t.q*100)}%)`)),
-    el('h3',{style:'margin-top:14px'},'위협도 = 적대 확률 × 피해 규모 × 긴급도'),
-    el('div',{class:'factors'},
-      el('div',{},el('small',{},'적대 확률'),el('b',{class:'num'},t.P.toFixed(2)),el('small',{},t.factors?.[0]??(t.rid?'허가 비행체':CLS[t.cls]+(t.rid?'':' · RID 없음')))),
-      el('div',{},el('small',{},'피해 규모'),el('b',{class:'num'},t.C.toFixed(2)),el('small',{},t.factors?.[1]??(t.fp?`낙하 예상 지점 인구 ${Math.round(t.popv*100)}%`:`${t.zone?.name||'—'} · 인구 ${Math.round(t.popv*100)}%`))),
-      el('div',{},el('small',{},'긴급도'),el('b',{class:'num'},t.U.toFixed(2)),el('small',{},t.factors?.[2]??(t.fp?`낙하까지 ${fmtTTI(t.fp.fall)}`:`TTI ${fmtTTI(t.tti)} · CPA ${Math.round(t.cpa)}m`)))),
-    (t.level==='HIGH'||t.level==='CRITICAL')?el('div',{style:'margin-top:14px'},el('button',{class:'primary',onclick:()=>{S.rsel=t.id;go('response')}},'③ 대응 결심으로 →')):el('p',{class:'muted',style:'margin-top:14px'},'HIGH 이상이 되면 대응 결심 대기열에 올라갑니다.')
+    el('div',{class:'kicker'},t.id+(t.status==='tentative'?' · 확인 중':'')),
+    el('div',{class:'hero-t'},CLS[t.cls],el('span',{class:'lvl '+t.level},t.level)),
+    el('div',{class:'hero-s'},t.zone&&isFinite(t.tti)?`${t.zone.name}까지 ${fmtTTI(t.tti)}`:'보호구역 접근 안 함'),
+    el('div',{class:'dsec'},el('div',{class:'kicker'},'식별 근거'),
+      el('div',{class:'classbar'},...['drone','balloon','bird','unknown'].map(k=>el('i',{style:`width:${p[k]/tot*100}%;background:${TYPE_COL[k]}`,title:CLS[k]}))),
+      el('div',{class:'cls-top'},`${CLS[top]} ${Math.round(p[top]/tot*100)}%`,el('span',{class:'muted'},' · '+['drone','balloon','bird','unknown'].filter(k=>k!==top).map(k=>`${CLS[k]} ${Math.round(p[k]/tot*100)}%`).join(' · '))),
+      el('ul',{class:'basis'},...basis.map(b=>el('li',{},b)),el('li',{},t.rid?`Remote ID ${t.rid}${t.permitted?' · 허가 목록 있음':' · 허가 목록 없음'}`:'Remote ID 없음'))),
+    el('div',{class:'dsec'},el('div',{class:'kicker'},'위협 = 적대 확률 × 피해 규모 × 긴급도'),
+      el('div',{class:'factors'},
+        f('적대 확률',t.P,t.factors?.[0]??(t.rid?'허가 비행체':CLS[t.cls]+(t.rid?'':' · RID 없음'))),
+        f('피해 규모',t.C,t.factors?.[1]??(t.fp?`낙하 지점 인구 ${Math.round(t.popv*100)}%`:`${t.zone?.name||'—'} · 인구 ${Math.round(t.popv*100)}%`)),
+        f('긴급도',t.U,t.factors?.[2]??(t.fp?`낙하까지 ${fmtTTI(t.fp.fall)}`:`TTI ${fmtTTI(t.tti)}`)))),
+    el('div',{class:'dmeta num'},`${Math.hypot(t.vx,t.vy).toFixed(1)} m/s · 고도 ${Math.round(t.alt)} m · 위치 오차 ±${Math.round(t.sig)} m`),
+    (t.level==='HIGH'||t.level==='CRITICAL')?el('button',{class:'primary big gonext',onclick:()=>{S.rsel=t.id;go('response')}},'③ 대응 결심으로 →'):''
   );
 }
 
 function renderResponse(full){
   const q=needsDecision().map(t=>({t,r:cardFor(t)})).sort((a,b)=>a.r.deadline-b.r.deadline);
   if(!S.rsel||!q.some(x=>x.t.id===S.rsel))S.rsel=q[0]?.t.id||null;
-  $('qList').replaceChildren(...(q.length?q.map(({t,r})=>el('li',{class:t.id===S.rsel?'on':'',onclick:()=>{S.rsel=t.id;renderDom(true)}},
+  $('qList').replaceChildren(...(q.length?q.map(({t,r})=>el('li',{class:t.id===S.rsel?'on':'',onpointerdown:()=>{S.rsel=t.id;renderDom(true)}},
     el('span',{class:'lvl '+t.level},t.level),
     el('div',{},el('div',{},`${t.id} · ${CLS[t.cls]}`+(t.prevId?` (이전 ${t.prevId})`:'')),el('div',{class:'sub'},'권고: '+ACT[r.rec]+(t.stale?` · 추적 끊김 ${Math.round(t.staleFor)}초`:''))),
     el('span',{class:'deadline num',style:`color:${r.deadline<60?'var(--crit)':r.deadline<180?'var(--high)':'var(--muted)'}`},fmtDL(r.deadline)))):[el('li',{class:'muted',style:'cursor:default'},'결정 대기 표적이 없습니다.')]));
@@ -720,7 +899,7 @@ function decide(t,r,decision){
 /* ---------------- loop ---------------- */
 let lastDom=0,lastSig='';
 function renderDom(full=false){
-  renderTop();
+  renderTop();renderTabs();
   if(screen==='main')renderMain();
   if(screen==='nodes')renderNodes(full);
   if(screen==='targets')renderTargets();
@@ -731,9 +910,10 @@ function frame(now){
   const dt=Math.min(.1,(now-prev)/1000);prev=now;
   if(!S.paused&&!SRV){if(RP){acc+=dt*S.speed;let moved=false;while(acc>=RP.meta.dt){acc-=RP.meta.dt;S.ri++;moved=true;if(S.ri>=RP.frames.length){reset();moved=false;break}}if(moved)replayFrame(RP.frames[S.ri])}
     else{acc+=dt*S.speed;while(acc>=1){step(1);acc-=1}if(S.t>1500){reset()}}}
-  if(screen==='main')drawMap($('mapMain'),{compact:true,fp:true});
-  if(screen==='nodes')drawMap($('mapNodes'),{truth:true,compact:!RP});
-  if(screen==='targets')drawMap($('mapTargets'),{fp:true,sel:S.sel});
+  if(screen==='main'&&!$('mapMain').hidden)drawMap($('mapMain'),{compact:true,fp:true});   // 2D fallback when the globe cannot load
+  const city=window.OPS_CITY;
+  if(screen==='nodes'){if(city)city.update(mapState(),{screen:'nodes',truth:true});else drawMap($('mapNodes'),{truth:true,compact:!RP})}
+  if(screen==='targets'){if(city)city.update(mapState(),{screen:'targets',sel:S.sel});else drawMap($('mapTargets'),{fp:true,sel:S.sel})}
   if(now-lastDom>500){lastDom=now;renderDom(false)}
   requestAnimationFrame(frame);
 }
@@ -748,6 +928,25 @@ $('exportLog').onclick=exportDecisions;
 $('replayClose').onclick=()=>{$('replayDlg').close();$('replayFrame').removeAttribute('src')};
 $('mapTargets').onclick=e=>{const t=pickTrack($('mapTargets'),e);if(t){S.sel=t.id;renderDom(true)}};
 $('mapMain').onclick=e=>{const t=pickTrack($('mapMain'),e);if(t){S.sel=t.id;go('targets')}};
+/* city view state in scenario ENU metres (replay/live: server ENU; simulation: centred on the area) */
+function mapState(){
+  const E=RP?(x,y)=>({e:x+OX,n:y+OY}):(x,y)=>({e:x-W/2,n:y-H/2}),o=E(0,0);
+  const node=id=>NODES.find(m=>m.id===id);
+  return{
+    bounds:{e0:o.e,n0:o.n,e1:o.e+W,n1:o.n+H,w:W,h:H},
+    wind:S.wind,
+    nodes:NODES.map(n=>({id:n.id,...E(n.x,n.y),alt:n.alt||120,q:nodeQ(n),R:nodeR(n),tilt:RP?(S.nodeState[n.id]?.tilt??0):(1-nodeQ(n))*40})),
+    zones:ZONES.map((z,i)=>({id:z.id,code:'ZONE '+'ABCDEFGH'[i],name:z.name,...E(z.x,z.y),r:z.r})),
+    pop:POP.map(p=>({...E(p.x,p.y),s:p.s,a:p.a})),
+    rays:RP?(S.rays||[]).map(r=>{const n=node(r.node);return n?{...E(n.x,n.y),alt:n.alt||120,az:r.az,el:r.el||0,L:Math.min(W,H)*.45}:null}).filter(Boolean):[],
+    truths:(S.truths||[]).filter(o=>{const seen=RP?active().some(t=>Math.hypot(t.x-o.x,t.y-o.y)<50):(S.tracks[o.id]&&S.tracks[o.id].status!=='lost');return !(S.t<o.t0||o.landed||seen)}).map(o=>({id:o.id,...E(o.x,o.y),alt:o.alt||0})),
+    tracks:Object.values(S.tracks).filter(t=>t.status!=='lost'&&t.status!=='landed').map(t=>({id:t.id,...E(t.x,t.y),alt:Math.max(0,t.alt||0),vx:t.vx,vy:t.vy,cls:t.cls,level:t.level,status:t.status,
+      permitted:!!t.permitted,rid:t.rid||null,zone:t.zone?.id||null,zoneCode:t.zone?'ZONE '+'ABCDEFGH'[ZONES.indexOf(t.zone)]:null,tti:t.tti??Infinity,
+      hist:(t.hist||[]).map(([x,y])=>{const p=E(x,y);return[p.e,p.n]}),fp:t.fp?{...E(t.fp.x,t.fp.y),r:t.fp.r||t.fp.radius||30,fall:t.fp.fall||null}:null})),
+  };
+}
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.target.closest('input,select,textarea,button,canvas')){e.preventDefault();$('pause').click()}});
+window.OPS_UI={go,screen:()=>screen,mapState,select:id=>{S.sel=id;renderDom(true)},region:'kr'};
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(['main','nodes','targets','response'].includes(h)&&h!==screen)go(h)});
 
 (async()=>{
@@ -755,12 +954,68 @@ window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(['ma
     try{const r=await fetch('/api/ops/meta');if(r.ok){RP={meta:await r.json(),frames:[]};SRV=true;applyMeta(RP.meta)}}catch(e){}
   }
   if(RP){$('speed').innerHTML='<option value="1">1×</option><option value="2" selected>2×</option><option value="5">5×</option>';
-    document.querySelector('.banner').textContent=(SRV?`실시간 모드 · 로컬 ops 서버 연결 (${location.host})`:`재생 모드 · 미리 계산한 파일`)+` · 가상 입력: 돔 간격 ${RP.meta.spacing}m, 안정도 ${RP.meta.quality}, 시드 ${RP.meta.seed} · 사례·조문은 공개 자료 기준, 법적 근거는 후보이며 법률 검토 필요 · 부수 피해 인원은 가상 추정`}
+    const chip=$('modeChip');chip.textContent=SRV?'실시간':'재생';chip.classList.toggle('live',SRV);
+    chip.title=SRV?`로컬 ops 서버 연결 (${location.host})`:'미리 계산한 파일 재생';
+    $('siteInfoList').prepend(el('li',{},`${SRV?`실시간: 로컬 ops 서버(${location.host})`:'재생: 미리 계산한 파일'} · 가상 입력 돔 간격 ${RP.meta.spacing} m, 안정도 ${RP.meta.quality}, 시드 ${RP.meta.seed}`))}
   reset();
   go(['main','nodes','targets','response'].includes(location.hash.slice(1))?location.hash.slice(1):'main');
   requestAnimationFrame(frame);
   if(SRV)connectWS();
 })();
+</script>
+<script type="module">
+// 3D globe overview (three.js, MIT; land/borders: Natural Earth; stars: HYG). Needs http(s): ES modules do not load from file://.
+const $=id=>document.getElementById(id);
+const SITES=[
+  {id:'kr-gangnam',name:'서울 강남',sub:'돔 3기 · 실시간',lat:37.4979,lon:127.0276,mode:'kr',live:true,city:'gangnam'},
+  {id:'us-nyc',name:'New York · Midtown',sub:'돔 3기 · 같은 가상 입력',lat:40.758,lon:-73.9855,mode:'us',live:true,city:'nyc'},
+];
+const CITY={kr:'gangnam',us:'nyc'};
+const NOTE={us:'미국(뉴욕) 모드: 지도·탐지·추적·식별은 같은 가상 입력으로 동작합니다. 대응 추천에 쓰는 미국 법령·사례(FAA 등)는 아직 넣지 않았습니다.'};
+// city view for ① ② (one renderer, moved between the two stages)
+try{
+  const {createCity}=await import('./city.js');
+  const city=await createCity({host:$('mapTargets').parentElement,onPick:id=>window.OPS_UI.select(id)});
+  await city.setCity('gangnam');
+  $('mapNodes').hidden=$('mapTargets').hidden=true;
+  window.OPS_CITY=city;
+  window.OPS_UI.go(window.OPS_UI.screen());
+}catch(err){console.warn('city view unavailable, using 2D map',err)}
+const setRegion=async m=>{window.OPS_UI.region=m;$('usNote').hidden=m!=='us';await window.OPS_CITY?.setCity(CITY[m])};
+const showNote=m=>{const n=$('regionNote');n.hidden=!NOTE[m];n.textContent=NOTE[m]||''};
+try{
+  const {createGlobe}=await import('./globe.js');
+  const globe=await createGlobe({canvas:$('globe'),overlay:$('globeSites'),sites:SITES,onSite:async site=>{
+    if(!site.live){showNote(site.mode);return}
+    syncRegion(site.mode);
+    await globe.flyToSite(site);
+    window.OPS_UI.go('targets');
+  }});
+  window.OPS_GLOBE=globe;
+  globe.setActive(window.OPS_UI.screen()==='main');
+  let mode='kr';
+  function syncRegion(m){
+    mode=m;setRegion(m);showNote(m);
+    for(const o of document.querySelectorAll('[data-region]'))o.setAttribute('aria-pressed',String(o.dataset.region===m));
+  }
+  for(const b of document.querySelectorAll('[data-region]'))b.onclick=()=>{
+    syncRegion(b.dataset.region);globe.setMode(mode);
+  };
+  for(const b of document.querySelectorAll('[data-view]'))b.onclick=()=>{
+    globe.setView(b.dataset.view);
+    for(const o of document.querySelectorAll('[data-view]'))o.setAttribute('aria-pressed',String(o===b));
+    try{localStorage.setItem('ops.globeView',b.dataset.view)}catch(e){}
+  };
+  try{const v=localStorage.getItem('ops.globeView');if(v==='photo')document.querySelector('[data-view=photo]').click()}catch(e){}
+  $('resetView').onclick=()=>globe.resetView();
+  // coming back to the overview: pull the camera out from the site again
+  window.addEventListener('hashchange',()=>{if(location.hash==='#main')globe.setMode(mode)});
+  document.addEventListener('click',e=>{if(e.target.closest('[data-go="main"]'))setTimeout(()=>globe.setMode(mode),0)});
+}catch(err){
+  console.warn('globe unavailable, using 2D map',err);
+  $('globe').hidden=true;$('mapMain').hidden=false;
+  document.querySelector('.globe-top').hidden=true;document.querySelector('.map-tools').hidden=true;
+}
 </script>
 </body>
 </html>
