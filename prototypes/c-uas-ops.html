@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skysailor C-UAS 결심지원</title>
+<style>
+:root{
+  --bg:#0c1821;--panel:#10202a;--panel2:#132833;--line:#2b424d;--line2:#22363f;
+  --text:#dcebed;--muted:#819ca9;--accent:#8bdfc4;--accent-ink:#0b2925;--warn:#b9a86a;
+  --low:#7d8f97;--med:#e6c84f;--high:#f0974a;--crit:#ef5b5b;
+  --balloon:#c9a3f0;--drone:#f06a6a;--bird:#9bc9e0;--unknown:#cfd8dc;
+  font-family:system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column}
+a{color:#83ddc1;text-decoration:none}
+button,select,input{font:inherit;font-size:12px;background:#1b303c;color:#dfeded;border:1px solid #35515e;border-radius:7px;padding:7px 11px}
+button{cursor:pointer}button:hover{background:#2c4d59}
+button.primary{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+button.ghost{background:transparent}
+h1{font-size:22px;margin:0}h2{font-size:14px;margin:0}h3{font-size:11px;letter-spacing:1px;color:var(--accent);margin:0 0 8px;font-weight:600}
+small,.muted{color:var(--muted);font-size:11px}
+.num{font-variant-numeric:tabular-nums}
+
+/* top bar */
+header{display:flex;align-items:center;gap:22px;padding:0 22px;height:60px;border-bottom:1px solid var(--line);flex-shrink:0}
+header .brand{font-size:14px;letter-spacing:2px;font-weight:700;white-space:nowrap;cursor:pointer}
+header .brand span{color:#7b9da8;font-weight:400}
+.flow{display:flex;gap:4px;list-style:none;margin:0;padding:0;font-size:11px}
+.flow li{padding:5px 10px;border-radius:999px;background:#13252f;color:#6f919f;white-space:nowrap}
+.flow li.on{background:#1f3f3a;color:var(--accent)}
+.status{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;white-space:nowrap}
+.status .alert{color:var(--crit);font-weight:700}
+.status .tti{color:var(--high)}
+.simctl{display:flex;gap:6px;align-items:center}
+.simctl select,.simctl button{padding:5px 8px;font-size:11px}
+.banner{font-size:11px;color:var(--warn);background:#1d1d14;padding:5px 22px;border-bottom:1px solid #3a3622}
+.tabs{display:flex;gap:2px;padding:0 22px;border-bottom:1px solid var(--line)}
+.tabs a{font-size:13px;padding:11px 16px;color:var(--muted);border-bottom:2px solid transparent}
+.tabs a.on{color:var(--text);border-bottom-color:var(--accent)}
+.tabs a b{color:var(--accent);margin-right:6px}
+
+main{flex:1;min-height:0;padding:18px 22px;display:flex;flex-direction:column;gap:16px}
+.screen{display:none;flex:1;min-height:0}
+.screen.on{display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+
+/* main hub */
+.hubgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.hubcard{display:flex;flex-direction:column;gap:12px;cursor:pointer;transition:border-color .15s}
+.hubcard:hover{border-color:var(--accent)}
+.hubcard .q{font-size:12px;color:var(--muted)}
+.hubcard .big{font-size:26px;font-weight:700}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px}
+.kv dt{color:var(--muted)}.kv dd{margin:0}
+.hubbottom{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;flex:1;min-height:260px}
+.feed{list-style:none;margin:0;padding:0;font-size:12px;overflow:auto;max-height:100%}
+.feed li{padding:6px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px}
+.feed li .t{color:var(--muted);min-width:58px}
+.stage{position:relative;flex:1;min-height:220px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0a151c}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.legend{position:absolute;left:8px;bottom:8px;display:flex;flex-wrap:wrap;gap:10px;font-size:10px;color:var(--muted);background:#0a151ccc;padding:5px 9px;border-radius:7px;pointer-events:none}
+.legend span{display:flex;align-items:center;gap:5px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.ring{width:10px;height:10px;border-radius:50%;border:1px dashed var(--accent);display:inline-block}
+.zonek{width:10px;height:10px;border-radius:50%;border:1px solid #ef8f8f;background:#ef5b5b22;display:inline-block}
+.fp{width:10px;height:10px;border-radius:50%;border:1px dotted var(--balloon);display:inline-block}
+
+/* levels */
+.lvl{font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;color:#0c1821;display:inline-block;min-width:66px;text-align:center}
+.LOW{background:var(--low)}.MEDIUM{background:var(--med)}.HIGH{background:var(--high)}.CRITICAL{background:var(--crit)}
+.badge{font-size:10px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.badge.good{color:var(--accent);border-color:#2f5e53}.badge.warn{color:var(--med);border-color:#5e5530}.badge.bad{color:var(--crit);border-color:#5e3030}
+
+/* two-col screens */
+.split{display:grid;grid-template-columns:360px 1fr;gap:16px;flex:1;min-height:0}
+.split.rev{grid-template-columns:1fr 400px}
+.col{display:flex;flex-direction:column;gap:16px;min-height:0;min-width:0}
+.scroll{overflow:auto}
+
+/* nodes */
+.node{border:1px solid var(--line2);border-radius:10px;padding:12px;background:var(--panel2);display:flex;flex-direction:column;gap:8px}
+.node header{all:unset;display:flex;align-items:center;gap:8px}
+.bar{height:6px;border-radius:3px;background:#1b2d36;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.ctrl{display:flex;flex-direction:column;gap:10px}
+.ctrl select{width:100%}
+.note{font-size:11px;color:var(--warn);line-height:1.6}
+
+/* targets */
+.tlist{list-style:none;margin:0;padding:0}
+.tlist li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 8px;border-bottom:1px solid var(--line2);cursor:pointer;font-size:12px}
+.tlist li:hover{background:#19313d}.tlist li.on{background:#213e49;box-shadow:inset 3px 0 var(--accent)}
+.tlist .sub{color:var(--muted);font-size:11px}
+.factors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.factors div{background:var(--panel2);border-radius:8px;padding:8px 10px}
+.factors b{display:block;font-size:17px}
+.factors small{display:block;line-height:1.5}
+.classbar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:6px 0}
+.classbar i{display:block;height:100%}
+
+/* response */
+.queue li{grid-template-columns:auto 1fr auto}
+.deadline{font-weight:700}
+.case{border-left:2px solid var(--accent);padding:4px 0 4px 10px;margin-bottom:10px;font-size:12px;line-height:1.6}
+.case .m{color:var(--muted);font-size:11px}
+.cons{font-size:12px;line-height:1.6;margin:0;padding-left:16px}
+.tag{font-size:10px;color:var(--warn)}
+.ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.ladder div{text-align:center;font-size:11px;padding:8px 4px;border-radius:7px;background:#18272f;color:#4f6873;line-height:1.4}
+.ladder div small{display:block;font-size:10px}
+.ladder .allowed{background:#1d3640;color:#a9c2cb}
+.ladder .cond{background:#2a2a1d;color:#cfc28a}
+.ladder .excluded{background:#2a1d1f;color:#9a6b6b}
+.ladder .excluded b{text-decoration:line-through}
+.ladder .rec{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.ladder .rec small{color:var(--accent-ink)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{padding:7px 6px;border-bottom:1px solid var(--line2);text-align:left}
+th{color:var(--muted);font-weight:500;font-size:11px}
+.decide{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.decide input{flex:1;min-width:200px}
+.notice{font-size:11px;color:var(--warn)}
+.loglist{list-style:none;margin:0;padding:0;font-size:12px}
+.loglist li{padding:6px 0;border-bottom:1px solid var(--line2)}
+.empty{color:var(--muted);font-size:12px;padding:20px 0;text-align:center}
+
+dialog{width:min(900px,95vw);background:#152832;color:#dfeded;border:1px solid #49636d;border-radius:14px;padding:18px}
+dialog::backdrop{background:#0009}
+.dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.rstage{position:relative;height:min(520px,65dvh);border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#0a151c}
+.rstage iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+@media (max-width:1000px){
+  header{flex-wrap:wrap;height:auto;padding:10px 16px;gap:10px}
+  .flow{order:3;flex-wrap:wrap}.status{margin-left:0}
+  main{padding:16px}
+  .tabs{padding:0 16px;overflow-x:auto}
+  .hubgrid,.hubbottom,.split,.split.rev{grid-template-columns:1fr}
+  .stage{min-height:320px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand" data-go="main">SKYSAILOR <span>C-UAS 결심지원</span></div>
+  <ol class="flow" id="flow">
+    <li data-s="nodes">탐지</li><li data-s="targets">추적</li><li data-s="targets">식별</li><li data-s="targets">위협도</li><li data-s="response">대응 추천</li><li data-s="response">결정</li>
+  </ol>
+  <div class="status">
+    <span id="stAlert" class="alert">경보 0</span>
+    <span id="stTti" class="tti">최단 TTI —</span>
+    <span class="num" id="stClock">T+00:00</span>
+    <div class="simctl">
+      <select id="speed" aria-label="시뮬레이션 속도"><option value="5">5×</option><option value="10" selected>10×</option><option value="20">20×</option></select>
+      <button id="pause">일시정지</button><button id="restart">처음부터</button>
+    </div>
+  </div>
+</header>
+<div class="banner">프로토타입 · 가상 지역·가상 표적 · 사례와 조문은 예시이며 출처 확인 전입니다 · 시간은 시뮬레이션 시간</div>
+<nav class="tabs" id="tabs">
+  <a href="#main" data-go="main">메인</a>
+  <a href="#nodes" data-go="nodes"><b>①</b>기기 성능</a>
+  <a href="#targets" data-go="targets"><b>②</b>표적 판단</a>
+  <a href="#response" data-go="response"><b>③</b>대응 결심</a>
+</nav>
+
+<main>
+<!-- ============ MAIN ============ -->
+<section class="screen" id="s-main">
+  <div class="hubgrid">
+    <article class="panel hubcard" data-go="nodes">
+      <h3>① 기기 성능</h3><div class="q">잘 보고 있나?</div>
+      <div class="big num" id="hNodes">—</div>
+      <dl class="kv"><dt>평균 자세 안정도</dt><dd id="hStab">—</dd><dt>관측 범위 합</dt><dd id="hCov">—</dd><dt>탑재 제어기</dt><dd id="hCtrl">—</dd><dt>바람</dt><dd id="hWind">—</dd></dl>
+    </article>
+    <article class="panel hubcard" data-go="targets">
+      <h3>② 표적 판단</h3><div class="q">무엇이고 얼마나 위험한가?</div>
+      <div class="big num" id="hTargets">—</div>
+      <dl class="kv"><dt>유형</dt><dd id="hTypes">—</dd><dt>최고 위협</dt><dd id="hTop">—</dd><dt>판정 대기</dt><dd id="hPending">—</dd></dl>
+    </article>
+    <article class="panel hubcard" data-go="response">
+      <h3>③ 대응 결심</h3><div class="q">무엇을, 언제까지 해야 하나?</div>
+      <div class="big num" id="hQueue">—</div>
+      <dl class="kv"><dt>가장 급한 결정</dt><dd id="hNext">—</dd><dt>권고</dt><dd id="hRec">—</dd><dt>결정 완료</dt><dd id="hDone">—</dd></dl>
+    </article>
+  </div>
+  <div class="hubbottom">
+    <div class="panel col"><h3>상황도</h3><div class="stage"><canvas id="mapMain"></canvas>
+      <div class="legend"><span><i class="dot" style="background:var(--balloon)"></i>풍선</span><span><i class="dot" style="background:var(--drone)"></i>드론</span><span><i class="dot" style="background:var(--bird)"></i>조류</span><span><i class="dot" style="background:var(--unknown)"></i>미상</span><span><i class="ring"></i>돔 관측 범위</span><span><i class="zonek"></i>보호구역</span></div></div></div>
+    <div class="panel col"><h3>이벤트</h3><ul class="feed" id="feed"></ul></div>
+  </div>
+</section>
+
+<!-- ============ ① NODES ============ -->
+<section class="screen" id="s-nodes">
+  <div class="split">
+    <div class="col scroll">
+      <div class="panel ctrl">
+        <h3>탑재 제어기</h3>
+        <select id="ctrlSel" aria-label="탑재 제어기"></select>
+        <div id="ctrlInfo" class="kv"></div>
+        <div id="ctrlNote" class="note"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="replayBtn">근거: Arena 3D 다시보기</button>
+          <a class="badge" href="http://100.120.214.39:8080/arena/" target="_blank" rel="noopener">Arena ↗</a>
+          <a class="badge" href="http://100.120.214.39:8080/platform/" target="_blank" rel="noopener">기체 구조 ↗</a>
+          <a class="badge" href="http://100.120.214.39:8080/cfd/" target="_blank" rel="noopener">CFD ↗</a>
+        </div>
+      </div>
+      <div class="panel"><h3>센서 돔 노드</h3><div id="nodeList" style="display:flex;flex-direction:column;gap:10px"></div></div>
+      <div class="panel"><h3>환경</h3><dl class="kv"><dt>바람</dt><dd id="nWind">—</dd><dt>바람 불확실성</dt><dd>±0.8 m/s (가정)</dd></dl></div>
+    </div>
+    <div class="panel col"><h3>관측 범위</h3><div class="muted">자세 안정도가 낮으면 센서가 흔들려 관측 범위가 줄고, 범위 밖 표적은 탐지되지 않습니다.</div>
+      <div class="stage"><canvas id="mapNodes"></canvas>
+      <div class="legend"><span><i class="ring"></i>관측 범위</span><span><i class="zonek"></i>보호구역</span><span><i class="dot" style="background:#555"></i>미탐지 표적(참값, 프로토타입 표시용)</span></div></div></div>
+  </div>
+</section>
+
+<!-- ============ ② TARGETS ============ -->
+<section class="screen" id="s-targets">
+  <div class="split rev">
+    <div class="panel col"><h3>상황도</h3><div class="stage"><canvas id="mapTargets"></canvas>
+      <div class="legend"><span><i class="dot" style="background:var(--balloon)"></i>풍선</span><span><i class="dot" style="background:var(--drone)"></i>드론</span><span><i class="dot" style="background:var(--bird)"></i>조류</span><span><i class="dot" style="background:var(--unknown)"></i>미상</span><span><i class="fp"></i>낙하 예상 범위</span><span><i class="zonek"></i>보호구역</span></div></div></div>
+    <div class="col">
+      <div class="panel scroll" style="max-height:42%"><h3>표적 · 위험 순</h3><ol class="tlist" id="tList"></ol></div>
+      <div class="panel scroll" style="flex:1" id="tDetail"><div class="empty">표적을 선택하세요.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ③ RESPONSE ============ -->
+<section class="screen" id="s-response">
+  <div class="split">
+    <div class="col">
+      <div class="panel scroll" style="flex:1"><h3>결정 대기 · 마감 순</h3><ol class="tlist queue" id="qList"></ol></div>
+      <div class="panel scroll" style="max-height:38%"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><h3 style="margin:0">결정 기록</h3><button id="exportLog" style="margin-left:auto;padding:4px 8px;font-size:11px">내보내기 (JSONL)</button></div><div id="logSummary" class="muted" style="margin-bottom:6px"></div><ul class="loglist" id="logList"><li class="muted">아직 결정이 없습니다.</li></ul></div>
+    </div>
+    <div class="col scroll" id="rCard"><div class="panel empty">결정 대기 표적을 선택하세요.</div></div>
+  </div>
+</section>
+</main>
+
+<dialog id="replayDlg"><div class="dhead"><h2 id="replayTitle">Arena 비행 다시보기</h2><button id="replayClose" aria-label="닫기">✕</button></div>
+<p class="muted" style="margin:0 0 10px">라이브 서버(100.120.214.39)의 /game/ 리플레이를 불러옵니다. Tailscale 연결이 필요합니다.</p>
+<div class="rstage"><iframe id="replayFrame" title="Arena 비행 다시보기"></iframe></div></dialog>
+
+<script src="data/replay.js" onerror="void 0"></script>
+<script>
+'use strict';
+const LIVE='http://100.120.214.39:8080';
+const $=id=>document.getElementById(id);
+const el=(tag,props={},...kids)=>{const e=document.createElement(tag);for(const[k,v]of Object.entries(props)){if(k==='class')e.className=v;else if(k==='style')e.style.cssText=v;else if(k.startsWith('on'))e[k]=v;else e.setAttribute(k,v)}for(const c of kids.flat())if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));return e};
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const fmtT=s=>{s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+const fmtTTI=s=>{if(!isFinite(s))return'—';s=Math.round(s);return s<60?s+'초':Math.floor(s/60)+'분 '+String(s%60).padStart(2,'0')+'초'};
+const fmtDL=d=>isFinite(d)&&d<=0?'즉시':fmtTTI(d);
+
+/* ---------------- world (virtual) ---------------- */
+let W=12000,H=8000;
+let ZONES=[
+  {id:'Z1',name:'공항 (가상)',x:9600,y:5600,r:1500,w:1.0},
+  {id:'Z2',name:'정부청사 (가상)',x:5200,y:3300,r:700,w:1.0},
+  {id:'Z3',name:'발전소 (가상)',x:9300,y:1500,r:600,w:.8},
+];
+let POP=[{x:4600,y:3900,s:1500,a:1.0},{x:7200,y:2500,s:1200,a:.8},{x:2400,y:6200,s:1000,a:.6},{x:6400,y:6300,s:900,a:.5}];
+const pop=(x,y)=>clamp(POP.reduce((m,p)=>m+p.a*Math.exp(-((x-p.x)**2+(y-p.y)**2)/(2*p.s*p.s)),0),0,1);
+let NODES=[
+  {id:'dome-1',x:3000,y:3000,alt:150,f:1.0},
+  {id:'dome-2',x:6300,y:5000,alt:150,f:.95},
+  {id:'dome-3',x:8600,y:3100,alt:150,f:.85,note:'빌딩풍 구간'},
+];
+
+/* Arena snapshot: GET /api/benchmarks/submissions on 2026-10-10 (top entries, simulation results) */
+const ARENA=[
+  {name:'SAC-Upright-10k-m8-d5',p:'cykim',metric:'02 · 실측 바람',score:1.868,dur:1.02,flip:1,tilt:177,replay:'0c7a045fa3b04be3ae56906af29f52f7'},
+  {name:'Direct-neutral-example',p:'Operator',metric:'04 · 테두리 3막대',score:1.774,dur:.94,flip:1,tilt:176,replay:'da19e3d52cf543d5b5ad32e2fb52ac22'},
+  {name:'SAC-Direct-Upright-10k-Stability96',p:'cykim',metric:'04 · 테두리 3막대',score:1.706,dur:.87,flip:1,tilt:136,replay:'45b6282230a444148620b65034174f2f'},
+  {name:'SAC-Hanging-Upright-10k-Stability16',p:'cykim',metric:'03 · 매달린 추',score:1.692,dur:.86,flip:1,tilt:129,replay:'e063f954a9534edbbb3e3877bd40ad04'},
+];
+const CONTROLLERS=[
+  {id:'v-target',name:'목표 성능 제어기 (가상)',q:.95,virtual:true},
+  {id:'v-mid',name:'중간 성능 제어기 (가상)',q:.7,virtual:true},
+  {id:'v-none',name:'제어 없음 · 추 중앙 고정 (가상)',q:.35,virtual:true},
+  ...ARENA.map((a,i)=>({id:'arena-'+i,name:'Arena · '+a.name,q:clamp(1-a.tilt/90,0,1)*.9+.08,arena:a})),
+];
+
+/* ---------------- RAG examples ---------------- */
+const LADDER=['observe','report','alert','rf_jam','kinetic'];
+const ACT={observe:'관측 지속',report:'관계기관 통보',alert:'경보 발령',rf_jam:'전파 차단',kinetic:'물리적 무력화'};
+const ALLOWED={LOW:['observe'],MEDIUM:['observe','report'],HIGH:['observe','report','alert'],CRITICAL:LADDER};
+const CASES=[
+  {id:'C1',title:'북한 무인기 영공 침범',date:'2022.12',cls:'drone',rid:'none',zone:'capital',popl:'high',
+   actions:'탐지 → 경보 → 전투기·공격헬기 투입',max:'kinetic',outcome:'격추 실패, 인천·김포공항 이륙 약 1시간 중단',cons:'도심 상공 사격 시 부수 피해 우려',src:'서울신문, SBS (정의서 인용)'},
+  {id:'C2',title:'대남 오물풍선 살포',date:'2024.06',cls:'balloon',rid:'none',zone:'capital',popl:'high',
+   actions:'관측 → 위치 안내·경보 → 낙하 후 수거',max:'alert',outcome:'약 600개 식별, 수도권 재산 피해 발생',cons:'공중 격추 시 낙하물 피해 우려',src:'동아일보 (정의서 인용)'},
+  {id:'C3',title:'(가상) 허가 드론 Remote ID 확인',date:'—',cls:'drone',rid:'present',zone:'airport',popl:'medium',
+   actions:'관측 → 신원 확인 → 관제 통보',max:'report',outcome:'허가 비행 확인 후 종료',cons:'허가 비행체에 대한 물리적 대응 불가',src:'가상 예시'},
+  {id:'C4',title:'(가상) 조류 오인 탐지',date:'—',cls:'bird',rid:'none',zone:'capital',popl:'medium',
+   actions:'관측 → 해제',max:'observe',outcome:'조류로 판정, 경보 해제',cons:'—',src:'가상 예시'},
+];
+const LEGAL={
+  rf_jam:{kind:'법적',text:'전파 차단은 법령상 권한 기관의 승인이 필요하며 주변 통신·항법에 영향',ref:'전파법 등 · 조문 확인 필요'},
+  kinetic:{kind:'법적',text:'무력화는 법령상 권한과 요건이 제한됨',ref:'관련 법령 · 조문 확인 필요'},
+  report:{kind:'절차',text:'불법 비행 의심 시 관계기관 통보',ref:'공개 대응 절차 · 확인 필요'},
+};
+
+
+/* ---------------- replay mode: ops pipeline output (prototypes/data/replay.js) ---------------- */
+/* live mode: served by the local ops server (python -m ops.service.server) — frames arrive over WebSocket */
+let RP=window.OPS_REPLAY&&!/[?&]mode=sim/.test(location.search)?window.OPS_REPLAY:null;
+let OX=0,OY=0,GRID=1000,SRV=false,WS=null;
+function applyMeta(meta){
+  const[b0,b1,b2,b3]=meta.bounds;OX=b0;OY=b1;W=b2-b0;H=b3-b1;GRID=W>4000?1000:100;
+  ZONES=meta.zones.map(z=>({id:z.id,name:z.name,x:z.center[0]-OX,y:z.center[1]-OY,r:z.r,w:z.w,kind:/공항/.test(z.name)?'airport':'capital'}));
+  POP=meta.population.map(([x,y,s,a])=>({x:x-OX,y:y-OY,s,a}));
+  NODES=meta.nodes.map(n=>({id:n.id,x:n.pos[0]-OX,y:n.pos[1]-OY,alt:Math.round(n.pos[2]),f:1}));
+}
+if(RP)applyMeta(RP.meta);
+const ctl=(action,value=null)=>fetch('/api/ops/control',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,value})}).catch(()=>{});
+function connectWS(){
+  WS=new WebSocket(`${location.protocol==='https:'?'wss':'ws'}://${location.host}/api/ops/ws`);
+  WS.onmessage=e=>{const m=JSON.parse(e.data);
+    if(m.type==='meta'){RP.meta=m.meta;applyMeta(m.meta);reset();renderDom(true)}
+    else if(m.type==='frame')replayFrame(m.frame)};
+  WS.onclose=()=>{event('서버 연결 끊김 · 3초 뒤 다시 연결','warn');setTimeout(connectWS,3000)};
+}
+function replayFrame(fr){
+  S.t=fr.t;S.wind={x:RP.meta.wind[0],y:RP.meta.wind[1]};
+  S.nodeState=Object.fromEntries(fr.nodes.map(n=>[n.id,n]));
+  S.rays=fr.rays;
+  S.truths=fr.truth.map(o=>({id:o.id,cls:o.cls,t0:0,x:o.pos[0]-OX,y:o.pos[1]-OY}));
+  const prev=S.tracks,next={},order=['LOW','MEDIUM','HIGH','CRITICAL'];
+  for(const t of fr.tracks){
+    const p=prev[t.id],probs=t.probs;
+    const cls=['drone','balloon','bird','unknown'].reduce((a,k)=>probs[k]>probs[a]?k:a,'unknown');
+    const x=t.pos[0]-OX,y=t.pos[1]-OY;
+    const fp=t.impact?{x:t.impact[0]-OX,y:t.impact[1]-OY,r:t.impact_r,fall:t.fall}:null;
+    const tr={id:t.id,status:t.status==='confirmed'?'confirmed':'tentative',x,y,vx:t.vel[0],vy:t.vel[1],alt:t.pos[2],
+      hist:t.hist.map(([hx,hy])=>[hx-OX,hy-OY]),cls,probs,rid:t.rid,permitted:t.permitted,basis:t.basis,check:t.check,
+      level:t.level||'LOW',score:t.score??0,P:t.P??0,C:t.C??0,U:t.U??0,tti:t.tti??Infinity,cpa:t.cpa??Infinity,
+      zone:ZONES.find(z=>z.id===t.zone)||null,fp,popv:fp?pop(fp.x,fp.y):pop(x,y),sig:t.sig,
+      q:Math.max(...fr.nodes.map(n=>n.stability)),first:p?p.first:fr.t,factors:t.factors,card:t.card};
+    if(!p)event(`${t.id} 신규 탐지 (${t.sources.map(s=>s==='camera'?'카메라':'Remote ID').join('·')})`);
+    if(p&&p.cls!==cls&&cls!=='unknown')event(`${t.id} 식별: ${CLS[cls]}${t.rid?' · Remote ID '+t.rid:''}`);
+    if(p&&order.indexOf(tr.level)>order.indexOf(p.level)&&order.indexOf(tr.level)>=2){event(`${t.id} 위협 ${tr.level} · ${CLS[cls]} · TTI ${fmtTTI(tr.tti)}`,'alert');if(!S.firstAlert[t.id])S.firstAlert[t.id]=fr.t}
+    next[t.id]=tr;
+  }
+  for(const id in prev)if(!next[id]&&prev[id].status==='confirmed')event(`${id} 추적 종료`);
+  S.tracks=next;
+}
+
+/* ---------------- simulation ---------------- */
+let S;
+function rng(seed){let s=seed>>>0;return()=>((s=(s*1664525+1013904223)>>>0)/4294967296)}
+function reset(){
+  if(RP){S={t:0,paused:false,speed:+$('speed').value,ctrl:'v-target',truths:[],tracks:{},events:[],log:[],decided:{},sel:null,rsel:null,wind:{x:0,y:0},firstAlert:{},ri:0,nodeState:{},rays:[]};event(`${SRV?'실시간 연결':'재생 시작'} · ${RP.meta.source} · 돔 간격 ${RP.meta.spacing}m`);if(RP.frames.length)replayFrame(RP.frames[0]);return}
+  const r=rng(7);
+  const truths=[];
+  const bal=[[400,2600,0],[900,4200,40],[300,5600,90],[1400,3400,150],[700,6800,220]];
+  bal.forEach(([x,y,t0],i)=>truths.push({id:'B-0'+(i+1),cls:'balloon',rid:null,t0,x,y,alt:1300-i*60,vx:0,vy:0,j:(r()-.5)*.6}));
+  truths.push({id:'D-01',cls:'drone',rid:null,t0:180,x:11800,y:7200,alt:120,goal:ZONES[1],spd:16,vx:0,vy:0});
+  truths.push({id:'R-01',cls:'drone',rid:'KR-UAS-24817',t0:0,x:7600,y:6900,alt:90,loiter:{x:7600,y:6600,r:450,w:.018},vx:0,vy:0});
+  truths.push({id:'K-01',cls:'bird',rid:null,t0:60,x:2600,y:4800,alt:60,hd:r()*6.28,vx:0,vy:0});
+  truths.push({id:'D-02',cls:'drone',rid:null,t0:620,x:11900,y:300,alt:110,goal:ZONES[2],spd:14,vx:0,vy:0});
+  S={t:0,paused:false,speed:+$('speed').value,ctrl:S?.ctrl||'v-target',truths,tracks:{},events:[],log:[],decided:{},sel:S?.sel&&null,rsel:null,wind:{x:3.8,y:.9},r,firstAlert:{}};
+  event('시뮬레이션 시작 · 가상 시나리오');
+}
+const ctrl=()=>CONTROLLERS.find(c=>c.id===S.ctrl);
+const nodeQ=n=>RP?(S.nodeState[n.id]?.stability??0):clamp(ctrl().q*n.f,0,1);
+const nodeR=n=>RP?(S.nodeState[n.id]?.coverage??0):2800*(.2+.8*nodeQ(n));
+function event(text,kind=''){S.events.unshift({t:S.t,text,kind});S.events.length=Math.min(S.events.length,60)}
+
+function stepTruth(o,dt){
+  const w=S.wind;
+  if(o.cls==='balloon'){o.vx=w.x+o.j;o.vy=w.y+o.j*.5;o.alt=Math.max(0,o.alt-1.1*dt)}
+  else if(o.loiter){const a=S.t*o.loiter.w;const nx=o.loiter.x+o.loiter.r*Math.cos(a),ny=o.loiter.y+o.loiter.r*Math.sin(a);o.vx=(nx-o.x)/dt;o.vy=(ny-o.y)/dt}
+  else if(o.goal){const dx=o.goal.x-o.x,dy=o.goal.y-o.y,d=Math.hypot(dx,dy)||1;const wv=Math.sin(S.t/25)*.15;o.vx=o.spd*(dx/d*Math.cos(wv)-dy/d*Math.sin(wv));o.vy=o.spd*(dy/d*Math.cos(wv)+dx/d*Math.sin(wv));if(d<o.goal.r*.25){o.vx*=.05;o.vy*=.05}}
+  else{o.hd+=(S.r()-.5)*.9;o.vx=11*Math.cos(o.hd)+w.x*.3;o.vy=11*Math.sin(o.hd)+w.y*.3;if(o.x<1500||o.x>W-1500||o.y<1500||o.y>H-1500)o.hd+=Math.PI*.1}
+  o.x+=o.vx*dt;o.y+=o.vy*dt;
+}
+function gauss(){return Math.sqrt(-2*Math.log(S.r()+1e-9))*Math.cos(6.283*S.r())}
+function step(dt){
+  S.t+=dt;
+  S.wind={x:3.8+.4*Math.sin(S.t/180),y:.9+.3*Math.cos(S.t/240)};
+  for(const o of S.truths){
+    if(S.t<o.t0)continue;
+    if(o.cls==='balloon'&&o.alt<=0){if(!o.landed){o.landed=true;const tr=S.tracks[o.id];if(tr){tr.status='landed';event(`${o.id} 지면 도달 · 인구 밀집도 ${Math.round(pop(o.x,o.y)*100)}%`,'warn')}}continue}
+    stepTruth(o,dt);
+    if(o.x<-500||o.x>W+500||o.y<-500||o.y>H+500)continue;
+    const seen=NODES.filter(n=>Math.hypot(o.x-n.x,o.y-n.y)<nodeR(n));
+    let tr=S.tracks[o.id];
+    if(!seen.length){if(tr&&tr.status!=='landed'&&S.t-tr.last>20&&tr.status!=='lost'){tr.status='lost';event(`${o.id} 관측 범위 이탈 · 추적 소실`)}continue}
+    const q=Math.max(...seen.map(nodeQ));const sig=25+140*(1-q);
+    const mx=o.x+gauss()*sig,my=o.y+gauss()*sig;
+    if(!tr){tr=S.tracks[o.id]={id:o.id,truth:o,first:S.t,last:S.t,x:mx,y:my,vx:0,vy:0,n:0,hist:[],cls:'unknown',probs:{drone:.25,balloon:.25,bird:.25,unknown:.25},status:'tentative',air:[],hdg:[],level:'LOW',score:0};event(`${o.id} 신규 탐지 (${seen.map(n=>n.id).join(', ')})`)}
+    const a=.35;const px=tr.x,py=tr.y;
+    tr.x=tr.x+(mx-tr.x)*a+tr.vx*dt*(1-a);tr.y=tr.y+(my-tr.y)*a+tr.vy*dt*(1-a);
+    const nvx=(tr.x-px)/dt,nvy=(tr.y-py)/dt;
+    tr.vx=tr.n?tr.vx*.8+nvx*.2:o.vx;tr.vy=tr.n?tr.vy*.8+nvy*.2:o.vy;
+    tr.n++;tr.last=S.t;tr.sig=sig;tr.q=q;tr.alt=o.alt;tr.rid=o.rid;
+    if(tr.status==='lost')tr.status='confirmed';
+    if(tr.status==='tentative'&&tr.n>=3){tr.status='confirmed'}
+    if(tr.n%5===0){tr.hist.push([tr.x,tr.y]);if(tr.hist.length>40)tr.hist.shift()}
+    // classification
+    const air=Math.hypot(o.vx-S.wind.x+gauss()*.6*(1.2-q),o.vy-S.wind.y+gauss()*.6*(1.2-q));
+    tr.air.push(air);if(tr.air.length>40)tr.air.shift();
+    tr.hdg.push(Math.atan2(o.vy,o.vx));if(tr.hdg.length>40)tr.hdg.shift();
+    classify(tr);
+    threat(tr);
+  }
+}
+function classify(tr){
+  const age=S.t-tr.first;const prev=tr.cls;
+  if(tr.rid){tr.cls='drone';tr.probs={drone:.96,balloon:.01,bird:.01,unknown:.02}}
+  else if(age<35){tr.cls='unknown';const k=age/35;tr.probs={drone:.25,balloon:.25+.15*k,bird:.25,unknown:.25-.15*k}}
+  else{
+    const m=tr.air.reduce((s,v)=>s+v,0)/tr.air.length;
+    let turn=0;for(let i=1;i<tr.hdg.length;i++){let d=tr.hdg[i]-tr.hdg[i-1];d=Math.atan2(Math.sin(d),Math.cos(d));turn+=Math.abs(d)}turn/=Math.max(1,tr.hdg.length-1);
+    if(m<1.6){tr.cls='balloon';tr.probs={balloon:.9,drone:.04,bird:.03,unknown:.03}}
+    else if(turn>.12){tr.cls='bird';tr.probs={bird:.78,drone:.12,balloon:.02,unknown:.08}}
+    else{tr.cls='drone';tr.probs={drone:.88,bird:.06,balloon:.02,unknown:.04}}
+    tr.airMean=m;tr.turn=turn;
+  }
+  if(prev!==tr.cls&&tr.cls!=='unknown')event(`${tr.id} 식별: ${CLS[tr.cls]}${tr.rid?' · Remote ID '+tr.rid:''}`);
+}
+const CLS={drone:'드론',balloon:'풍선',bird:'조류',unknown:'미상'};
+function cpaTti(tr,z){
+  const px=tr.x-z.x,py=tr.y-z.y,vx=tr.vx,vy=tr.vy,v2=vx*vx+vy*vy;
+  const d0=Math.hypot(px,py);if(d0<=z.r)return{cpa:d0,tti:0};
+  if(v2<1e-6)return{cpa:d0,tti:Infinity};
+  const tc=Math.max(0,-(px*vx+py*vy)/v2);const cpa=Math.hypot(px+vx*tc,py+vy*tc);
+  if(cpa>z.r)return{cpa,tti:Infinity};
+  const b=2*(px*vx+py*vy),c=px*px+py*py-z.r*z.r;const t=(-b-Math.sqrt(b*b-4*v2*c))/(2*v2);
+  return{cpa,tti:Math.max(0,t)};
+}
+function footprint(tr){
+  const fall=tr.alt/1.1;const ix=tr.x+S.wind.x*fall,iy=tr.y+S.wind.y*fall;
+  return{x:ix,y:iy,r:120+.8*fall*.6,fall};
+}
+function threat(tr){
+  const P={unknown:.5,balloon:.7,drone:tr.rid?.08:.9,bird:.05}[tr.cls];
+  let C,U,tti=Infinity,cpa=Infinity,zone=null,fp=null,popv;
+  for(const z of ZONES){const r=cpaTti(tr,z);if(r.tti<tti||(tti===Infinity&&r.cpa<cpa)){tti=r.tti;cpa=r.cpa;zone=z}}
+  if(tr.cls==='balloon'){
+    fp=footprint(tr);popv=pop(fp.x,fp.y);
+    const zin=ZONES.find(z=>Math.hypot(fp.x-z.x,fp.y-z.y)<z.r+fp.r);
+    C=Math.max(popv,zin?zin.w*.9:0);U=Math.max(Math.exp(-fp.fall/900),isFinite(tti)?Math.exp(-tti/600):0);
+    tti=Math.min(tti,fp.fall);
+  }else{
+    popv=pop(tr.x,tr.y);
+    C=Math.max(popv*.7,zone?zone.w*(cpa<=zone.r?1:.5*Math.exp(-(cpa-zone.r)/2000)):0);
+    U=isFinite(tti)?Math.exp(-tti/600):.15*Math.exp(-(cpa-(zone?.r||0))/3000);
+  }
+  const raw=P*C*U;const score=Math.round(100*Math.pow(raw,.7));
+  const level=score>=75?'CRITICAL':score>=50?'HIGH':score>=25?'MEDIUM':'LOW';
+  const order=['LOW','MEDIUM','HIGH','CRITICAL'];
+  if(tr.status!=='tentative'&&order.indexOf(level)>order.indexOf(tr.level)&&order.indexOf(level)>=2){event(`${tr.id} 위협 ${level} · ${CLS[tr.cls]} · TTI ${fmtTTI(tti)}`,'alert');if(!S.firstAlert[tr.id])S.firstAlert[tr.id]=S.t}
+  Object.assign(tr,{P,C,U,score,level,tti,cpa,zone,fp,popv});
+}
+
+/* ---------------- RAG card (rule-based template) ---------------- */
+function situation(tr){return{cls:tr.cls,rid:tr.rid?'present':'none',zone:tr.zone?.kind||(tr.zone?.id==='Z1'?'airport':'capital'),popl:tr.popv>.6?'high':tr.popv>.3?'medium':'low'}}
+function recommend(tr){
+  const sit=situation(tr);
+  const cases=CASES.map(c=>{const m=[];let s=0;if(c.cls===sit.cls){s+=3;m.push('표적 유형')}if(c.zone===sit.zone){s+=2;m.push('시설 유형')}if(c.popl===sit.popl){s+=1;m.push('인구 밀집도')}if(c.rid===sit.rid){s+=1;m.push('Remote ID')}return{...c,sim:s/7,matched:m}}).filter(c=>c.matched.includes('표적 유형')).sort((a,b)=>b.sim-a.sim).slice(0,3);
+  const allowed=ALLOWED[tr.level];
+  const st={};const cons=[];
+  for(const a of LADDER)st[a]=allowed.includes(a)?'allowed':'out';
+  if(tr.rid){for(const a of ['alert','rf_jam','kinetic'])if(st[a]==='allowed'){st[a]='excluded'}cons.push({kind:'작전',text:'Remote ID 확인된 허가 비행체 → 신원 확인·관제 통보로 한정',applies:'경보 이상 제외'})}
+  if(tr.popv>.45&&st.kinetic==='allowed'){st.kinetic='excluded';cons.push({kind:'작전',text:`인구 밀집 지역(밀집도 ${Math.round(tr.popv*100)}%) → 격추 시 낙하물 부수 피해`,applies:'무력화 제외'})}
+  if(tr.cls==='balloon'&&st.rf_jam==='allowed'){st.rf_jam='excluded';cons.push({kind:'작전',text:'풍선은 무선 조종이 아니므로 전파 차단 효과 없음',applies:'전파 차단 제외'})}
+  if(st.rf_jam==='allowed'){st.rf_jam='cond';cons.push({...LEGAL.rf_jam,applies:'전파 차단 조건부'})}
+  if(st.kinetic==='allowed'){st.kinetic='cond';cons.push({...LEGAL.kinetic,applies:'무력화 조건부'})}
+  if(st.report==='allowed')cons.push({...LEGAL.report,applies:'통보'});
+  const usable=LADDER.filter(a=>st[a]==='allowed');
+  const caseMax=cases.length?Math.max(...cases.map(c=>LADDER.indexOf(c.max))):-1;
+  let rec=usable[0]||'observe';
+  for(const a of usable)if(LADDER.indexOf(a)<=caseMax)rec=a;
+  const enough=cases.length>0;
+  if(!enough)rec='observe';
+  const lvlTxt={LOW:'관측',MEDIUM:'관측~통보',HIGH:'관측~경보',CRITICAL:'관측~무력화'}[tr.level];
+  const why=`위협 ${tr.level} → 허용 범위 ${lvlTxt}`+(cons.filter(c=>/제외/.test(c.applies)).length?` → 제약으로 ${cons.filter(c=>/제외/.test(c.applies)).map(c=>c.applies.replace(' 제외','')).join('·')} 제외`:'')+(enough?` → 유사 사례 최고 대응 '${ACT[LADDER[caseMax]]}' 범위 안에서 ${ACT[rec]}`:' → 유사 사례 없음: 관측 지속');
+  const deadline=isFinite(tr.tti)?Math.max(0,tr.tti-(tr.cls==='balloon'?120:60)):Infinity;
+  return{cases,st,cons,rec,why,enough,deadline};
+}
+function fromCard(c){
+  const KIND={legal:'법적',operational:'작전'};
+  return{rec:c.rec,why:c.why,enough:c.enough,deadline:c.deadline??Infinity,real:true,version:c.version,
+    st:Object.fromEntries(Object.entries(c.status).map(([k,v])=>[k,v==='conditional'?'cond':v])),
+    cases:c.cases.map(x=>({title:x.title,date:x.date,actions:x.actions,outcome:x.outcome,cons:x.cons,src:x.src,sim:x.sim,matched:x.matched})),
+    cons:c.cons.map(x=>({kind:KIND[x.kind]||x.kind,text:x.text,ref:x.doc?`${x.doc} ${x.article}`:'',quote:x.quote,verified:x.verified,
+      applies:x.applies.map(a=>ACT[a]).join('·')}))}
+}
+const cardFor=t=>RP&&t.card?fromCard(t.card):recommend(t);
+function collateral(tr,a){
+  const p=tr.popv;const people=Math.round(p*9000/100)*100;
+  return{observe:['없음','—'],report:['없음','—'],alert:['낮음','대피·안내 혼선 가능'],rf_jam:['중간','주변 통신·항법 간섭, 추락 위치 불확실'],kinetic:[p>.45?'높음':'중간',`낙하물 영향 인구 약 ${people.toLocaleString()}명 (가상 추정)`]}[a];
+}
+
+/* ---------------- map rendering ---------------- */
+const COL={balloon:'#c9a3f0',drone:'#f06a6a',bird:'#9bc9e0',unknown:'#cfd8dc'};
+const LCOL={LOW:'#7d8f97',MEDIUM:'#e6c84f',HIGH:'#f0974a',CRITICAL:'#ef5b5b'};
+function drawMap(cv,opt={}){
+  const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+  const s=Math.min(w/W,h/H)*.96,ox=(w-W*s)/2,oy=(h-H*s)/2;
+  const X=x=>ox+x*s,Y=y=>oy+(H-y)*s;cv._tf={X,Y,s,ox,oy};
+  g.fillStyle='#0d1c24';g.fillRect(X(0),Y(H),W*s,H*s);
+  // population
+  for(const p of POP){const gr=g.createRadialGradient(X(p.x),Y(p.y),0,X(p.x),Y(p.y),p.s*2*s);gr.addColorStop(0,`rgba(140,120,90,${.28*p.a})`);gr.addColorStop(1,'rgba(140,120,90,0)');g.fillStyle=gr;g.beginPath();g.arc(X(p.x),Y(p.y),p.s*2*s,0,7);g.fill()}
+  // grid
+  g.strokeStyle='#16303a';g.lineWidth=1;for(let x=0;x<=W;x+=GRID){g.beginPath();g.moveTo(X(x),Y(0));g.lineTo(X(x),Y(H));g.stroke()}for(let y=0;y<=H;y+=GRID){g.beginPath();g.moveTo(X(0),Y(y));g.lineTo(X(W),Y(y));g.stroke()}
+  // zones
+  for(const z of ZONES){g.fillStyle='rgba(239,91,91,.12)';g.strokeStyle='#ef8f8f';g.lineWidth=1.2;g.beginPath();g.arc(X(z.x),Y(z.y),z.r*s,0,7);g.fill();g.stroke();g.fillStyle='#ef9f9f';g.font='11px system-ui';g.fillText(z.name,X(z.x)-z.r*s*.6,Y(z.y)-z.r*s-4)}
+  // nodes + coverage
+  for(const n of NODES){const R=nodeR(n),q=nodeQ(n);g.setLineDash([5,5]);g.strokeStyle=q>.8?'#8bdfc4':q>.5?'#e6c84f':'#ef5b5b';g.globalAlpha=.8;g.beginPath();g.arc(X(n.x),Y(n.y),R*s,0,7);g.stroke();g.setLineDash([]);g.globalAlpha=.06;g.fillStyle=g.strokeStyle;g.fill();g.globalAlpha=1;
+    g.fillStyle='#8bdfc4';g.beginPath();g.moveTo(X(n.x),Y(n.y)-7);g.lineTo(X(n.x)+6,Y(n.y)+4);g.lineTo(X(n.x)-6,Y(n.y)+4);g.closePath();g.fill();g.fillStyle='#a9c2cb';g.font='10px system-ui';g.fillText(n.id,X(n.x)+8,Y(n.y)+4)}
+  // wind arrow
+  const wx=X(W*.92),wy=Y(H*.9),wm=Math.hypot(S.wind.x,S.wind.y);g.strokeStyle='#83ddc1';g.fillStyle='#83ddc1';g.lineWidth=2;const ux=S.wind.x/wm,uy=S.wind.y/wm;arrow(g,wx-ux*22,wy+uy*22,wx+ux*22,wy-uy*22);g.font='11px system-ui';g.fillText(`바람 ${wm.toFixed(1)}m/s`,wx-30,wy+34);
+  // undetected truths
+  if(RP)for(const r of S.rays||[]){const n=NODES.find(m=>m.id===r.node);if(!n)continue;const L=Math.min(W,H)*.45;g.setLineDash([3,4]);g.strokeStyle='rgba(207,216,220,.4)';g.lineWidth=1;g.beginPath();g.moveTo(X(n.x),Y(n.y));g.lineTo(X(n.x+Math.sin(r.az)*L),Y(n.y+Math.cos(r.az)*L));g.stroke();g.setLineDash([])}
+  if(opt.truth)for(const o of S.truths){const seen=RP?active().some(t=>Math.hypot(t.x-o.x,t.y-o.y)<50):(S.tracks[o.id]&&S.tracks[o.id].status!=='lost');if(S.t<o.t0||o.landed||seen)continue;g.fillStyle='#555';g.beginPath();g.arc(X(o.x),Y(o.y),3,0,7);g.fill()}
+  // tracks
+  for(const tr of Object.values(S.tracks)){
+    if(tr.status==='lost'||tr.status==='landed')continue;
+    const x=X(tr.x),y=Y(tr.y),c=COL[tr.cls];
+    if(opt.fp&&tr.fp){g.setLineDash([2,3]);g.strokeStyle='#c9a3f0';g.lineWidth=1;g.beginPath();g.moveTo(x,y);g.lineTo(X(tr.fp.x),Y(tr.fp.y));g.stroke();g.beginPath();g.arc(X(tr.fp.x),Y(tr.fp.y),tr.fp.r*s,0,7);g.stroke();g.setLineDash([])}
+    if(tr.hist.length>1){g.strokeStyle=c;g.globalAlpha=.35;g.lineWidth=1;g.beginPath();tr.hist.forEach(([hx,hy],i)=>i?g.lineTo(X(hx),Y(hy)):g.moveTo(X(hx),Y(hy)));g.stroke();g.globalAlpha=1}
+    const v=Math.hypot(tr.vx,tr.vy);if(v>.3){g.strokeStyle=c;g.fillStyle=c;g.lineWidth=1.5;const L=Math.min(28,8+v*1.2);arrow(g,x,y,x+tr.vx/v*L,y-tr.vy/v*L)}
+    g.globalAlpha=tr.status==='tentative'?.45:1;g.fillStyle=c;g.beginPath();g.arc(x,y,tr.cls==='balloon'?5:4.5,0,7);g.fill();g.globalAlpha=1;
+    if(tr.level!=='LOW'){g.strokeStyle=LCOL[tr.level];g.lineWidth=2;g.beginPath();g.arc(x,y,9,0,7);g.stroke()}
+    if(opt.sel===tr.id){g.strokeStyle='#fff';g.lineWidth=1.5;g.beginPath();g.arc(x,y,13,0,7);g.stroke()}
+    if(!opt.compact){g.fillStyle='#dcebed';g.font='10px system-ui';g.fillText(tr.id,x+8,y-8)}
+  }
+}
+function arrow(g,x1,y1,x2,y2){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();const a=Math.atan2(y2-y1,x2-x1);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-6*Math.cos(a-.45),y2-6*Math.sin(a-.45));g.lineTo(x2-6*Math.cos(a+.45),y2-6*Math.sin(a+.45));g.closePath();g.fill()}
+function pickTrack(cv,ev){const tf=cv._tf;if(!tf)return null;const r=cv.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top;let best=null,bd=16;for(const tr of active()){const d=Math.hypot(tf.X(tr.x)-mx,tf.Y(tr.y)-my);if(d<bd){bd=d;best=tr}}return best}
+
+/* ---------------- views ---------------- */
+const active=()=>Object.values(S.tracks).filter(t=>t.status==='confirmed'||t.status==='tentative');
+const ranked=()=>active().filter(t=>t.status==='confirmed').sort((a,b)=>b.score-a.score);
+const needsDecision=()=>ranked().filter(t=>(t.level==='HIGH'||t.level==='CRITICAL')&&!S.decided[t.id]&&(!RP||t.card));
+let screen='main';
+function go(s){screen=s;for(const sc of document.querySelectorAll('.screen'))sc.classList.toggle('on',sc.id==='s-'+s);for(const a of document.querySelectorAll('.tabs a'))a.classList.toggle('on',a.dataset.go===s);for(const li of $('flow').children)li.classList.toggle('on',li.dataset.s===s);if(location.hash!=='#'+s)history.replaceState(null,'','#'+s);renderDom(true)}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go)}});
+
+function renderTop(){
+  const alerts=active().filter(t=>t.level==='HIGH'||t.level==='CRITICAL');
+  $('stAlert').textContent='경보 '+alerts.length;
+  const m=Math.min(...alerts.map(t=>t.tti),Infinity);$('stTti').textContent='최단 TTI '+fmtTTI(m);
+  $('stClock').textContent='T+'+fmtT(S.t);
+}
+function renderMain(){
+  const q=NODES.map(nodeQ),avg=q.reduce((a,b)=>a+b,0)/q.length;
+  $('hNodes').textContent=`${NODES.length}/${NODES.length} 노드 운용`;
+  $('hStab').textContent=Math.round(avg*100)+'%';
+  $('hCov').textContent=(NODES.reduce((s,n)=>s+Math.PI*(nodeR(n)/1000)**2,0)).toFixed(1)+' km²';
+  $('hCtrl').textContent=RP?'기록된 시나리오 (재생)':ctrl().name;
+  $('hWind').textContent=windTxt();
+  const a=active();const by={};for(const t of a)by[t.cls]=(by[t.cls]||0)+1;
+  $('hTargets').textContent=`${a.length} 표적 추적 중`;
+  $('hTypes').textContent=Object.entries(by).map(([k,v])=>`${CLS[k]} ${v}`).join(' · ')||'—';
+  const top=ranked()[0];$('hTop').replaceChildren(top?el('span',{},el('span',{class:'lvl '+top.level},top.level),` ${top.id} · ${CLS[top.cls]}`):'—');
+  $('hPending').textContent=a.filter(t=>t.cls==='unknown').length+' 표적';
+  const nd=needsDecision();
+  $('hQueue').textContent=`${nd.length} 건 결정 대기`;
+  const next=nd.map(t=>({t,r:cardFor(t)})).sort((x,y)=>x.r.deadline-y.r.deadline)[0];
+  $('hNext').textContent=next?`${next.t.id} · 마감 ${fmtDL(next.r.deadline)}`:'—';
+  $('hRec').textContent=next?ACT[next.r.rec]:'—';
+  $('hDone').textContent=DECISIONS.length+' 건';
+  const f=$('feed');f.replaceChildren(...S.events.slice(0,30).map(e=>el('li',{},el('span',{class:'t num'},'T+'+fmtT(e.t)),el('span',{style:e.kind==='alert'?'color:var(--high)':e.kind==='warn'?'color:var(--med)':''},e.text))));
+}
+const windTxt=()=>{const m=Math.hypot(S.wind.x,S.wind.y);const deg=(90-Math.atan2(S.wind.y,S.wind.x)*180/Math.PI+360)%360;const dirs=['북','북동','동','남동','남','남서','서','북서'];return `${m.toFixed(1)} m/s · ${dirs[Math.round(((deg+180)%360)/45)%8]}풍`};
+
+function renderNodes(full){
+  if(full&&RP){
+    const sel=$('ctrlSel');sel.replaceChildren(new Option(`기록된 시나리오 · 안정도 ${RP.meta.quality}`,'rp'));sel.disabled=true;
+    const info=$('ctrlInfo');info.replaceChildren(el('dt',{},'입력'),el('dd',{},RP.meta.source),el('dt',{},'카메라'),el('dd',{},`돔당 ${RP.meta.cameras.count}대 · ${RP.meta.cameras.width}px · 화각 ${RP.meta.cameras.hfov}°`),el('dt',{},'돔 간격'),el('dd',{},RP.meta.spacing+' m'),el('dt',{},'관측 범위 기준'),el('dd',{},RP.meta.coverage_ref));
+    $('ctrlNote').textContent='재생 모드에서는 제어기를 바꿀 수 없습니다. 안정도·돔 간격을 바꾸려면 python -m ops.service.export --quality --spacing 으로 다시 생성합니다. 점선은 돔 1대만 본 방향(위치 미확정)입니다.';
+    $('replayBtn').disabled=true;
+  }
+  else if(full){
+    const sel=$('ctrlSel');if(!sel.options.length){const g1=el('optgroup',{label:'가상 (목표 성능 가정)'}),g2=el('optgroup',{label:'Arena 제출 · 시뮬레이션 실측 (2026-10-10 스냅샷)'});for(const c of CONTROLLERS)(c.virtual?g1:g2).append(new Option(c.name,c.id));sel.append(g1,g2)}
+    sel.value=S.ctrl;
+    const c=ctrl();const info=$('ctrlInfo');info.replaceChildren();
+    const kv=(k,v)=>info.append(el('dt',{},k),el('dd',{},v));
+    if(c.arena){kv('지표',c.arena.metric);kv('참가자',c.arena.p);kv('점수',c.arena.score.toFixed(3)+' m·s');kv('평균 체공',c.arena.dur.toFixed(2)+'초');kv('뒤집힘',Math.round(c.arena.flip*100)+'%');kv('평균 최대 기울기',c.arena.tilt+'°');kv('관측 안정도',Math.round(c.q*100)+'% (기울기 기반 환산)')}
+    else{kv('관측 안정도',Math.round(c.q*100)+'% (가정값)');kv('근거','실측 아님 · 목표 성능 가정')}
+    $('ctrlNote').textContent=c.arena?'현재 Arena 제출 Agent는 시뮬레이션에서 모두 약 1초 안에 뒤집혀(뒤집힘 100%) 관측 안정도가 매우 낮습니다. 관측 범위가 크게 줄어 표적 대부분을 놓치는 것을 확인할 수 있습니다.':'가상 가정값입니다. 실제 제어기 성능이 확보되면 Arena 결과로 교체합니다.';
+    $('replayBtn').disabled=!c.arena;
+  }
+  const list=$('nodeList');list.replaceChildren(...NODES.map(n=>{const q=nodeQ(n);const tilt=RP?(S.nodeState[n.id]?.tilt??0):(1-q)*(ctrl().arena?170:40)+Math.abs(gaussSafe())*(1-q)*6;const st=q>.8?['좋음','good']:q>.5?['저하','warn']:['불안정','bad'];const seen=active().filter(t=>Math.hypot(t.x-n.x,t.y-n.y)<nodeR(n)).length;
+    return el('div',{class:'node'},el('header',{},el('b',{},n.id),el('span',{class:'badge '+st[1]},'관측 '+st[0]),n.note?el('span',{class:'badge'},n.note):null),
+      el('dl',{class:'kv'},el('dt',{},'자세 안정도'),el('dd',{},el('div',{class:'bar'},el('i',{style:`width:${Math.round(q*100)}%;background:${q>.8?'var(--accent)':q>.5?'var(--med)':'var(--crit)'}`}))),el('dt',{},'현재 기울기'),el('dd',{class:'num'},Math.min(180,tilt).toFixed(0)+'°'),el('dt',{},'관측 범위'),el('dd',{class:'num'},(nodeR(n)/1000).toFixed(2)+' km'),el('dt',{},'고도'),el('dd',{},n.alt+' m'),el('dt',{},'탐지 중'),el('dd',{},seen+' 표적')))}));
+  $('nWind').textContent=windTxt();
+}
+function gaussSafe(){return Math.sqrt(-2*Math.log(Math.random()+1e-9))*Math.cos(6.283*Math.random())}
+
+function renderTargets(){
+  const list=ranked().concat(active().filter(t=>t.status==='tentative'));
+  if(!S.sel||!S.tracks[S.sel]||!active().includes(S.tracks[S.sel]))S.sel=ranked()[0]?.id||null;
+  $('tList').replaceChildren(...list.map(t=>el('li',{class:t.id===S.sel?'on':'',onclick:()=>{S.sel=t.id;renderDom(true)}},
+    el('span',{class:'lvl '+t.level},t.status==='tentative'?'확인 중':t.level),
+    el('div',{},el('div',{},`${t.id} · ${CLS[t.cls]}`,t.rid?' · RID':''),el('div',{class:'sub'},`TTI ${fmtTTI(t.tti)} · ${t.zone?t.zone.name:'—'}`)),
+    el('span',{class:'num muted'},t.score))));
+  const d=$('tDetail');const t=S.tracks[S.sel];
+  if(!t){d.replaceChildren(el('div',{class:'empty'},'표적을 선택하세요.'));return}
+  const p=t.probs;const tot=Object.values(p).reduce((a,b)=>a+b,0);
+  const speed=Math.hypot(t.vx,t.vy);
+  d.replaceChildren(
+    el('div',{style:'display:flex;align-items:center;gap:10px'},el('h2',{},t.id),el('span',{class:'lvl '+t.level},t.level),el('span',{class:'muted num'},'점수 '+t.score)),
+    el('h3',{style:'margin-top:14px'},'식별'),
+    el('div',{class:'classbar'},...['balloon','drone','bird','unknown'].map(k=>el('i',{style:`width:${p[k]/tot*100}%;background:${COL[k]}`,title:CLS[k]}))),
+    el('div',{style:'font-size:12px'},['balloon','drone','bird','unknown'].map(k=>`${CLS[k]} ${Math.round(p[k]/tot*100)}%`).join(' · ')),
+    el('dl',{class:'kv',style:'margin-top:8px'},
+      el('dt',{},'근거'),t.basis?el('dd',{},...t.basis.map(b=>el('div',{},b))):el('dd',{},t.cls==='unknown'?`판정 대기 (관측 ${Math.round(S.t-t.first)}/35초)`:t.rid?'Remote ID 수신':`바람 대비 속도 ${t.airMean?.toFixed(1)} m/s ${t.cls==='balloon'?'≈ 0 → 바람을 따라 흐름':'→ 스스로 이동'}`),
+      el('dt',{},'Remote ID'),el('dd',{},t.rid||'없음 (신원 미상)'),
+      el('dt',{},'속도·고도'),el('dd',{class:'num'},`${speed.toFixed(1)} m/s · ${Math.round(t.alt)} m`),
+      el('dt',{},'위치 오차'),el('dd',{class:'num'},`±${Math.round(t.sig)} m (노드 안정도 ${Math.round(t.q*100)}%)`)),
+    el('h3',{style:'margin-top:14px'},'위협도 = 적대 확률 × 피해 규모 × 긴급도'),
+    el('div',{class:'factors'},
+      el('div',{},el('small',{},'적대 확률'),el('b',{class:'num'},t.P.toFixed(2)),el('small',{},t.factors?.[0]??(t.rid?'허가 비행체':CLS[t.cls]+(t.rid?'':' · RID 없음')))),
+      el('div',{},el('small',{},'피해 규모'),el('b',{class:'num'},t.C.toFixed(2)),el('small',{},t.factors?.[1]??(t.fp?`낙하 예상 지점 인구 ${Math.round(t.popv*100)}%`:`${t.zone?.name||'—'} · 인구 ${Math.round(t.popv*100)}%`))),
+      el('div',{},el('small',{},'긴급도'),el('b',{class:'num'},t.U.toFixed(2)),el('small',{},t.factors?.[2]??(t.fp?`낙하까지 ${fmtTTI(t.fp.fall)}`:`TTI ${fmtTTI(t.tti)} · CPA ${Math.round(t.cpa)}m`)))),
+    (t.level==='HIGH'||t.level==='CRITICAL')?el('div',{style:'margin-top:14px'},el('button',{class:'primary',onclick:()=>{S.rsel=t.id;go('response')}},'③ 대응 결심으로 →')):el('p',{class:'muted',style:'margin-top:14px'},'HIGH 이상이 되면 대응 결심 대기열에 올라갑니다.')
+  );
+}
+
+function renderResponse(full){
+  const q=needsDecision().map(t=>({t,r:cardFor(t)})).sort((a,b)=>a.r.deadline-b.r.deadline);
+  if(!S.rsel||!q.some(x=>x.t.id===S.rsel))S.rsel=q[0]?.t.id||null;
+  $('qList').replaceChildren(...(q.length?q.map(({t,r})=>el('li',{class:t.id===S.rsel?'on':'',onclick:()=>{S.rsel=t.id;renderDom(true)}},
+    el('span',{class:'lvl '+t.level},t.level),
+    el('div',{},el('div',{},`${t.id} · ${CLS[t.cls]}`),el('div',{class:'sub'},'권고: '+ACT[r.rec])),
+    el('span',{class:'deadline num',style:`color:${r.deadline<60?'var(--crit)':r.deadline<180?'var(--high)':'var(--muted)'}`},fmtDL(r.deadline)))):[el('li',{class:'muted',style:'cursor:default'},'결정 대기 표적이 없습니다.')]));
+  const lg=$('logList');lg.replaceChildren(...(DECISIONS.length?DECISIONS.map(l=>{const d=l.decision;return el('li',{},el('b',{},`T+${fmtT(d.t)} ${d.track_id}`),` · ${DEC_KO[d.decision]}${d.action?' · '+ACT[d.action]:''}`,el('div',{class:'muted'},`권고 ${ACT[l.recommended_action]||'—'} · 결정 소요 ${l.latency_s??'—'}초${d.override_reason?' · 사유: '+d.override_reason:''}${l.override?' · 권고와 다름':''}`))}):[el('li',{class:'muted'},'아직 결정이 없습니다.')]));
+  const sm=decisionSummary();$('logSummary').textContent=sm.count?`${sm.count}건 · 권고와 다른 결정 ${Math.round(sm.override*100)}% · 평균 결정 소요 ${sm.latency??'—'}초 · 브라우저에 보관됨`:'결정은 이 브라우저에 보관되고, 내보내기로 서버 기록과 같은 형식의 파일을 받을 수 있습니다.';
+  if(!full)return updateDeadline(q);
+  const box=$('rCard');const cur=q.find(x=>x.t.id===S.rsel);
+  if(!cur){box.replaceChildren(el('div',{class:'panel empty'},'결정 대기 표적을 선택하세요.'));return}
+  const{t,r}=cur;
+  box.replaceChildren(
+    el('div',{class:'panel'},el('div',{style:'display:flex;align-items:center;gap:10px;flex-wrap:wrap'},el('h2',{},`${t.id} · ${CLS[t.cls]}${t.rid?'':' · Remote ID 없음'}`),el('span',{class:'lvl '+t.level},t.level),el('span',{class:'muted'},`${t.zone?.name||''} · TTI ${fmtTTI(t.tti)}`),el('span',{id:'dl',class:'deadline num',style:'margin-left:auto'},'결정 마감 '+fmtDL(r.deadline)))),
+    el('div',{class:'panel'},el('h3',{},'유사 사례 · RAG'),...(r.cases.length?r.cases.map(c=>el('div',{class:'case'},el('div',{},el('b',{},(c.date!=='—'?c.date+' ':'')+c.title),el('span',{class:'m'},`  유사도 ${Math.round(c.sim*100)}% · ${c.matched.join('·')} 일치`)),el('div',{},'조치: '+c.actions),el('div',{},'결과: '+c.outcome),el('div',{class:'m'},'제약: '+c.cons+' · 출처: ',r.real?el('a',{href:c.src,target:'_blank',rel:'noopener'},new URL(c.src).hostname):c.src,' '),el('span',{class:'tag'},r.real?'공개 보도 기준':'예시 · 출처 확인 전'))):[el('p',{class:'muted'},'유사 사례 없음 → 관측 지속 권고')])),
+    el('div',{class:'panel'},el('h3',{},r.real?`법적·작전적 제약 · RAG (색인 ${r.version})`:'법적·작전적 제약 · RAG'),el('ul',{class:'cons'},...r.cons.map(c=>el('li',{},el('b',{},`[${c.kind}] `),c.text,c.ref?el('span',{class:'tag'},` (${c.ref})`):null,el('span',{class:'muted'},` → ${c.applies}`),c.quote?el('div',{class:'muted',style:'font-size:11px;margin:2px 0 6px'},`“${c.quote}”`+(c.verified?' · 원문 대조 확인':'')):null)))),
+    el('div',{class:'panel'},el('h3',{},'대응 단계 · 권고'),
+      el('div',{class:'ladder'},...LADDER.map(a=>{const s=r.st[a];const cls=a===r.rec?'rec':s==='allowed'?'allowed':s==='cond'?'cond':s==='excluded'?'excluded':'';const sub=a===r.rec?'권고':s==='allowed'?'허용':s==='cond'?'조건부':s==='excluded'?'제외':'범위 밖';return el('div',{class:cls},el('b',{},ACT[a]),el('small',{},sub))})),
+      el('p',{style:'font-size:12px;line-height:1.7;margin:10px 0 0'},el('b',{},'근거: '),r.why)),
+    el('div',{class:'panel'},el('h3',{},'대응별 부수 피해'),el('table',{},el('tr',{},el('th',{},'대응'),el('th',{},'상태'),el('th',{},'부수 피해'),el('th',{},'비고')),...LADDER.map(a=>{const[c,n]=collateral(t,a);return el('tr',{style:a===r.rec?'background:#16302c':''},el('td',{},ACT[a]),el('td',{},{allowed:'허용',cond:'조건부',excluded:'제외',out:'범위 밖'}[r.st[a]]+(a===r.rec?' · 권고':'')),el('td',{style:`color:${c==='높음'?'var(--crit)':c==='중간'?'var(--high)':c==='낮음'?'var(--med)':'var(--muted)'}`},c),el('td',{class:'muted'},n))}))),
+    el('div',{class:'panel'},el('h3',{},'결정'),
+      el('div',{class:'decide'},el('label',{class:'muted'},'대응 '),(()=>{const s=el('select',{id:'decAct'});for(const a of LADDER)if(r.st[a]!=='out'){const o=new Option(ACT[a]+(a===r.rec?' (권고)':r.st[a]==='excluded'?' (제외됨)':r.st[a]==='cond'?' (조건부)':''),a);s.append(o)}s.value=r.rec;s.onchange=()=>{$('reason').hidden=s.value===r.rec};return s})(),
+        el('button',{class:'primary',onclick:()=>decide(t,r,'승인')},'승인'),el('button',{onclick:()=>decide(t,r,'보류')},'보류'),el('button',{onclick:()=>decide(t,r,'추가 관측')},'추가 관측')),
+      el('input',{id:'reason',placeholder:'권고와 다른 대응을 선택한 이유 (필수)',hidden:'',style:'width:100%;margin-top:8px'}),
+      el('p',{class:'notice',style:'margin:10px 0 0'},'AI는 선택지와 근거만 제시합니다. 최종 결정과 실행은 운용자가 합니다.'))
+  );
+}
+function updateDeadline(q){const c=q.find(x=>x.t.id===S.rsel);const d=$('dl');if(c&&d){d.textContent='결정 마감 '+fmtDL(c.r.deadline);d.style.color=c.r.deadline<60?'var(--crit)':c.r.deadline<180?'var(--high)':''}}
+/* ⑧ decision log: same line format as ops/service/decisions.py (DecisionLog) */
+const STORE_KEY='skysailor-ops-decisions';
+const DEC_KO={approve:'승인',hold:'보류',observe_more:'추가 관측',dismiss:'해제'},DEC_EN={'승인':'approve','보류':'hold','추가 관측':'observe_more'};
+let DECISIONS=(()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch(e){return[]}})();
+const saveDecisions=()=>{try{localStorage.setItem(STORE_KEY,JSON.stringify(DECISIONS))}catch(e){}};
+function decisionSummary(){const n=DECISIONS.length,lat=DECISIONS.map(l=>l.latency_s).filter(x=>x!=null);
+  return{count:n,override:n?DECISIONS.filter(l=>l.override).length/n:0,latency:lat.length?Math.round(lat.reduce((a,b)=>a+b,0)/lat.length*10)/10:null}}
+function exportDecisions(){const body=[...DECISIONS].reverse().map(l=>JSON.stringify(l)).join('\n')+'\n';
+  const a=el('a',{href:URL.createObjectURL(new Blob([body],{type:'application/x-ndjson'})),download:'decisions.jsonl'});document.body.append(a);a.click();a.remove()}
+function decide(t,r,decision){
+  const act=$('decAct').value;const reason=$('reason').value.trim();
+  if(decision==='승인'&&act!==r.rec&&!reason){$('reason').hidden=false;$('reason').focus();$('reason').style.borderColor='var(--crit)';return}
+  const latency=S.t-(S.firstAlert[t.id]??S.t),action=decision==='승인'?act:null,ref=Math.random().toString(16).slice(2,14).padEnd(12,'0');
+  DECISIONS.unshift({ref,logged_at:new Date().toISOString(),source:'prototype',
+    decision:{track_id:t.id,t:S.t,operator:'operator',decision:DEC_EN[decision],action,override_reason:action&&action!==r.rec?reason:null,snapshot_ref:ref},
+    recommended_action:r.rec,override:!!(action&&action!==r.rec),latency_s:Math.round(latency*10)/10,
+    threat:{track_id:t.id,level:t.level,score:t.score,p_hostile:t.P,consequence:t.C,urgency:t.U,tti_s:isFinite(t.tti)?t.tti:null,factors:t.factors||null},
+    recommendation:{recommended_action:r.rec,justification:r.why,index_version:r.version||null,evidence_sufficient:r.enough,action_status:r.st}});
+  saveDecisions();
+  if(SRV){const line=DECISIONS[0];
+    fetch('/api/ops/decision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({decision:line.decision})})
+      .then(async r=>{const b=await r.json();if(r.ok){line.source='server';line.server_ref=b.snapshot_ref;saveDecisions();event(`${t.id} 결정 서버 저장 (${b.snapshot_ref})`)}else event(`${t.id} 결정 서버 저장 실패: ${b.detail||r.status}`,'warn');renderDom(true)})
+      .catch(()=>event(`${t.id} 결정 서버 저장 실패: 연결 없음 (브라우저에만 보관)`,'warn'))}
+  if(decision!=='추가 관측')S.decided[t.id]=decision;
+  event(`${t.id} 결정: ${decision} · ${ACT[decision==='승인'?act:'observe']}`,'');
+  S.rsel=null;renderDom(true);
+}
+
+/* ---------------- loop ---------------- */
+let lastDom=0,lastSig='';
+function renderDom(full=false){
+  renderTop();
+  if(screen==='main')renderMain();
+  if(screen==='nodes')renderNodes(full);
+  if(screen==='targets')renderTargets();
+  if(screen==='response'){const sig=needsDecision().map(t=>t.id).join()+'|'+S.rsel+'|'+DECISIONS.length;renderResponse(full||sig!==lastSig);lastSig=sig}
+}
+let acc=0,prev=performance.now();
+function frame(now){
+  const dt=Math.min(.1,(now-prev)/1000);prev=now;
+  if(!S.paused&&!SRV){if(RP){acc+=dt*S.speed;let moved=false;while(acc>=RP.meta.dt){acc-=RP.meta.dt;S.ri++;moved=true;if(S.ri>=RP.frames.length){reset();moved=false;break}}if(moved)replayFrame(RP.frames[S.ri])}
+    else{acc+=dt*S.speed;while(acc>=1){step(1);acc-=1}if(S.t>1500){reset()}}}
+  if(screen==='main')drawMap($('mapMain'),{compact:true,fp:true});
+  if(screen==='nodes')drawMap($('mapNodes'),{truth:true,compact:!RP});
+  if(screen==='targets')drawMap($('mapTargets'),{fp:true,sel:S.sel});
+  if(now-lastDom>500){lastDom=now;renderDom(false)}
+  requestAnimationFrame(frame);
+}
+
+/* ---------------- controls ---------------- */
+$('speed').onchange=()=>{S.speed=+$('speed').value;if(SRV)ctl('speed',S.speed)};
+$('pause').onclick=()=>{S.paused=!S.paused;$('pause').textContent=S.paused?'재개':'일시정지';if(SRV)ctl(S.paused?'pause':'resume')};
+$('restart').onclick=()=>{if(SRV){ctl('restart');return}const c=S.ctrl;reset();S.ctrl=c;renderDom(true)};
+$('ctrlSel').onchange=()=>{S.ctrl=$('ctrlSel').value;event(`탑재 제어기 변경: ${ctrl().name}`);renderDom(true)};
+$('replayBtn').onclick=()=>{const c=ctrl();if(!c.arena)return;$('replayTitle').textContent='Arena 비행 다시보기 · '+c.arena.name;$('replayFrame').src=`${LIVE}/game/?embed=1&replay=${encodeURIComponent(c.arena.replay)}`;$('replayDlg').showModal()};
+$('exportLog').onclick=exportDecisions;
+$('replayClose').onclick=()=>{$('replayDlg').close();$('replayFrame').removeAttribute('src')};
+$('mapTargets').onclick=e=>{const t=pickTrack($('mapTargets'),e);if(t){S.sel=t.id;renderDom(true)}};
+$('mapMain').onclick=e=>{const t=pickTrack($('mapMain'),e);if(t){S.sel=t.id;go('targets')}};
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(['main','nodes','targets','response'].includes(h)&&h!==screen)go(h)});
+
+(async()=>{
+  if(location.protocol.startsWith('http')&&!/[?&]mode=(sim|replay)/.test(location.search)){
+    try{const r=await fetch('/api/ops/meta');if(r.ok){RP={meta:await r.json(),frames:[]};SRV=true;applyMeta(RP.meta)}}catch(e){}
+  }
+  if(RP){$('speed').innerHTML='<option value="1">1×</option><option value="2" selected>2×</option><option value="5">5×</option>';
+    document.querySelector('.banner').textContent=(SRV?`실시간 모드 · 로컬 ops 서버 연결 (${location.host})`:`재생 모드 · 미리 계산한 파일`)+` · 가상 입력: 돔 간격 ${RP.meta.spacing}m, 안정도 ${RP.meta.quality}, 시드 ${RP.meta.seed} · 사례·조문은 공개 자료 기준, 법적 근거는 후보이며 법률 검토 필요 · 부수 피해 인원은 가상 추정`}
+  reset();
+  go(['main','nodes','targets','response'].includes(location.hash.slice(1))?location.hash.slice(1):'main');
+  requestAnimationFrame(frame);
+  if(SRV)connectWS();
+})();
+</script>
+</body>
+</html>
