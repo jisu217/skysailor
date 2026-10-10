@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>상황도 표시 기준</title>
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
+<style>
+:root{--bg:#03070d;--text:#dce7f4;--muted:#7d93aa;--border:#88b8e329;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --friend:#3d7bff;--zone:#d1b47a;--low:#8a9bad;--med:#e6c84f;--high:#f0974a;--crit:#ef5b5b;--cov:#5f86ad}
+*{box-sizing:border-box}
+@font-face{font-family:"Pretendard Variable";font-weight:45 920;font-display:swap;src:url(vendor/pretendard/PretendardVariable.woff2) format("woff2-variations")}
+body{margin:0;background:var(--bg);color:var(--text);font:13px/1.6 "Pretendard Variable",-apple-system,"Apple SD Gothic Neo",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:20px;margin:0 0 4px;letter-spacing:-.3px}
+.sub{color:var(--muted);margin:0 0 28px}
+section{background:linear-gradient(135deg,#0a1521ed,#06101bea);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:16px}
+h2{font-size:13px;margin:0 0 4px;font-weight:600}
+.kicker{font-size:10px;letter-spacing:1.3px;color:#6c88a4;text-transform:uppercase;margin-bottom:6px}
+p.note{color:var(--muted);font-size:12px;margin:6px 0 12px}
+.grid{display:grid;gap:10px}
+.swatches{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.sw{display:flex;align-items:center;gap:10px;font-size:12px}
+.sw i{width:26px;height:14px;border-radius:2px;flex-shrink:0}
+.sw small{display:block;color:var(--muted);font-size:11px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border-bottom:1px solid #88b8e31a;padding:8px 6px;text-align:center;vertical-align:middle}
+th{color:var(--muted);font-weight:500;font-size:11px}
+td:first-child,th:first-child{text-align:left}
+.cards{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.card{border:1px solid #88b8e31a;border-radius:6px;padding:10px;background:#050c15}
+.card svg.demo{display:block;width:100%;height:150px;background:#0a1426;border-radius:4px}
+.card b{display:block;font-size:12px;margin:8px 0 2px}
+.card span{color:var(--muted);font-size:11px}
+.mono{font-family:var(--mono)}
+.sym{filter:drop-shadow(0 0 4px var(--glow))}
+.tag{display:inline-flex;align-items:center;gap:8px;font:10px/1.4 var(--mono);color:#cfe0f2;background:#07111bdd;border:1px solid #88b8e333;border-left:2px solid var(--high);padding:3px 7px;border-radius:2px}
+.tag em{font-style:normal;color:var(--muted)}
+.tag.x{flex-direction:column;align-items:flex-start;gap:1px}
+.diff li{margin:4px 0;color:#b8cce1;font-size:12px}
+@media (max-width:640px){th,td{padding:6px 3px}}
+</style>
+</head>
+<body>
+<main>
+  <h1>상황도 표시 기준</h1>
+  <p class="sub">① 기기 성능 · ② 표적 판단 도시 지도에 쓰는 색·선·기호. 바탕 모양으로 피아를 나누는 방식은 MIL-STD-2525 / APP-6 개념을 참고했습니다(표준 준수 구현 아님).</p>
+
+  <section>
+    <div class="kicker">1 · 색 규칙</div>
+    <h2>색은 세 가지 뜻을 섞지 않습니다: 종류, 위협 단계, 아군</h2>
+    <p class="note">종류 색은 표적 자체(3D 모형·기호 그림·꼬리표의 종류 글자)에만 칠합니다. 위협 색(회색·노랑·주황·빨강)과 지도 바탕(남색)·아군(하늘색)에 겹치지 않는 색으로 골랐습니다. 지도 위 다른 요소는 채운 면 없이 선 위주로 그립니다.</p>
+    <div class="grid swatches" style="margin-bottom:12px">
+      <div class="sw"><i style="background:#c58bff"></i><div>풍선<small>보라</small></div></div>
+      <div class="sw"><i style="background:#38e8f0"></i><div>드론<small>시안</small></div></div>
+      <div class="sw"><i style="background:#9be36b"></i><div>조류<small>연두</small></div></div>
+      <div class="sw"><i style="background:#f4f8fc"></i><div>미상<small>흰색</small></div></div>
+    </div>
+    <div class="grid swatches">
+      <div class="sw"><i style="background:#3d7bff;box-shadow:0 0 0 2px #e8f0f8"></i><div>아군 센서(돔)<small>파랑 채운 배지 + 흰 테두리</small></div></div>
+      <div class="sw"><i style="background:var(--low)"></i><div>LOW<small>관측</small></div></div>
+      <div class="sw"><i style="background:var(--med)"></i><div>MEDIUM<small>주의</small></div></div>
+      <div class="sw"><i style="background:var(--high)"></i><div>HIGH<small>결심 대기열</small></div></div>
+      <div class="sw"><i style="background:var(--crit)"></i><div>CRITICAL<small>즉시 결심</small></div></div>
+      <div class="sw"><i style="background:var(--zone)"></i><div>보호구역<small>평소엔 호박색 가는 선</small></div></div>
+      <div class="sw"><i style="background:var(--cov)"></i><div>관측 범위<small>저하 시 노랑·빨강</small></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">2 · 표적 기호</div>
+    <h2>그림과 그림 색 = 종류 · 바탕 모양 = 피아 · 테두리와 빛 = 위협 단계</h2>
+    <p class="note">"적성 의심"은 위협 HIGH 이상이면서 허가 목록에 없는 표적입니다. 적으로 확정하는 것은 운용자 결심이므로 화면은 "의심"까지만 표시합니다.</p>
+    <table id="symTable"></table>
+  </section>
+
+  <section>
+    <div class="kicker">2-1 · 도시 지도에서의 모습</div>
+    <h2>지도 위에서는 종류 색 3D 모형으로 그리고, 위협·피아는 꼬리표에 표시합니다</h2>
+    <p class="note">풍선 모양은 Skysailor 게임 장면(아레나 다시보기)의 풍선을 따랐습니다. 모형 둘레에는 테두리를 두지 않고 같은 색의 은은한 빛만 둡니다. 위협 단계는 꼬리표 왼쪽 막대·연결선·고도선 색, 적성 의심은 꼬리표 앞 "의심" 표시로 나타냅니다. 화면 크기는 확대·축소와 상관없이 일정합니다.</p>
+    <canvas id="modelPreview" style="width:100%;height:170px;display:block;background:#0a1426;border-radius:6px"></canvas>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);text-align:center;font-size:12px;color:var(--muted);margin-top:6px"><span>풍선</span><span>드론</span><span>조류</span><span>미상</span></div>
+  </section>
+
+  <section>
+    <div class="kicker">3 · 상태 표시</div>
+    <table id="stateTable"></table>
+  </section>
+
+  <section>
+    <div class="kicker">4 · 지도 위 요소</div>
+    <div class="grid cards">
+      <div class="card">
+        <svg class="demo" viewBox="0 0 240 150">
+          <circle cx="120" cy="78" r="56" fill="none" stroke="#d1b47a" stroke-width="1.3"/>
+          <circle cx="120" cy="78" r="50" fill="none" stroke="#d1b47a" stroke-width="0.8" stroke-dasharray="4 4" opacity=".6"/>
+          <text x="120" y="16" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" fill="#d1b47a" letter-spacing="1">ZONE A · 정부청사(가상)</text>
+        </svg>
+        <b>보호구역 · 평소</b><span>가는 이중선(바깥 실선, 안쪽 점선). 면 채움 없음. 기울여 보기에서는 상한 고도에 옅은 테두리만.</span>
+      </div>
+      <div class="card">
+        <svg class="demo" viewBox="0 0 240 150">
+          <circle cx="120" cy="78" r="56" fill="none" stroke="#f0974a" stroke-width="1.8"><animate attributeName="opacity" values="1;.35;1" dur="1.4s" repeatCount="indefinite"/></circle>
+          <circle cx="120" cy="78" r="50" fill="none" stroke="#f0974a" stroke-width="0.8" stroke-dasharray="4 4" opacity=".7"/>
+          <text x="120" y="16" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" fill="#f0974a" letter-spacing="1">ZONE A · T-003 TTI 58s</text>
+        </svg>
+        <b>보호구역 · 접근 경보</b><span>HIGH 이상 표적이 이 구역으로 향하면 그 표적의 위협 색으로 바뀌고 깜빡임. 꼬리표에 표적·도달 시간.</span>
+      </div>
+      <div class="card">
+        <svg class="demo" viewBox="0 0 240 150">
+          <line x1="70" y1="40" x2="150" y2="100" stroke="#e6c84f" stroke-width="1" stroke-dasharray="1 4" stroke-linecap="round"/>
+          <circle cx="150" cy="100" r="34" fill="none" stroke="#e6c84f" stroke-width="1" opacity=".8"/>
+          <path d="M143,100 H157 M150,93 V107" stroke="#e6c84f" stroke-width="1.4"/>
+          <circle cx="70" cy="40" r="10" fill="#06101b" stroke="#e6c84f" stroke-width="1.5"/>
+          <text x="190" y="140" text-anchor="end" font-family="ui-monospace,monospace" font-size="9" fill="#e6c84f">낙하 예상 · 반경 120 m · 317 s</text>
+        </svg>
+        <b>풍선 낙하 예측</b><span>예상 지점 십자 + 예상 범위 원 1개(확률 등고선 아님) + 점선 연결. MEDIUM 이상이거나 선택한 표적만.</span>
+      </div>
+      <div class="card">
+        <svg class="demo" viewBox="0 0 240 150">
+          <circle cx="95" cy="80" r="48" fill="none" stroke="#5f86ad" stroke-width="1" stroke-dasharray="5 4" opacity=".7"/>
+          <circle cx="150" cy="80" r="40" fill="none" stroke="#e6c84f" stroke-width="1" stroke-dasharray="5 4" opacity=".8"/>
+          <line x1="95" y1="80" x2="215" y2="25" stroke="#8ea4bd" stroke-width="0.8" stroke-dasharray="3 4" opacity=".45"/>
+          <circle cx="95" cy="80" r="8" fill="#06101b" stroke="#8cc8f0" stroke-width="1.5"/>
+          <circle cx="150" cy="80" r="8" fill="#06101b" stroke="#e6c84f" stroke-width="1.5"/>
+        </svg>
+        <b>관측 범위 · 방향선</b><span>관측 범위는 남색 점선, 자세 저하 시 노랑·빨강. 방향선은 아주 옅은 점선.</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">5 · 꼬리표</div>
+    <h2>고정폭 한 줄, 선택하면 두 줄</h2>
+    <p class="note">왼쪽 막대 색 = 위협 단계. 기호와 꼬리표는 가는 선으로 연결합니다.</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <span class="tag">T-003 <em>│</em> <b style="color:#38e8f0">UAV</b> <em>│</em> 106 m <em>│</em> 12 m/s</span>
+      <span class="tag x" style="border-left-color:var(--crit)"><span><b style="background:var(--crit);color:#06101b;padding:1px 4px;border-radius:2px;margin-right:4px">의심</b>T-003 <em>│</em> <b style="color:#38e8f0">UAV</b> <em>│</em> 106 m <em>│</em> 12 m/s</span><span><em>ZONE A · TTI 58 s · Remote ID 없음</em></span></span>
+      <span class="tag" style="border-left-color:var(--low)">T-002 <em>│</em> <b style="color:#38e8f0">UAV</b> <em>│</em> 81 m <em>│</em> RID 허가</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">6 · 레이어 기본값</div>
+    <table>
+      <tr><th>레이어</th><th>① 기기 성능</th><th>② 표적 판단</th></tr>
+      <tr><td>표적 기호·꼬리표</td><td>켬</td><td>켬</td></tr>
+      <tr><td>보호구역</td><td>켬</td><td>켬</td></tr>
+      <tr><td>관측 범위</td><td>켬 (강조)</td><td>켬 (옅게)</td></tr>
+      <tr><td>방향선</td><td>켬</td><td>끔</td></tr>
+      <tr><td>낙하 예측</td><td>끔</td><td>켬</td></tr>
+      <tr><td>인구 밀도</td><td>끔</td><td>끔</td></tr>
+    </table>
+    <p class="note">각 화면 지도 위 버튼으로 켜고 끕니다.</p>
+  </section>
+
+  <section>
+    <div class="kicker">7 · 표준과 다른 점</div>
+    <ul class="diff">
+      <li>표준은 피아를 틀 색으로도 구분하지만, 여기서는 테두리 색을 위협 단계에 씁니다(피아는 바탕 모양으로만).</li>
+      <li>표준의 문자·부호 대신 종류를 그림(드론·풍선·조류)으로 그립니다. 지도 바탕과 구별이 잘 되도록 한 선택입니다.</li>
+      <li>점선 테두리는 "확인 중(추적 미확정)" 표시입니다. 표준의 점선 의미(계획·예상)와 다릅니다.</li>
+      <li>"적성 의심"은 위협 점수로 붙는 표시이며, 표준의 적성(Hostile) 판정이 아닙니다.</li>
+      <li>조류는 중립 틀로 표시합니다.</li>
+    </ul>
+  </section>
+</main>
+
+<script type="module">
+import { symbol, TOK, AFFIL_KO, nodeSymbol } from './symbols.js';
+import * as THREE from 'three';
+import { makeModel, addModelLights } from './models.js';
+{
+  const cv = document.getElementById('modelPreview');
+  const r = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+  r.setPixelRatio(Math.min(devicePixelRatio, 2)); r.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene(); addModelLights(scene);
+  const cam = new THREE.OrthographicCamera(-2, 2, 0.75, -0.75, 0.1, 20); cam.position.set(0, 1.4, 4); cam.lookAt(0, 0, 0);
+  const ms = ['balloon', 'drone', 'bird', 'unknown'].map((c, i) => { const m = makeModel(c); m.position.x = -1.5+i; m.scale.setScalar(0.85/m.userData.size); if (c === 'balloon') m.position.y = 0.2; scene.add(m); return m; });
+  const fit = () => { const w = cv.clientWidth, h = cv.clientHeight; r.setSize(w, h, false); const a = w/h; cam.left = -0.75*a; cam.right = 0.75*a; cam.updateProjectionMatrix(); ms.forEach((m, i) => { m.position.x = (-1.5+i)*Math.min(1, 0.75*a/2); }); };
+  new ResizeObserver(fit).observe(cv); fit();
+  r.setAnimationLoop((now) => { const t = now/1000; ms.forEach((m) => { m.userData.animate?.(t); if (!m.userData.led) m.rotation.y = t*0.4; else m.rotation.y = t*0.4; }); r.render(scene, cam); });
+}
+const t = document.getElementById('symTable');
+const types = [['drone', '드론'], ['balloon', '풍선'], ['bird', '조류'], ['unknown', '미상']];
+const rows = [['unknown', 'LOW'], ['unknown', 'MEDIUM'], ['hostile', 'HIGH'], ['hostile', 'CRITICAL'], ['neutral', 'LOW']];
+t.innerHTML = `<tr><th>피아 · 위협</th>${types.map(([c, k]) => `<th>${k}</th>`).join('')}</tr>` +
+  rows.map(([a, l]) => `<tr><td>${AFFIL_KO[a]} · ${l}</td>${types.map(([c]) => `<td>${symbol({ affil: a, glyph: c, color: TOK.level[l], ink: TOK.type[c], size: 44 })}</td>`).join('')}</tr>`).join('') +
+  `<tr><td>아군 센서(돔)</td><td colspan="4" style="text-align:left">${nodeSymbol(1)} 정상 &nbsp; ${nodeSymbol(.7)} 자세 저하 &nbsp; ${nodeSymbol(.3)} 불안정</td></tr>`;
+document.getElementById('stateTable').innerHTML = `<tr><th>상태</th><th>기호</th><th>뜻</th></tr>
+  <tr><td>확인 중</td><td>${symbol({ affil: 'unknown', glyph: 'drone', color: TOK.level.LOW, tentative: true, size: 44 })}</td><td style="text-align:left">추적 미확정: 점선 테두리, 흐린 그림</td></tr>
+  <tr><td>선택</td><td>${symbol({ affil: 'hostile', glyph: 'drone', color: TOK.level.HIGH, ink: TOK.type.drone, sel: true, size: 44 })}</td><td style="text-align:left">흰 점선 바깥 고리</td></tr>
+  <tr><td>허가 드론</td><td>${symbol({ affil: 'neutral', glyph: 'drone', color: TOK.level.LOW, ink: TOK.type.drone, size: 44 })}</td><td style="text-align:left">Remote ID가 허가 목록에 있음: 둥근 네모 바탕</td></tr>`;
+</script>
+</body>
+</html>
