@@ -28,9 +28,15 @@ def health():
 
 @router.post('/decision', status_code=201)
 def post_decision(body: DecisionIn):
-    threat, rec, alert_t = body.threat, body.recommendation, body.alert_t
-    if snapshot_provider is not None and threat is None:
-        threat, rec, alert_t = snapshot_provider(body.decision.track_id)
+    # Client snapshot fields are accepted for compatibility, never trusted for auditing.
+    if snapshot_provider is None:
+        raise HTTPException(503, 'Server snapshot provider is unavailable')
+    track_id = body.decision.track_id
+    threat, rec, alert_t = snapshot_provider(track_id)
+    if threat is None:
+        raise HTTPException(404, 'No server snapshot exists for this track')
+    if threat.track_id != track_id or (rec is not None and rec.track_id != track_id):
+        raise HTTPException(409, 'Server snapshot does not match the decision track')
     try:
         ref = log.record(body.decision, threat, rec, alert_t)
     except OverrideReasonRequired as e:

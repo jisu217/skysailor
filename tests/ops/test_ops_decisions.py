@@ -45,6 +45,7 @@ def test_api_rejects_override_without_reason(tmp_path, monkeypatch):
     from fastapi.testclient import TestClient
     import ops.service.api as api
     monkeypatch.setattr(api, 'log', DecisionLog(tmp_path/'d.jsonl'))
+    monkeypatch.setattr(api, 'snapshot_provider', lambda track_id: (TH, REC, 90.0))
     app = FastAPI(); app.include_router(api.router)
     c = TestClient(app)
     body = dict(decision=_d(action='rf_jam').model_dump(), threat=TH.model_dump(), recommendation=REC.model_dump(), alert_t=90)
@@ -73,5 +74,53 @@ def test_server_live_ingest_and_decision_snapshot(tmp_path, monkeypatch):
         assert [(t['rid'], t['status']) for t in frame['tracks']] == [('TEST-1', 'confirmed')]
         with c.websocket_connect('/api/ops/ws') as ws:
             assert ws.receive_json()['type'] == 'meta'
-        r = c.post('/api/ops/decision', json=dict(decision=_d(decision='hold', action=None).model_dump()))
+        decision = _d(decision='hold', action=None).model_copy(update=dict(track_id=frame['tracks'][0]['id']))
+        r = c.post('/api/ops/decision', json=dict(decision=decision.model_dump()))
         assert r.status_code == 201
+        assert api.log.read()[-1]['threat']['track_id'] == decision.track_id
+
+
+@pytest.mark.parametrize('with_client_snapshot', [False, True])
+def test_api_uses_authoritative_snapshot(tmp_path, monkeypatch, with_client_snapshot):
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    import ops.service.api as api
+    monkeypatch.setattr(api, 'log', DecisionLog(tmp_path/'d.jsonl'))
+    calls = []
+
+    def snapshot(track_id):
+        calls.append(track_id)
+        return TH, REC, 90.0
+
+    monkeypatch.setattr(api, 'snapshot_provider', snapshot)
+    app = FastAPI(); app.include_router(api.router)
+    body = dict(decision=_d(decision='hold', action=None).model_dump())
+    if with_client_snapshot:
+        body.update(threat=TH.model_copy(update=dict(track_id='unrelated')).model_dump(),
+                    recommendation=REC.model_copy(update=dict(track_id='unrelated')).model_dump(),
+                    alert_t=0)
+    assert TestClient(app).post('/api/ops/decision', json=body).status_code == 201
+    (row,) = api.log.read()
+    assert calls == ['T-1']
+    assert row['threat'] == TH.model_dump()
+    assert row['recommendation'] == REC.model_dump()
+    assert row['latency_s'] == 10.0
+
+
+@pytest.mark.parametrize('snapshot,status', [
+    (None, 503),
+    ((None, None, None), 404),
+    ((TH.model_copy(update=dict(track_id='unrelated')), REC, 90), 409),
+    ((TH, REC.model_copy(update=dict(track_id='unrelated')), 90), 409),
+])
+def test_api_rejects_missing_or_mismatched_server_snapshot(tmp_path, monkeypatch, snapshot, status):
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    import ops.service.api as api
+    monkeypatch.setattr(api, 'log', DecisionLog(tmp_path/'d.jsonl'))
+    monkeypatch.setattr(api, 'snapshot_provider', None if snapshot is None else lambda track_id: snapshot)
+    app = FastAPI(); app.include_router(api.router)
+    body = dict(decision=_d(decision='hold', action=None).model_dump(),
+                threat=TH.model_dump(), recommendation=REC.model_dump(), alert_t=90)
+    assert TestClient(app).post('/api/ops/decision', json=body).status_code == status
+    assert api.log.read() == []
