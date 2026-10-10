@@ -1,0 +1,32 @@
+{
+  "case_id": "kr-2024-06-incheon-balloon",
+  "title": "북한 오물풍선 인천공항 낙하 (활주로 운영 중단)",
+  "date": "2024-06-01",
+  "country": "kr",
+  "target_class": "balloon",
+  "count": 600,
+  "region": "서울·경기, 인천국제공항",
+  "zone_type": "airport",
+  "population": "medium",
+  "rid": "none",
+  "actions_taken": [
+    "탐지·추적",
+    "인천공항 활주로 운영 일시 중단",
+    "낙하 후 수거"
+  ],
+  "max_action": "alert",
+  "outcome": "6.1~2 인천공항 주변에 10개 낙하, 활주로 3차례 운영 중단. 항공기 51편 지연, 5편 김포 회항",
+  "collateral": "항공편 지연·회항. 엔진 흡입 시 손상 위험 지적",
+  "constraints": [
+    "격추 시 낙하 과정에서 민간 피해 우려",
+    "내용물이 위험물일 경우 격추 시 위험 증가",
+    "사격 탄이 군사분계선 이북으로 넘어갈 가능성"
+  ],
+  "sources": [
+    "https://www.newsis.com/view/NISX20240607_0002764359",
+    "https://www.segye.com/newsView/20240602504234"
+  ],
+  "notes": [
+    "count=600은 6.1~6.2 전국 식별 수(정의서 인용). 인천공항 주변 낙하는 10개"
+  ]
+}

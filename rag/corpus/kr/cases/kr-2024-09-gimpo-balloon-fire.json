@@ -1,0 +1,32 @@
+{
+  "case_id": "kr-2024-09-gimpo-balloon-fire",
+  "title": "김포공항 인근 공장 화재 (오물풍선 기폭장치 추정 물체 발견)",
+  "date": "2024-09-05",
+  "country": "kr",
+  "target_class": "balloon",
+  "count": 1,
+  "region": "경기 김포 (김포공항에서 2~3km)",
+  "zone_type": "residential",
+  "population": "medium",
+  "rid": "none",
+  "actions_taken": [
+    "화재 발생",
+    "소방 진화 (1시간 17분)",
+    "지붕에서 기폭장치 추정 물체·잔해 발견",
+    "원인 조사"
+  ],
+  "max_action": "observe",
+  "outcome": "자동차부품 공장 건물 화재. 지붕에서 오물풍선 기폭장치 추정 물체 발견",
+  "collateral": "공장 건물 소실",
+  "constraints": [
+    "풍선의 발열 타이머 장치가 불완전 분리된 채 낙하하면 화재 가능 (합참 분석)"
+  ],
+  "sources": [
+    "https://www.ajunews.com/view/20240909204904517",
+    "https://www.newdaily.co.kr/site/data/html/2024/09/10/2024091000155.html"
+  ],
+  "notes": [
+    "소방은 기폭장치, 합참은 발열 타이머로 설명이 다름",
+    "화재 원인은 보도 시점에 조사 중"
+  ]
+}

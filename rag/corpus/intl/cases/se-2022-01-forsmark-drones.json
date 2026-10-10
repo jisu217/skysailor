@@ -1,0 +1,30 @@
+{
+  "case_id": "se-2022-01-forsmark-drones",
+  "title": "스웨덴 포르스마르크 등 원전 상공 드론",
+  "date": "2022-01-14",
+  "country": "se",
+  "target_class": "drone",
+  "count": null,
+  "region": "스웨덴 포르스마르크·오스카르스함·링할스 원전",
+  "zone_type": "power",
+  "population": "low",
+  "rid": "unknown",
+  "actions_taken": [
+    "경비원 목격·신고",
+    "경찰 순찰·헬기 수색",
+    "보안경찰(Säpo)이 수사 인계",
+    "국가 특별 사건으로 분류"
+  ],
+  "max_action": "report",
+  "outcome": "드론 포획·조종자 특정 못 함",
+  "constraints": [
+    "헬기 수색으로도 드론을 잡지 못함"
+  ],
+  "sources": [
+    "https://dronexl.co/2022/01/17/swedish-police-drone-nuclear-plant",
+    "https://next.sr.se/artikel/police-confirm-another-drone-sighting-over-nuclear-power-plant"
+  ],
+  "notes": [
+    "경찰이 공식 확인한 건수와 Säpo가 밝힌 원전 수가 다름"
+  ]
+}

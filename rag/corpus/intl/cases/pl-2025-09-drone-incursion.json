@@ -1,0 +1,30 @@
+{
+  "case_id": "pl-2025-09-drone-incursion",
+  "title": "러시아 드론 폴란드 영공 침범과 격추",
+  "date": "2025-09-10",
+  "country": "pl",
+  "target_class": "drone",
+  "count": 19,
+  "region": "폴란드 동부",
+  "zone_type": "residential",
+  "population": "low",
+  "rid": "none",
+  "actions_taken": [
+    "탐지·추적 (약 7시간)",
+    "폴란드·NATO 전투기 투입 (F-16, F-35)",
+    "최소 3대 격추",
+    "NATO 조약 4조 협의 요청"
+  ],
+  "max_action": "kinetic",
+  "outcome": "일부 격추, NATO 4조 협의 발동",
+  "collateral": "주택 지붕 파손 등 재산 피해. 인명 피해 없음",
+  "constraints": [],
+  "sources": [
+    "https://en.wikipedia.org/wiki/2025_Russian_drone_incursion_into_Poland",
+    "https://www.gmfus.org/news/kremlin-again-tests-natos-frontline"
+  ],
+  "notes": [
+    "count=19는 총리가 밝힌 영공 침범 건수",
+    "격추 수는 3~8대로 출처마다 다름"
+  ]
+}

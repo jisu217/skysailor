@@ -1,0 +1,28 @@
+{
+  "case_id": "us-2023-02-lake-huron-object",
+  "title": "휴런호 상공 미확인 비행체 격추",
+  "date": "2023-02-12",
+  "country": "us",
+  "target_class": "balloon",
+  "count": 1,
+  "region": "미국·캐나다 휴런호 상공 (인구 밀집 지역 인근)",
+  "zone_type": "military",
+  "population": "low",
+  "rid": "none",
+  "actions_taken": [
+    "추적",
+    "호수 상공에서 격추"
+  ],
+  "max_action": "kinetic",
+  "outcome": "팔각형 물체, 탑재물 식별 안 됨",
+  "constraints": [
+    "인구 밀집 지역과 가까워 수면 상공에서 처리"
+  ],
+  "sources": [
+    "https://www.pbs.org/newshour/nation/unidentified-object-downed-by-u-s-fighter-jets-over-lake-huron"
+  ],
+  "notes": [
+    "격추 순서 집계(3번째/4번째)는 2.4 정찰 풍선 포함 여부에 따라 다름",
+    "수면 상공에서 처리한 이유를 공식 설명한 자료는 확인하지 못함 (constraints는 정황)"
+  ]
+}

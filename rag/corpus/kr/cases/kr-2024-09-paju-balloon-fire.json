@@ -1,0 +1,30 @@
+{
+  "case_id": "kr-2024-09-paju-balloon-fire",
+  "title": "오물풍선 파주 창고 지붕 화재",
+  "date": "2024-09-08",
+  "country": "kr",
+  "target_class": "balloon",
+  "count": 1,
+  "region": "경기 파주 광탄면 제약회사 창고",
+  "zone_type": "residential",
+  "population": "low",
+  "rid": "none",
+  "actions_taken": [
+    "화재 발생",
+    "소방 진화",
+    "현장 군 인계"
+  ],
+  "max_action": "observe",
+  "outcome": "창고 지붕 330㎡ 소실",
+  "collateral": "재산 피해 약 8,700만원 (소방 추산). 인명 피해 없음",
+  "constraints": [
+    "낙하 후 수거 방침 유지: 인화성 물질·폭발물은 확인되지 않았고 자연 낙하 후 수거가 가장 안전하다는 군 입장"
+  ],
+  "sources": [
+    "https://www.twig24.com/news/accident/2024/09/09/20240909500062",
+    "https://www.newdaily.co.kr/site/data/html/2024/09/10/2024091000155.html"
+  ],
+  "notes": [
+    "동원 인력·장비 수는 보도마다 다름"
+  ]
+}

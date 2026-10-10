@@ -1,0 +1,29 @@
+{
+  "case_id": "kr-2014-03-paju-drone",
+  "title": "북한 무인기 파주 추락 발견 (청와대 촬영)",
+  "date": "2014-03-24",
+  "country": "kr",
+  "target_class": "drone",
+  "count": 1,
+  "region": "경기 파주 (서울 상공 비행)",
+  "zone_type": "capital",
+  "population": "medium",
+  "rid": "none",
+  "actions_taken": [
+    "비행 중 탐지 못 함",
+    "추락 후 발견·수거",
+    "정밀 분석으로 북한제 확인"
+  ],
+  "max_action": "observe",
+  "outcome": "청와대 등 수도권 핵심 시설 사진 193장 촬영. 비행 중에는 탐지되지 않음",
+  "constraints": [
+    "소형 무인기를 탐지할 레이더가 없었다고 국방부가 인정"
+  ],
+  "sources": [
+    "https://twig24.com/news/diplomacy/2014/04/04/20140404003007",
+    "https://www.dailian.co.kr/news/view/430786/"
+  ],
+  "notes": [
+    "백령도(3.31), 삼척(4.6) 무인기와 같은 시기 발견. 세부 수치는 보도마다 차이 있음"
+  ]
+}

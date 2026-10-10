@@ -1,0 +1,30 @@
+{
+  "case_id": "de-2025-10-munich-drones",
+  "title": "뮌헨 공항 드론 목격으로 이틀 연속 운항 중단",
+  "date": "2025-10-02",
+  "country": "de",
+  "target_class": "drone",
+  "count": null,
+  "region": "독일 뮌헨 공항",
+  "zone_type": "airport",
+  "population": "medium",
+  "rid": "unknown",
+  "actions_taken": [
+    "관제 비행 제한",
+    "이틀 연속 운항 중단",
+    "경찰 수색"
+  ],
+  "max_action": "alert",
+  "outcome": "이륙 17편 취소·도착 15편 회항 (10.2). 드론 정체 미확인",
+  "constraints": [
+    "목격이 확인되지 않은 상태에서도 예방적으로 운항 제한"
+  ],
+  "sources": [
+    "https://www.business-standard.com/world-news/munich-airport-suspends-flights-again-after-fresh-drone-sightings-125100400115_1.html",
+    "https://ukrinform.net/rubric-emergencies/4128831-munich-airport-temporarily-suspends-flights-after-drone-sighting.html"
+  ],
+  "notes": [
+    "바이에른 주지사가 경찰의 드론 격추 허용 입법을 요구",
+    "항공편 수치는 보도마다 다름"
+  ]
+}

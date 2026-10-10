@@ -1,0 +1,28 @@
+{
+  "case_id": "kr-2024-07-yongsan-balloon",
+  "title": "북한 오물풍선 대통령실 경내 낙하",
+  "date": "2024-07-24",
+  "country": "kr",
+  "target_class": "balloon",
+  "count": null,
+  "region": "서울 용산 대통령실",
+  "zone_type": "capital",
+  "population": "high",
+  "rid": "none",
+  "actions_taken": [
+    "실시간 위치 감시",
+    "낙하 후 안전점검·수거"
+  ],
+  "max_action": "observe",
+  "outcome": "대통령실 경내 첫 낙하물 발견. 위험성·오염성 없음 확인 후 수거 (10.24 두 번째 낙하)",
+  "constraints": [
+    "격추 대신 낙하 후 수거 방침 유지 (민간 피해 우려)"
+  ],
+  "sources": [
+    "https://www.segye.com/newsView/20240724516258",
+    "https://www.kukinews.com/article/view/kuk202410240123"
+  ],
+  "notes": [
+    "풍선에 GPS가 없어 의도적 표적 여부는 단정하기 어렵다는 분석과 가능성을 배제할 수 없다는 지적이 함께 있음"
+  ]
+}

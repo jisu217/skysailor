@@ -1,0 +1,29 @@
+{
+  "case_id": "kr-2024-07-goyang-balloon-fire",
+  "title": "북한 오물풍선 고양 다세대주택 옥상 낙하 화재",
+  "date": "2024-07",
+  "country": "kr",
+  "target_class": "balloon",
+  "count": 1,
+  "region": "경기 고양시 덕양구 다세대주택",
+  "zone_type": "residential",
+  "population": "high",
+  "rid": "none",
+  "actions_taken": [
+    "낙하 후 화재 발생",
+    "소방 진화",
+    "군 인계·수거"
+  ],
+  "max_action": "observe",
+  "outcome": "옥상에 추락한 풍선이 터지며 화재 발생",
+  "collateral": "주거 건물 화재",
+  "constraints": [
+    "낙하 후 수거 방침 하에서는 낙하 지점의 피해를 막을 수 없음"
+  ],
+  "sources": [
+    "https://www.ytn.co.kr/_ln/0134_202409091626455415"
+  ],
+  "notes": [
+    "세부 피해 규모는 공개 보도에서 확인하지 못함"
+  ]
+}

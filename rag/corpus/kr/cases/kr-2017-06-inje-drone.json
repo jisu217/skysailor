@@ -1,0 +1,27 @@
+{
+  "case_id": "kr-2017-06-inje-drone",
+  "title": "북한 무인기 인제 추락 발견 (사드 기지 촬영)",
+  "date": "2017-06-09",
+  "country": "kr",
+  "target_class": "drone",
+  "count": 1,
+  "region": "강원 인제 (경북 성주까지 비행)",
+  "zone_type": "military",
+  "population": "low",
+  "rid": "none",
+  "actions_taken": [
+    "비행 중 탐지 못 함",
+    "추락 후 발견·수거",
+    "북한 소행 확인 발표 (6.21)",
+    "유엔사에 조사 요청"
+  ],
+  "max_action": "observe",
+  "outcome": "성주 사드 기지 일대 촬영. 엔진 이상으로 추락",
+  "constraints": [
+    "소형 무인기 탐지 공백 (2014년 이후에도 지속)"
+  ],
+  "sources": [
+    "https://www.newsis.com/view/NISX20170621_0000018984",
+    "https://www.newdaily.co.kr/site/data/html/2017/06/15/2017061500024.html"
+  ]
+}

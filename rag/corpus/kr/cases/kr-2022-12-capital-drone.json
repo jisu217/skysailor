@@ -1,0 +1,34 @@
+{
+  "case_id": "kr-2022-12-capital-drone",
+  "title": "북한 무인기 5대 영공 침범 (서울 비행금지구역 진입)",
+  "date": "2022-12-26",
+  "country": "kr",
+  "target_class": "drone",
+  "count": 5,
+  "region": "서울·경기 파주·강화",
+  "zone_type": "capital",
+  "population": "high",
+  "rid": "none",
+  "actions_taken": [
+    "탐지·추적",
+    "경고방송·경고사격",
+    "전투기·경공격기·공격헬기 투입",
+    "공격헬기 기관포 약 100발 사격",
+    "격추 실패"
+  ],
+  "max_action": "kinetic",
+  "outcome": "5대 모두 격추 실패. 1대는 용산 비행금지구역(P-73) 진입이 이후 확인됨",
+  "collateral": "인천·김포공항 민항기 이륙 한때 중단. 대응 중 KA-1 경공격기 1대 추락 (조종사 2명 탈출)",
+  "constraints": [
+    "첫 레이더 포착 후 6분 뒤에야 이상 항적으로 인지",
+    "약 2m 소형 글라이더형으로 탐지·격추 어려움"
+  ],
+  "sources": [
+    "https://mobile.newsis.com/view/NISX20221226_0002137059",
+    "https://mobile.newsis.com/view/NISX20221227_0002138515",
+    "https://mobile.newsis.com/view/NISX20230106_0002151085"
+  ],
+  "notes": [
+    "침범 시간(5~7시간)과 공항 조치(이륙 중단/착륙 중단)는 보도마다 표현이 다름"
+  ]
+}
