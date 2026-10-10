@@ -10,7 +10,7 @@ function ball(r,m,parent=scene){const o=new T.Mesh(new T.SphereGeometry(r,24,16)
 function rod(a,b,r,m,parent=scene){const o=new T.Mesh(new T.CylinderGeometry(r,r,1,16),m);parent.add(o);setRod(o,a,b);return o}
 function setRod(o,a,b){const d=new T.Vector3().subVectors(b,a);o.position.copy(a).add(b).multiplyScalar(.5);o.scale.y=d.length();o.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize())}
 function ring(radius,tube,m,parent=scene){const o=new T.Mesh(new T.TorusGeometry(radius,tube,12,96),m);o.rotation.x=Math.PI/2;parent.add(o);return o}
-const dome=new T.Group();scene.add(dome);const radius=(190*190+80*80)/160,theta=Math.asin(190/radius);const shell=new T.Mesh(new T.SphereGeometry(radius,64,24,0,Math.PI*2,0,theta),mat('#88c8c3',{transparent:true,opacity:.16,side:T.DoubleSide,depthWrite:false}));shell.position.y=80-radius;dome.add(shell);ring(190,2,teal,dome);
+const dome=new T.Group();scene.add(dome);const radius=(190*190+80*80)/160,theta=Math.asin(190/radius);const shell=new T.Mesh(new T.SphereGeometry(radius,64,24,0,Math.PI*2,0,theta),mat('#88c8c3',{transparent:true,opacity:.16,side:T.DoubleSide,depthWrite:false}));shell.position.y=80-radius;dome.add(shell);
 const base=new T.Group();scene.add(base);ring(190,2,white,base);
 const joint=ball(12,gold);const mass=joint;
 const actuators=[],mounts=[];
