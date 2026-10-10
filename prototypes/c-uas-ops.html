@@ -349,13 +349,14 @@ function replayFrame(fr){
   }
   for(const id in prev)if(!next[id]&&prev[id].status==='confirmed')event(`${id} 추적 종료`);
   S.tracks=next;
+  updatePending(fr.t);
 }
 
 /* ---------------- simulation ---------------- */
 let S;
 function rng(seed){let s=seed>>>0;return()=>((s=(s*1664525+1013904223)>>>0)/4294967296)}
 function reset(){
-  if(RP){S={t:0,paused:false,speed:+$('speed').value,ctrl:'v-target',truths:[],tracks:{},events:[],log:[],decided:{},sel:null,rsel:null,wind:{x:0,y:0},firstAlert:{},ri:0,nodeState:{},rays:[]};event(`${SRV?'실시간 연결':'재생 시작'} · ${RP.meta.source} · 돔 간격 ${RP.meta.spacing}m`);if(RP.frames.length)replayFrame(RP.frames[0]);return}
+  if(RP){S={t:0,paused:false,speed:+$('speed').value,ctrl:'v-target',truths:[],tracks:{},events:[],log:[],decided:{},sel:null,rsel:null,wind:{x:0,y:0},firstAlert:{},ri:0,nodeState:{},rays:[],pending:{}};event(`${SRV?'실시간 연결':'재생 시작'} · ${RP.meta.source} · 돔 간격 ${RP.meta.spacing}m`);if(RP.frames.length)replayFrame(RP.frames[0]);return}
   const r=rng(7);
   const truths=[];
   const bal=[[400,2600,0],[900,4200,40],[300,5600,90],[1400,3400,150],[700,6800,220]];
@@ -542,7 +543,33 @@ function pickTrack(cv,ev){const tf=cv._tf;if(!tf)return null;const r=cv.getBound
 /* ---------------- views ---------------- */
 const active=()=>Object.values(S.tracks).filter(t=>t.status==='confirmed'||t.status==='tentative');
 const ranked=()=>active().filter(t=>t.status==='confirmed').sort((a,b)=>b.score-a.score);
-const needsDecision=()=>ranked().filter(t=>(t.level==='HIGH'||t.level==='CRITICAL')&&!S.decided[t.id]&&(!RP||t.card));
+/* decision queue (replay/live): a target stays queued until decided or lost for PENDING_HOLD s, keeping its
+   last card; a new alert track close to a lost one continues it (same target, new track id) */
+const PENDING_HOLD=30,PENDING_LINK_M=250;
+const isAlert=t=>(t.level==='HIGH'||t.level==='CRITICAL')&&t.card;
+function updatePending(now){
+  const P=S.pending||(S.pending={});
+  for(const tr of Object.values(S.tracks)){
+    if(!isAlert(tr)||S.decided[tr.id])continue;
+    let prev=P[tr.id]?.prevId||null,prevTrack=P[tr.id]?.prevTrack||null;
+    if(!P[tr.id]){
+      const lost=Object.values(P).find(p=>p.stale&&now-p.seen<PENDING_HOLD&&Math.hypot(p.track.x-tr.x,p.track.y-tr.y)<PENDING_LINK_M);
+      if(lost){prev=lost.id;prevTrack=lost.track;S.firstAlert[tr.id]=S.firstAlert[lost.id]??S.firstAlert[tr.id];delete P[lost.id];
+        event(`${tr.id}: 추적이 끊겼던 ${lost.id}와 같은 표적으로 이어짐`);if(S.rsel===lost.id)S.rsel=tr.id}
+    }
+    // same target, new track id: keep the earlier identification and card until the new track is identified
+    const inherit=prevTrack&&tr.cls==='unknown'&&prevTrack.cls!=='unknown';
+    const shown=inherit?Object.assign(Object.create(tr),{cls:prevTrack.cls,probs:prevTrack.probs,card:prevTrack.card,inherited:true}):tr;
+    P[tr.id]={id:tr.id,track:shown,seen:now,stale:false,prevId:prev,prevTrack};
+  }
+  for(const p of Object.values(P)){
+    if(!S.tracks[p.id]||!isAlert(S.tracks[p.id]))p.stale=true;
+    if(S.decided[p.id]||now-p.seen>PENDING_HOLD)delete P[p.id];
+  }
+}
+const needsDecision=()=>RP
+  ?Object.values(S.pending||{}).filter(p=>!S.decided[p.id]).map(p=>Object.assign(Object.create(p.track),{stale:p.stale,staleFor:S.t-p.seen,prevId:p.prevId}))
+  :ranked().filter(t=>(t.level==='HIGH'||t.level==='CRITICAL')&&!S.decided[t.id]);
 let screen='main';
 function go(s){screen=s;for(const sc of document.querySelectorAll('.screen'))sc.classList.toggle('on',sc.id==='s-'+s);for(const a of document.querySelectorAll('.tabs a'))a.classList.toggle('on',a.dataset.go===s);for(const li of $('flow').children)li.classList.toggle('on',li.dataset.s===s);if(location.hash!=='#'+s)history.replaceState(null,'','#'+s);renderDom(true)}
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go)}});
@@ -634,7 +661,7 @@ function renderResponse(full){
   if(!S.rsel||!q.some(x=>x.t.id===S.rsel))S.rsel=q[0]?.t.id||null;
   $('qList').replaceChildren(...(q.length?q.map(({t,r})=>el('li',{class:t.id===S.rsel?'on':'',onclick:()=>{S.rsel=t.id;renderDom(true)}},
     el('span',{class:'lvl '+t.level},t.level),
-    el('div',{},el('div',{},`${t.id} · ${CLS[t.cls]}`),el('div',{class:'sub'},'권고: '+ACT[r.rec])),
+    el('div',{},el('div',{},`${t.id} · ${CLS[t.cls]}`+(t.prevId?` (이전 ${t.prevId})`:'')),el('div',{class:'sub'},'권고: '+ACT[r.rec]+(t.stale?` · 추적 끊김 ${Math.round(t.staleFor)}초`:''))),
     el('span',{class:'deadline num',style:`color:${r.deadline<60?'var(--crit)':r.deadline<180?'var(--high)':'var(--muted)'}`},fmtDL(r.deadline)))):[el('li',{class:'muted',style:'cursor:default'},'결정 대기 표적이 없습니다.')]));
   const lg=$('logList');lg.replaceChildren(...(DECISIONS.length?DECISIONS.map(l=>{const d=l.decision;return el('li',{},el('b',{},`T+${fmtT(d.t)} ${d.track_id}`),` · ${DEC_KO[d.decision]}${d.action?' · '+ACT[d.action]:''}`,el('div',{class:'muted'},`권고 ${ACT[l.recommended_action]||'—'} · 결정 소요 ${l.latency_s??'—'}초${d.override_reason?' · 사유: '+d.override_reason:''}${l.override?' · 권고와 다름':''}`))}):[el('li',{class:'muted'},'아직 결정이 없습니다.')]));
   const sm=decisionSummary();$('logSummary').textContent=sm.count?`${sm.count}건 · 권고와 다른 결정 ${Math.round(sm.override*100)}% · 평균 결정 소요 ${sm.latency??'—'}초 · 브라우저에 보관됨`:'결정은 이 브라우저에 보관되고, 내보내기로 서버 기록과 같은 형식의 파일을 받을 수 있습니다.';
@@ -643,6 +670,10 @@ function renderResponse(full){
   if(!cur){box.replaceChildren(el('div',{class:'panel empty'},'결정 대기 표적을 선택하세요.'));return}
   const{t,r}=cur;
   box.replaceChildren(
+    t.stale||t.prevId?el('div',{class:'panel',style:'border-color:var(--med);color:var(--med);font-size:12px'},
+      t.stale?`추적이 ${Math.round(t.staleFor)}초 전에 끊겼습니다. 마지막으로 받은 위협도·카드를 보여줍니다 (${PENDING_HOLD}초 동안 유지).`:'',
+      t.prevId?` 추적이 끊겼던 ${t.prevId}와 같은 표적으로 이어졌습니다. 결정 소요 시간은 처음 경보부터 계산합니다.`:'',
+      t.inherited?' 새 추적의 식별이 끝날 때까지 이전 판정과 카드를 유지합니다.':''):'',
     el('div',{class:'panel'},el('div',{style:'display:flex;align-items:center;gap:10px;flex-wrap:wrap'},el('h2',{},`${t.id} · ${CLS[t.cls]}${t.rid?'':' · Remote ID 없음'}`),el('span',{class:'lvl '+t.level},t.level),el('span',{class:'muted'},`${t.zone?.name||''} · TTI ${fmtTTI(t.tti)}`),el('span',{id:'dl',class:'deadline num',style:'margin-left:auto'},'결정 마감 '+fmtDL(r.deadline)))),
     el('div',{class:'panel'},el('h3',{},'유사 사례 · RAG'),...(r.cases.length?r.cases.map(c=>el('div',{class:'case'},el('div',{},el('b',{},(c.date!=='—'?c.date+' ':'')+c.title),el('span',{class:'m'},`  유사도 ${Math.round(c.sim*100)}% · ${c.matched.join('·')} 일치`)),el('div',{},'조치: '+c.actions),el('div',{},'결과: '+c.outcome),el('div',{class:'m'},'제약: '+c.cons+' · 출처: ',r.real?el('a',{href:c.src,target:'_blank',rel:'noopener'},new URL(c.src).hostname):c.src,' '),el('span',{class:'tag'},r.real?'공개 보도 기준':'예시 · 출처 확인 전'))):[el('p',{class:'muted'},'유사 사례 없음 → 관측 지속 권고')])),
     el('div',{class:'panel'},el('h3',{},r.real?`법적·작전적 제약 · RAG (색인 ${r.version})`:'법적·작전적 제약 · RAG'),el('ul',{class:'cons'},...r.cons.map(c=>el('li',{},el('b',{},`[${c.kind}] `),c.text,c.ref?el('span',{class:'tag'},` (${c.ref})`):null,el('span',{class:'muted'},` → ${c.applies}`),c.quote?el('div',{class:'muted',style:'font-size:11px;margin:2px 0 6px'},`“${c.quote}”`+(c.verified?' · 원문 대조 확인':'')):null)))),
@@ -693,7 +724,7 @@ function renderDom(full=false){
   if(screen==='main')renderMain();
   if(screen==='nodes')renderNodes(full);
   if(screen==='targets')renderTargets();
-  if(screen==='response'){const sig=needsDecision().map(t=>t.id).join()+'|'+S.rsel+'|'+DECISIONS.length;renderResponse(full||sig!==lastSig);lastSig=sig}
+  if(screen==='response'){const sig=needsDecision().map(t=>t.id+(t.stale?'~':'')).join()+'|'+S.rsel+'|'+DECISIONS.length;renderResponse(full||sig!==lastSig);lastSig=sig}
 }
 let acc=0,prev=performance.now();
 function frame(now){
