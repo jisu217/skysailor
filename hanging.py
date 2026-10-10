@@ -31,7 +31,7 @@ class HangingSim(DomeSim):
             ET.SubElement(guide,'geom',type='capsule',size='.001',fromto=' '.join(map(str,[*a,*outer])),rgba='.6 .75 .8 1')
         joint=ET.SubElement(hub,'body',name='connector',pos=f'0 0 {-self.hang}')
         for name,axis,limits in [('cx','1 0 0',(-rr*.6,rr*.6)),('cy','0 1 0',(-rr*.6,rr*.6)),('cz','0 0 1',(-.04,min(.04,self.hang-.02)))]:
-            ET.SubElement(joint,'joint',name=name,type='slide',axis=axis,limited='true',range=f'{limits[0]} {limits[1]}')
+            ET.SubElement(joint,'joint',name=name,type='slide',axis=axis,**({'limited':'false'} if direct else {'limited':'true','range':f'{limits[0]} {limits[1]}'}))
         if direct:
             # Translation-only idealized point payload. No independent rotation or pendulum.
             ET.SubElement(joint,'inertial',pos='0 0 0',mass=str(self.payload_mass+.001),diaginertia='1e-10 1e-10 1e-10')
@@ -47,7 +47,9 @@ class HangingSim(DomeSim):
             payload=ET.SubElement(pendulum,'body',name='payload',pos=f'0 0 {-L}');ET.SubElement(payload,'geom',type='sphere',size='.01',mass='0',rgba='.95 .7 .3 1')
         # Each actuator's physical stroke: initial length ±30mm (soft MuJoCo stops).
         initial=np.hypot(rr,self.hang)
-        for tendon in root.findall('./tendon/spatial'):tendon.set('limited','true');tendon.set('range',f'{initial-.03} {initial+.03}')
+        for tendon in root.findall('./tendon/spatial'):
+            tendon.set('limited','false' if direct else 'true')
+            if not direct:tendon.set('range',f'{initial-.03} {initial+.03}')
         self.model=mujoco.MjModel.from_xml_string(ET.tostring(root,encoding='unicode'));self.data=mujoco.MjData(self.model)
         self.hub=self.model.body('hub').id;self.payload=self.model.body('payload').id;self.connector=self.model.body('connector').id
         self.anchor=self.model.site('anchor').id;self.tips=[self.model.site(f'tip{i}').id for i in range(3)];self.air_sites=[self.model.site(f'air{i}').id for i in range(24)]
@@ -63,9 +65,9 @@ class HangingSim(DomeSim):
     def step(self,action,wind):
         self.wind=np.asarray(wind);self.data.qfrc_applied[:]=0
         aero=self.aerodynamics();mujoco.mj_applyFT(self.model,self.data,aero['force'][0],aero['torque_com'],self.data.xipos[self.hub],self.hub,self.data.qfrc_applied)
-        self.spool=np.clip(self.spool+np.asarray(action)*self.motor_speed*self.c.dt,self.model.tendon_range[:,0],self.model.tendon_range[:,1]);self.target_lengths=self.spool.copy()
+        self.spool=np.clip(self.spool+np.asarray(action)*self.motor_speed*self.c.dt,0. if self.direct else self.model.tendon_range[:,0],np.inf if self.direct else self.model.tendon_range[:,1]);self.target_lengths=self.spool.copy()
         local=np.r_[self.data.qpos[7:9],self.data.qpos[9]-self.hang]
-        delta=local-self.attachments;J=delta/np.linalg.norm(delta,axis=1)[:,None]
+        delta=local-self.attachments;J=delta/np.maximum(np.linalg.norm(delta,axis=1)[:,None],1e-12)
         rates=J@self.data.qvel[6:9]
         # Axial force servo, positive force extends. Forces map to relative slides,
         # so equal/opposite internal reactions are handled by the coupled mass matrix.

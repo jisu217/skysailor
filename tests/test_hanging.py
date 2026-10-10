@@ -56,3 +56,19 @@ def test_direct_evaluation(tmp_path,monkeypatch):
     replay=json.loads((b.REPLAYS/(row['episodes'][0]['replay_id']+'.json')).read_text())
     assert replay['frames'][0]['mechanism']=='P' and replay['hardware']['connector_drop_mm']==100
     assert 'pendulum_length_mm' not in replay['hardware']
+
+def test_direct_unrestricted_travel():
+    import mujoco
+    from hanging import DirectSim,HangingSim
+    s=DirectSim();s.c.air_density=0
+    assert not s.model.jnt_limited.any()
+    assert not s.model.tendon_limited.any()
+    initial=s.spool.copy()
+    for _ in range(1100):s.step([1,1,1],np.zeros(3))
+    assert np.all(s.spool-initial>.03)
+    assert np.isfinite(s.data.qpos).all()
+    s.data.qpos[7:10]=[.15,-.15,-.1]
+    mujoco.mj_forward(s.model,s.data)
+    assert not s.model.jnt_limited.any()
+    old=HangingSim()
+    assert old.model.tendon_limited.all()
