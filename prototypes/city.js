@@ -99,7 +99,7 @@ const flatMat = (color, order, opacity = 1) => {
   return { m, order };
 };
 
-export async function createCity({ host, onPick, base = 'data/city/' }) {
+export async function createCity({ host, onPick, onNode, base = 'data/city/' }) {
   // DOM: one wrap (canvas + labels + toolbar) moved between the ① and ② stages
   const wrap = document.createElement('div');
   wrap.className = 'city-wrap';
@@ -190,9 +190,10 @@ export async function createCity({ host, onPick, base = 'data/city/' }) {
   const modelScene = new THREE.Scene();
   addModelLights(modelScene);
   const models = new Map();
+  const DIM = 0.35;                                    // opacity of the other domes while one is selected
   const MODEL_PX = { balloon: 40, drone: 26, bird: 32, unknown: 26, dome: 46 };
   const domes = new Map();
-  function syncDomes(nodes) {
+  function syncDomes(nodes, sel) {
     const seen = new Set();
     for (const n of nodes) {
       seen.add(n.id);
@@ -201,6 +202,8 @@ export async function createCity({ host, onPick, base = 'data/city/' }) {
       m.target.copy(V(n.e, n.n, n.alt)); m.obj.position.copy(m.target);
       m.obj.userData.setStatus(n.q > 0.8 ? TOK.friend : TOK.q(n.q));
       m.obj.userData.setTilt(Math.min(60, n.tilt || 0)*Math.PI/180);
+      const dim = sel && sel !== n.id ? DIM : 1;
+      if (m.dim !== dim) { m.dim = dim; m.obj.traverse((o) => { if (o.material) { o.material.transparent = true; o.material.opacity = (o.material.userData.base ??= o.material.opacity)*dim; } }); }
     }
     for (const [id, m] of domes) if (!seen.has(id)) { modelScene.remove(m.obj); domes.delete(id); }
   }
@@ -316,7 +319,7 @@ export async function createCity({ host, onPick, base = 'data/city/' }) {
       if (m.dy !== dy) { m.dy = dy; tag.style.transform = dy ? `translateY(${dy}px)` : ''; m.el.querySelector('.leader').style.transform = dy ? `rotate(${Math.atan2(dy, 12)*180/Math.PI}deg) scaleX(${Math.hypot(dy, 12)/12})` : ''; }
     }
     for (const m of marks.values()) {
-      if (m.el.hidden || m.cls !== 'city-node') continue;
+      if (m.el.hidden || !m.cls?.startsWith('city-node')) continue;
       const lab = m.el.querySelector('.nlabel'), r = [m.xy[0]+14, m.xy[1]-8, m.xy[0]+100, m.xy[1]+8];
       const quiet = placed.some((o) => r[0] < o[2] && r[2] > o[0] && r[1] < o[3] && r[3] > o[1]);
       if (lab && lab.hidden !== quiet) lab.hidden = quiet;
@@ -452,16 +455,19 @@ export async function createCity({ host, onPick, base = 'data/city/' }) {
       mark('z:'+z.id, 'city-zonetag'+(th ? ' alert' : ''), `<span style="color:${col}">${esc(text)}</span>`, V(z.e, z.n+z.r, 0));
     }
 
-    // own sensors: coverage (dashed, blue unless degraded), stalk, friendly symbol
+    // own sensors: coverage (dashed, blue unless degraded), stalk, friendly symbol; a selected dome (①) dims the others
+    const ns = opt.screen === 'nodes' ? opt.nsel : null, dimOf = (id) => (ns && ns !== id ? DIM : 1);
     for (const n of st.nodes) {
-      if (L.coverage) add3d(dashedCircle(n.e, n.n, n.R, 0, 160), TOK.q(n.q), opt.screen === 'nodes' ? 1.2 : 0.9, opt.screen === 'nodes' ? 0.8 : 0.45, 12);
-      add3d([n.e, 0, -n.n, n.e, n.alt, -n.n], TOK.friend, 0.8, 0.35);
-      mark('n:'+n.id, 'city-node', `<span class="nlabel num">${esc(n.id)} · ${Math.round(n.q*100)}%</span>`, V(n.e, n.n, n.alt));
+      const k = dimOf(n.id), on = ns === n.id;
+      if (L.coverage) add3d(dashedCircle(n.e, n.n, n.R, 0, 160), TOK.q(n.q), opt.screen === 'nodes' ? (on ? 1.8 : 1.2) : 0.9, (opt.screen === 'nodes' ? 0.8 : 0.45)*k, 12);
+      if (on) disc(n.e, n.n, n.R, TOK.q(n.q), 0.07, 11);
+      add3d([n.e, 0, -n.n, n.e, n.alt, -n.n], TOK.friend, 0.8, 0.35*k);
+      mark('n:'+n.id, 'city-node'+(on ? ' sel' : k < 1 ? ' dim' : ''), `<span class="hit"></span><span class="nlabel num">${esc(n.id)} · ${Math.round(n.q*100)}%</span>`, V(n.e, n.n, n.alt), () => onNode?.(n.id));
     }
     if (L.rays) for (const r of st.rays) {
       const a = V(r.e, r.n, r.alt);
       const b2 = a.clone().add(new THREE.Vector3(Math.sin(r.az)*Math.cos(r.el), Math.sin(r.el), -Math.cos(r.az)*Math.cos(r.el)).multiplyScalar(r.L));
-      add3d(dashed(a, b2, 10, 14), TOK.ray, 0.8, 0.28);
+      add3d(dashed(a, b2, 10, 14), TOK.ray, 0.8, 0.28*dimOf(r.node));
     }
     if (opt.truth) for (const o of st.truths) mark('o:'+o.id, 'city-truth', '', V(o.e, o.n, o.alt || 0));
 
@@ -491,7 +497,7 @@ export async function createCity({ host, onPick, base = 'data/city/' }) {
         `<span class="hit"></span><span class="leader" style="background:${col}"></span><span class="tag" style="border-left-color:${col}"><span>${line1}</span>${line2}</span>`, p, () => onPick?.(t.id));
     }
     syncModels(st.tracks);
-    syncDomes(st.nodes);
+    syncDomes(st.nodes, ns);
     for (const [k, m] of marks) if (!m.seen) { m.el.remove(); marks.delete(k); }
     // compass + wind
     windBearing = Math.atan2(st.wind.x, st.wind.y);
