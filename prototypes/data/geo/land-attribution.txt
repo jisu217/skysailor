@@ -1,0 +1,2 @@
+Natural Earth 1:50m Physical Vectors — Land (public domain), via the EBS project (used with the author's permission).
+https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_land.geojson
