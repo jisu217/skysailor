@@ -480,3 +480,33 @@ WebSocket 재시작 재현성, 입력 범위/삼각형 투영, 구동 속도 제
 한계: 공기힘은 240 mm cap 예비 CFD 표를 45 cm로 키운 값이고, tail은 dome 뒤 흐름을
 넣지 않은 단순 항력 model입니다. 회로층은 무게만 더했고 강성·공기 투과 변화는
 넣지 않았습니다. 각 경우 한 번씩 돌린 결과입니다.
+
+## 출처 목록
+
+이 repository와 `docs/next-steps/README.md`에서 쓴 외부 자료, 도구, 논문입니다.
+
+### 자료
+
+- 실측 바람: Schön, M., Büchau, Y., zum Berge, K., Bange, J., Platis, A. Falkenberg 50 m METEK USA-1 (mike) 3차원 바람 자료, CC-BY-4.0. [doi:10.5281/zenodo.18268508](https://doi.org/10.5281/zenodo.18268508) (전처리 기록: `data/wind/README.md`, `data/wind/measured.json`)
+
+### Simulation과 계산 도구
+
+- MuJoCo: [Python/viewer](https://mujoco.readthedocs.io/en/stable/python.html), [Modeling](https://mujoco.readthedocs.io/en/stable/modeling.html)
+- OpenFOAM (simpleFoam, kOmegaSST, forces/forceCoeffs): [표준 해석기](https://www.openfoam.com/documentation/user-guide/a-reference/a.1-standard-solvers), [Wall functions](https://doc.openfoam.com/2606/tools/processing/models/turbulence/ras/wall-functions/), [yPlus](https://doc.openfoam.com/2212/tools/post-processing/function-objects/field/yPlus/)
+- Gmsh (격자 생성), Three.js (browser 3D 화면), Gymnasium (학습 환경 형식)
+
+### 논문
+
+- Field, S. B., Klaus, M., Moore, M. G., Nori, F. (1997). Chaotic dynamics of falling disks. *Nature* 388, 252–254. [doi:10.1038/40817](https://doi.org/10.1038/40817)
+- Andersen, A., Pesavento, U., Wang, Z. J. (2005). Unsteady aerodynamics of fluttering and tumbling plates. *J. Fluid Mech.* 541, 65–90. [Cambridge](https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/abs/unsteady-aerodynamics-of-fluttering-and-tumbling-plates/1FC26E817B4D5B91714C9875F070CF8D)
+- Auguste, F., Magnaudet, J., Fabre, D. (2013). Falling styles of disks. *J. Fluid Mech.* 719, 388–405.
+- Vincent, L., Shambaugh, W. S., Kanso, E. (2016). Holes stabilize freely falling coins. *J. Fluid Mech.* 801, 250–259. [doi:10.1017/jfm.2016.432](https://doi.org/10.1017/jfm.2016.432)
+- Virgili-Llop, J., Polat, H. C., Romano, M. (2019). Attitude stabilization of spacecraft in very low Earth orbit by center-of-mass shifting. *Front. Robot. AI* 6. [doi:10.3389/frobt.2019.00007](https://doi.org/10.3389/frobt.2019.00007)
+- Reddy, G., Wong-Ng, J., Celani, A., Sejnowski, T. J., Vergassola, M. (2018). Glider soaring via reinforcement learning in the field. *Nature* 562, 236–239. [doi:10.1038/s41586-018-0533-0](https://doi.org/10.1038/s41586-018-0533-0)
+- Iyer, V., Gaensbauer, H., Daniel, T. L., Gollakota, S. (2022). Wind dispersal of battery-free wireless devices. *Nature* 603, 427–433. [doi:10.1038/s41586-021-04363-9](https://doi.org/10.1038/s41586-021-04363-9)
+- Johnson, K., Arroyos, V., Ferran, A., et al. (2023). Solar-powered shape-changing origami microfliers. *Sci. Robot.* 8. [doi:10.1126/scirobotics.adg4276](https://doi.org/10.1126/scirobotics.adg4276)
+
+### 사례와 기사
+
+- DARPA ICARUS 발표: [Electronic Specifier (2015)](https://www.electronicspecifier.com/?p=47199), [Defense One (2015)](https://www.defenseone.com/technology/2015/10/military-wants-vampire-drones-die-sun/122722/)
+- Otherlab APSARA: [IEEE Spectrum](https://spectrum.ieee.org/otherlab-apsara-aerial-delivery-system)
