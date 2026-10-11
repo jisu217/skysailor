@@ -10,7 +10,7 @@ FROM python:3.12-slim-bookworm AS kit
 WORKDIR /src
 COPY . .
 COPY --from=frontend /web/dist ./web/dist
-RUN python participant/build_package.py
+RUN find . -exec touch {} + && python participant/build_package.py
 
 FROM python:3.12-slim-bookworm
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 UV_LINK_MODE=copy
