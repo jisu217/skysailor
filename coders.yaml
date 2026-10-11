@@ -1,0 +1,8 @@
+version: "1"
+mode: standalone
+
+services:
+  web:
+    dockerfile: Dockerfile
+    port: 8000
+    expose: public
