@@ -1,4 +1,4 @@
-# Skysailor 다음 단계: soft circuit와 사라지는 비행체
+# Skysailor 다음 단계: soft circuit과 사라지는 비행체
 
 이 문서는 지금까지의 결과(45 cm film dome + tail, `상승 시험` preset) 다음에 할 두 가지를 정리합니다. 그림 3장은 MuJoCo simulation 결과이고, 나머지 2장은 개념도와 계산값입니다.
 
