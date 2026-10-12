@@ -1,6 +1,8 @@
 # Corpus
 
-RAG가 참조하는 원문 데이터 작성 규칙입니다. 공개 문서만 넣고, 진행 상태나 구현 설명은 [rag/README.md](../README.md)와 [rag/docs/DESIGN.md](../docs/DESIGN.md)에 둡니다.
+RAG 참조 원문 data의 작성 규칙. 공개 문서만 수록하며, 진행 상태와 구현 설명은 [rag/README.md](../README.md), [rag/docs/DESIGN.md](../docs/DESIGN.md) 참고.
+
+## Layout
 
 ```
 kr/      한국 (사례·법령·판례·절차)
@@ -9,29 +11,30 @@ intl/    기타 해외 참고 사례
   └─ 각 폴더: cases/  laws/  precedents/  procedures/
 ```
 
-모드별로 읽는 폴더:
-- **한국 모드(kr):** kr + us + intl. 해외 선례도 판단에 참고가 되기 때문입니다.
-- **미국 모드(us):** us + intl
+Mode별 참조 folder:
 
-## 사례 기록 (`cases/*.json`)
+- Korea mode (`kr`): `kr` + `us` + `intl`. 해외 선례도 판단 근거로 활용.
+- US mode (`us`): `us` + `intl`
 
-`rag/cases/schema.py`의 `Case` 형식을 따르고, 파일 하나에 사례 하나입니다.
+## Case Records (`cases/*.json`)
 
-| 필드 | 내용 |
-|---|---|
-| `target_class`, `count`, `region`, `zone_type`, `population`, `rid` | 상황. 유사 사례 찾기에 쓰임 |
-| `actions_taken` | 실제로 취한 조치 (순서대로) |
-| `max_action` | 가장 높았던 대응 수위 (observe / report / alert / rf_jam / kinetic) |
-| `outcome`, `collateral` | 결과와 부수 피해 |
-| `constraints` | 그때 작용한 법적·작전적 제약 |
-| `sources` | 출처 URL (필수) |
-| `notes` | 보도마다 다른 수치, 확인되지 않은 부분 |
+`rag/cases/schema.py`의 `Case` schema 준수, file 1개당 사례 1건.
 
-**작성 원칙:** 출처에서 확인된 사실만 씁니다. 보도마다 다르거나 확인되지 않은 내용은 본문에 단정하지 않고 `notes`에 적습니다.
+기록 필드:
 
-## 문서 원문 (`laws/`, `precedents/`, `procedures/`)
+- `target_class`, `count`, `region`, `zone_type`, `population`, `rid`: 상황 정보. 유사 사례 매칭에 사용.
+- `actions_taken`: 실제 조치. 순서대로 기록.
+- `max_action`: 최고 대응 수위(`observe` / `report` / `alert` / `rf_jam` / `kinetic`).
+- `outcome`, `collateral`: 결과와 부수 피해.
+- `constraints`: 당시 작용한 법적·작전적 제약.
+- `sources`: 출처 URL. 필수.
+- `notes`: 보도 간 수치 차이, 미확인 사항.
 
-원문 파일마다 같은 이름의 `.meta.json`을 둡니다.
+Authoring rule: 출처로 확인된 사실만 기재. 보도 간 상이하거나 미확인된 내용은 본문에 단정하지 않고 `notes`에 기록.
+
+## Source Documents (`laws/`, `precedents/`, `procedures/`)
+
+원문 file마다 동일 이름의 `.meta.json` 동반.
 
 ```json
 { "doc": "항공안전법", "doc_type": "law", "country": "kr",
