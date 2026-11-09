@@ -101,7 +101,16 @@ body.is-main main,body.full-map main{padding:0}
 /* map chrome kept minimal: no city name, height legend, view-angle or layer buttons (defaults per screen) */
 .city-name,.city-legend,.city-tools .view-switch,.city-layers{display:none!important}
 .city-tools{justify-content:flex-end}
-.tdetail .dsec{border-top:1px solid var(--line2);margin-top:14px;padding-top:12px}
+.tdetail .dsec,.ndetail .dsec{border-top:1px solid var(--line2);margin-top:14px;padding-top:12px}
+.ntable tr.on{background:#213e49;box-shadow:inset 3px 0 var(--accent)}
+.ndetail .nd-head{display:flex;align-items:center;gap:8px}
+.ndetail .nd-x{margin-left:auto;padding:2px 8px;font-size:12px}
+.ndetail .nd-list{list-style:none;margin:6px 0 0;padding:0;font-size:12px}
+.ndetail .nd-list li{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--line2)}
+.ndetail .nd-list .lvl{min-width:56px;padding:2px 5px}
+.ndetail .nd-loss{font-size:12px;line-height:1.7;margin:6px 0 0;padding-left:16px}
+.ndetail .spark{display:block;width:100%;height:36px;margin-top:6px}
+.float-l{overflow-y:auto}
 .cls-top{font-size:13px;font-weight:600}.cls-top .muted{font-weight:400;font-size:11px}
 .basis{margin:8px 0 0;padding-left:16px;font-size:12px;color:#b8cce1;line-height:1.7}
 .factors .fk{color:#b8cce1}
@@ -192,8 +201,11 @@ details.ctrlp .kv{margin:10px 0}
 .city-legend i{width:12px;height:9px;border:1px solid #4a73a3;background:#263d63}
 .city-legend i.e{opacity:.5;border-color:#2e4a6c}
 .city-labels .sym{display:block;flex-shrink:0;filter:drop-shadow(0 0 4px var(--glow)) drop-shadow(0 1px 3px #000)}
-.city-node{display:flex;align-items:center;margin:-8px 0 0 26px}
+.city-node{pointer-events:auto;display:flex;align-items:center;gap:3px;margin:-23px 0 0 -23px;padding:0;background:none;border:0;cursor:pointer;transition:opacity .2s}
+.city-node:hover{background:none}
+.city-node .hit{width:46px;height:46px;flex-shrink:0;border-radius:50%}
 .city-node .nlabel{font-size:10px;color:#9cc4e4;text-shadow:0 1px 3px #000,0 0 2px #000}
+.city-node.dim{opacity:.35}.city-node.sel .nlabel{color:#fff;font-weight:600}
 .city-truth{width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:#5d6b78}
 .city-track{pointer-events:auto;display:flex;align-items:center;margin:-23px 0 0 -23px;padding:0;background:none;border:0;color:#cfe0f2;cursor:pointer}
 .city-track:hover{background:none}.city-track:hover .tag{border-color:#88b8e366}
@@ -251,7 +263,14 @@ details.ctrlp .kv{margin:10px 0}
 .classbar i{display:block;height:100%}
 
 /* response */
-.queue li{grid-template-columns:auto 1fr auto}
+.queue li{grid-template-columns:auto 1fr auto;font-size:14px;padding:12px 10px;gap:12px}
+.queue li>div>div:first-child{font-weight:600}
+.queue li .sub{font-size:12px;margin-top:2px}
+.queue li .lvl{font-size:11px;padding:4px 8px}
+.queue li .deadline{font-size:16px}
+#s-response .split>.col:first-child h3{font-size:12px}
+#logList{font-size:13px}#logList .muted{font-size:12px}
+#logSummary{font-size:12px}
 .deadline{font-weight:700}
 .case{border-left:2px solid var(--accent);padding:4px 0 4px 10px;margin-bottom:10px;font-size:12px;line-height:1.6}
 .case .m{color:var(--muted);font-size:11px}
@@ -274,10 +293,10 @@ details.ctrlp .kv{margin:10px 0}
 .hitl{font-size:11px;color:var(--muted);margin-top:10px}
 .evs-panel{padding-bottom:6px}
 details.ev{border-top:1px solid var(--line2)}
-details.ev summary{display:flex;align-items:baseline;gap:12px;padding:11px 0;cursor:pointer;list-style:none}
-details.ev summary::-webkit-details-marker{display:none}
-details.ev summary::before{content:'▸';color:var(--muted);font-size:11px;transition:transform .15s}
-details.ev[open] summary::before{transform:rotate(90deg)}
+details.ev>summary{display:flex;align-items:baseline;gap:12px;padding:11px 0;cursor:pointer;list-style:none}
+details.ev>summary::-webkit-details-marker{display:none}
+details.ev>summary::before{content:'▸';color:var(--muted);font-size:11px;transition:transform .15s}
+details.ev[open]>summary::before{transform:rotate(90deg)}
 .evt{font-size:13px;font-weight:600;white-space:nowrap}
 .evs{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .evb{padding:0 0 12px 20px;font-size:12px}
@@ -293,6 +312,36 @@ details.ev[open] summary::before{transform:rotate(90deg)}
 .ladder .excluded b{text-decoration:line-through}
 .ladder .rec{background:var(--accent);color:var(--accent-ink);font-weight:700}
 .ladder .rec small{color:var(--accent-ink)}
+.ladder.pick{margin-top:14px}
+.ladder.pick button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:9px 4px;border-radius:7px;border:1px solid transparent;background:#18272f;color:#4f6873;line-height:1.4;cursor:pointer}
+.ladder.pick button b{font-size:12px}.ladder.pick button small{display:block;font-size:10px}
+.ladder.pick .allowed{background:#1d3640;color:#a9c2cb}
+.ladder.pick .cond{background:#2a2a1d;color:#cfc28a}
+.ladder.pick .excluded{background:#2a1d1f;color:#9a6b6b}.ladder.pick .excluded b{text-decoration:line-through}
+.ladder.pick button::before{content:'';width:22px;height:3px;border-radius:2px;background:var(--step);margin-bottom:4px}
+.ladder.pick button b{color:var(--step)}
+.ladder.pick .excluded b{color:#9a6b6b}
+.ladder.pick button:disabled::before{opacity:.3}.ladder.pick button:disabled b{color:inherit}
+.ladder.pick .rec{border:1px dashed color-mix(in srgb,var(--step) 70%,transparent)}
+.ladder.pick .rec small{color:var(--step)}
+.ladder.pick button[aria-checked=true]{background:color-mix(in srgb,var(--step) 18%,#0d1b29);color:#dce7f4;border:1px solid var(--step);font-weight:600}
+.ladder.pick button[aria-checked=true] b{color:var(--step)}
+.ladder.pick button[aria-checked=true] small{color:#dce7f4}
+.ladder.pick button:disabled{cursor:not-allowed;opacity:.6}
+.recp .why-list{margin:0;padding-left:16px;font-size:12px;line-height:1.8;color:#b8cce1}
+.evgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.evcard{border:1px solid var(--line2);border-radius:8px;padding:12px 14px;background:#0d1b2980;min-width:0}
+.evcard .evh{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.evcard .evb{padding:0}
+.evcard .evb td,.evcard .evb th{padding:6px 6px}
+.evc-cases{margin-top:12px}
+.casegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.casegrid .cnum{position:absolute;left:10px;top:8px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#88b8e326;color:#dce7f4;font-size:10px;font-weight:700}
+.casegrid .case{position:relative;margin:0;padding:8px 10px 8px 36px;border:0;border-radius:6px;background:#0a151c80}
+@media (max-width:1100px){.evgrid{grid-template-columns:1fr}}
+details.case summary{cursor:pointer;list-style:none}details.case summary::-webkit-details-marker{display:none}
+details.case>div{margin-top:4px}
+details.quote summary{cursor:pointer;color:var(--muted);font-size:11px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 td,th{padding:7px 6px;border-bottom:1px solid var(--line2);text-align:left}
 th{color:var(--muted);font-weight:500;font-size:11px}
@@ -381,6 +430,7 @@ dialog::backdrop{background:#0009}
   <div class="float-l">
     <div class="panel" id="nSum"></div>
     <div class="panel"><h3>돔</h3><table class="ntable" id="nodeList"></table></div>
+    <div class="panel ndetail" id="nDetail" hidden></div>
     <details class="panel ctrlp">
       <summary><span class="evt">탑재 제어기</span><span class="evs" id="ctrlBrief"></span></summary>
       <select id="ctrlSel" aria-label="탑재 제어기"></select>
@@ -547,6 +597,13 @@ function reset(){
 const ctrl=()=>CONTROLLERS.find(c=>c.id===S.ctrl);
 const nodeQ=n=>RP?(S.nodeState[n.id]?.stability??0):clamp(ctrl().q*n.f,0,1);
 const nodeR=n=>RP?(S.nodeState[n.id]?.coverage??0):2800*(.2+.8*nodeQ(n));
+const nodeTilt=n=>RP?(S.nodeState[n.id]?.tilt??0):(1-nodeQ(n))*(ctrl().arena?170:40);
+let NSEL=null;   // dome selected on ① (kept across replay restarts)
+function selectNode(id){NSEL=NSEL===id||!id?null:id;if(NSEL)window.OPS_CITY?.focusNode(NSEL);renderDom(true)}
+function recNodes(){   // stability/tilt history per dome for the ① trend line (replay: from the start, live: since connecting)
+  if(!S.nhist||S.nhT>S.t)S.nhist={};if(S.nhT===S.t)return;S.nhT=S.t;
+  for(const n of NODES){const h=S.nhist[n.id]??=[];h.push([S.t,nodeQ(n),nodeTilt(n)]);if(h.length>600)h.shift()}
+}
 function event(text,kind=''){S.events.unshift({t:S.t,text,kind});S.events.length=Math.min(S.events.length,60)}
 
 function stepTruth(o,dt){
@@ -797,9 +854,55 @@ function renderNodes(full){
     el('div',{class:'hero-t'},`운용 ${ok}/${NODES.length}`,el('span',{class:'hero-sub num'},`평균 안정도 ${Math.round(avg*100)}%`)),
     el('div',{class:'hero-s'},`작전 지역 관측 ${Math.round(cover*100)}% · 바람 ${windTxt()}`));
   $('ctrlBrief').textContent=RP?`기록된 시나리오 · 안정도 ${RP.meta.quality}`:ctrl().name;
-  const row=n=>{const q=nodeQ(n);const tilt=RP?(S.nodeState[n.id]?.tilt??0):(1-q)*(ctrl().arena?170:40);const st=q>.8?['정상','good']:q>.5?['저하','warn']:['불안정','bad'];const seen=active().filter(t=>Math.hypot(t.x-n.x,t.y-n.y)<nodeR(n)).length;
-    return el('tr',{onpointerdown:()=>window.OPS_CITY?.focusNode(n.id),title:'지도에서 보기'},el('td',{},el('b',{},n.id)),el('td',{},el('span',{class:'st '+st[1]},st[0])),el('td',{class:'num'},Math.round(q*100)+'%'),el('td',{class:'num'},Math.min(180,tilt).toFixed(0)+'°'),el('td',{class:'num'},Math.round(nodeR(n))+' m'),el('td',{class:'num'},seen))};
+  const row=n=>{const q=nodeQ(n);const tilt=nodeTilt(n);const st=q>.8?['정상','good']:q>.5?['저하','warn']:['불안정','bad'];const seen=active().filter(t=>Math.hypot(t.x-n.x,t.y-n.y)<nodeR(n)).length;
+    return el('tr',{class:n.id===NSEL?'on':'',onpointerdown:()=>selectNode(n.id),title:n.id===NSEL?'선택 해제':'선택 · 지도에서 보기'},el('td',{},el('b',{},n.id)),el('td',{},el('span',{class:'st '+st[1]},st[0])),el('td',{class:'num'},Math.round(q*100)+'%'),el('td',{class:'num'},Math.min(180,tilt).toFixed(0)+'°'),el('td',{class:'num'},Math.round(nodeR(n))+' m'),el('td',{class:'num'},seen))};
   $('nodeList').replaceChildren(el('tr',{},...['돔','상태','안정도','기울기','반경','탐지'].map(h=>el('th',{},h))),...NODES.map(row));
+  renderNodeDetail();
+}
+// ① selected dome: status, what it sees now, what is lost without it, trend
+function renderNodeDetail(){
+  const d=$('nDetail'),n=NODES.find(m=>m.id===NSEL);
+  if(!n){NSEL=null;d.hidden=true;return}
+  d.hidden=false;
+  const q=nodeQ(n),R=nodeR(n),st=q>.8?['정상','good']:q>.5?['저하','warn']:['불안정','bad'];
+  const others=NODES.filter(m=>m!==n),inR=(m,x,y)=>Math.hypot(x-m.x,y-m.y)<nodeR(m);
+  // 2. targets inside this dome's radius, and who else sees them
+  const LV=['LOW','MEDIUM','HIGH','CRITICAL'];
+  const seen=active().filter(t=>inR(n,t.x,t.y)).sort((a,b)=>LV.indexOf(b.level)-LV.indexOf(a.level)||a.tti-b.tti);
+  const tli=t=>{const co=others.filter(m=>inR(m,t.x,t.y)).map(m=>m.id);
+    return el('li',{},el('span',{class:'lvl '+t.level},t.status==='tentative'?'확인 중':t.level),el('b',{},t.id),CLS[t.cls],
+      el('span',{class:'muted',style:'margin-left:auto'},co.length?`${co.join('·')}와 공동`:'단독 관측'))};
+  // 3. coverage with vs without this dome: whole area and each protected zone
+  const cov=(set,pts)=>pts.filter(([x,y])=>set.some(m=>inR(m,x,y))).length/(pts.length||1);
+  const area=[];for(let i=0;i<40;i++)for(let j=0;j<30;j++)area.push([(i+.5)/40*W,(j+.5)/30*H]);
+  const zpts=z=>{const p=[];for(let i=0;i<12;i++)for(let j=0;j<12;j++){const x=z.x+((i+.5)/12*2-1)*z.r,y=z.y+((j+.5)/12*2-1)*z.r;if(Math.hypot(x-z.x,y-z.y)<=z.r)p.push([x,y])}return p};
+  const pct=v=>Math.round(v*100)+'%';
+  const a0=cov(NODES,area),a1=cov(others,area);
+  const zl=ZONES.map(z=>{const p=zpts(z);return{z,b:cov(NODES,p),a:cov(others,p)}}).filter(o=>o.b-o.a>.01);
+  const solo=seen.filter(t=>!others.some(m=>inR(m,t.x,t.y)));
+  const loss=[el('li',{},`작전 지역 관측 ${pct(a0)} → `,el('b',{},pct(a1)),a0-a1>.005?` (−${Math.round((a0-a1)*100)}%p)`:' (변화 없음)'),
+    ...zl.map(o=>el('li',{},`${o.z.name} 관측 ${pct(o.b)} → `,el('b',{style:o.a<.5?'color:var(--crit)':''},pct(o.a)))),
+    solo.length?el('li',{},`놓치는 표적: ${solo.map(t=>t.id).join(', ')}`):null].filter(Boolean);
+  // 4. trend
+  const h=S.nhist?.[n.id]||[];let trend;
+  if(h.length<2)trend=el('div',{class:'muted',style:'margin-top:6px'},'기록이 쌓이는 중입니다.');
+  else{
+    const lo=h.reduce((a,b)=>b[1]<a[1]?b:a),mt=Math.max(...h.map(r=>r[2])),y0=Math.min(.5,lo[1]-.05);   // axis y0..100%
+    const t0=h[0][0],t1=h[h.length-1][0],X=t=>((t-t0)/((t1-t0)||1)*100).toFixed(1),Y=v=>(34-(v-y0)/(1-y0)*32).toFixed(1);
+    const pts=h.map(([t,v])=>X(t)+','+Y(v)).join(' ');
+    const svg=`<svg class="spark" viewBox="0 0 100 36" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="100" y1="${Y(.8)}" y2="${Y(.8)}" stroke="#88b8e33a" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/><polyline points="${pts}" fill="none" stroke="#90d4b1" stroke-width="1.5" vector-effect="non-scaling-stroke"/><circle cx="${X(lo[0])}" cy="${Y(lo[1])}" r="1.6" fill="#e6c84f"/></svg>`;
+    trend=el('div',{});trend.innerHTML=svg;
+    trend.append(el('div',{class:'muted'},`최저 T+${fmtT(lo[0])} ${pct(lo[1])} · 최대 기울기 ${Math.min(180,mt).toFixed(0)}° · 점선 = 정상 기준 80%`));
+  }
+  d.replaceChildren(...[
+    el('div',{class:'nd-head'},el('div',{class:'kicker'},'선택한 돔 · 고도 ',el('span',{style:'text-transform:none'},`${n.alt||120} m`)),el('button',{class:'nd-x',onpointerdown:()=>selectNode(null),'aria-label':'선택 해제'},'✕')),
+    el('div',{class:'hero-t'},n.id,el('span',{class:'st '+st[1]},st[0])),
+    el('div',{class:'hero-s num'},`안정도 ${pct(q)} · 기울기 ${Math.min(180,nodeTilt(n)).toFixed(0)}° · 반경 ${Math.round(R)} m`),
+    n.note?el('div',{class:'note'},n.note):null,
+    el('div',{class:'dsec'},el('div',{class:'kicker'},`지금 보는 표적 (${seen.length})`),
+      seen.length?el('ul',{class:'nd-list'},...seen.map(tli)):el('div',{class:'muted',style:'margin-top:6px'},'반경 안에 표적이 없습니다.')),
+    el('div',{class:'dsec'},el('div',{class:'kicker'},'이 돔이 빠지면'),el('ul',{class:'nd-loss'},...loss)),
+    el('div',{class:'dsec'},el('div',{class:'kicker'},'안정도 추이'),trend)].filter(Boolean));
 }
 function gaussSafe(){return Math.sqrt(-2*Math.log(Math.random()+1e-9))*Math.cos(6.283*Math.random())}
 
@@ -848,26 +951,63 @@ function renderResponse(full){
   const box=$('rCard');const cur=q.find(x=>x.t.id===S.rsel);
   if(!cur){box.replaceChildren(el('div',{class:'panel empty'},'결정 대기 표적을 선택하세요.'));return}
   const{t,r}=cur;
-  box.replaceChildren(
-    t.stale||t.prevId?el('div',{class:'panel',style:'border-color:var(--med);color:var(--med);font-size:12px'},
-      t.stale?`추적이 ${Math.round(t.staleFor)}초 전에 끊겼습니다. 마지막으로 받은 위협도·카드를 보여줍니다 (${PENDING_HOLD}초 동안 유지).`:'',
-      t.prevId?` 추적이 끊겼던 ${t.prevId}와 같은 표적으로 이어졌습니다. 결정 소요 시간은 처음 경보부터 계산합니다.`:'',
-      t.inherited?' 새 추적의 식별이 끝날 때까지 이전 판정과 카드를 유지합니다.':''):'',
-    el('div',{class:'panel'},el('div',{style:'display:flex;align-items:center;gap:10px;flex-wrap:wrap'},el('h2',{},`${t.id} · ${CLS[t.cls]}${t.rid?'':' · Remote ID 없음'}`),el('span',{class:'lvl '+t.level},t.level),el('span',{class:'muted'},`${t.zone?.name||''} · TTI ${fmtTTI(t.tti)}`),el('span',{id:'dl',class:'deadline num',style:'margin-left:auto'},'결정 마감 '+fmtDL(r.deadline)))),
-    el('div',{class:'panel'},el('h3',{},'유사 사례 · RAG'),...(r.cases.length?r.cases.map(c=>el('div',{class:'case'},el('div',{},el('b',{},(c.date!=='—'?c.date+' ':'')+c.title),el('span',{class:'m'},`  유사도 ${Math.round(c.sim*100)}% · ${c.matched.join('·')} 일치`)),el('div',{},'조치: '+c.actions),el('div',{},'결과: '+c.outcome),el('div',{class:'m'},'제약: '+c.cons+' · 출처: ',r.real?el('a',{href:c.src,target:'_blank',rel:'noopener'},new URL(c.src).hostname):c.src,' '),el('span',{class:'tag'},r.real?'공개 보도 기준':'예시 · 출처 확인 전'))):[el('p',{class:'muted'},'유사 사례 없음 → 관측 지속 권고')])),
-    el('div',{class:'panel'},el('h3',{},r.real?`법적·작전적 제약 · RAG (색인 ${r.version})`:'법적·작전적 제약 · RAG'),el('ul',{class:'cons'},...r.cons.map(c=>el('li',{},el('b',{},`[${c.kind}] `),c.text,c.ref?el('span',{class:'tag'},` (${c.ref})`):null,el('span',{class:'muted'},` → ${c.applies}`),c.quote?el('div',{class:'muted',style:'font-size:11px;margin:2px 0 6px'},`“${c.quote}”`+(c.verified?' · 원문 대조 확인':'')):null)))),
-    el('div',{class:'panel'},el('h3',{},'대응 단계 · 권고'),
-      el('div',{class:'ladder'},...LADDER.map(a=>{const s=r.st[a];const cls=a===r.rec?'rec':s==='allowed'?'allowed':s==='cond'?'cond':s==='excluded'?'excluded':'';const sub=a===r.rec?'권고':s==='allowed'?'허용':s==='cond'?'조건부':s==='excluded'?'제외':'범위 밖';return el('div',{class:cls},el('b',{},ACT[a]),el('small',{},sub))})),
-      el('p',{style:'font-size:12px;line-height:1.7;margin:10px 0 0'},el('b',{},'근거: '),r.why)),
-    el('div',{class:'panel'},el('h3',{},'대응별 부수 피해'),el('table',{},el('tr',{},el('th',{},'대응'),el('th',{},'상태'),el('th',{},'부수 피해'),el('th',{},'비고')),...LADDER.map(a=>{const[c,n]=collateral(t,a);return el('tr',{style:a===r.rec?'background:#16302c':''},el('td',{},ACT[a]),el('td',{},{allowed:'허용',cond:'조건부',excluded:'제외',out:'범위 밖'}[r.st[a]]+(a===r.rec?' · 권고':'')),el('td',{style:`color:${c==='높음'?'var(--crit)':c==='중간'?'var(--high)':c==='낮음'?'var(--med)':'var(--muted)'}`},c),el('td',{class:'muted'},n))}))),
-    el('div',{class:'panel'},el('h3',{},'결정'),
-      el('div',{class:'decide'},el('label',{class:'muted'},'대응 '),(()=>{const s=el('select',{id:'decAct'});for(const a of LADDER)if(r.st[a]!=='out'){const o=new Option(ACT[a]+(a===r.rec?' (권고)':r.st[a]==='excluded'?' (제외됨)':r.st[a]==='cond'?' (조건부)':''),a);s.append(o)}s.value=r.rec;s.onchange=()=>{$('reason').hidden=s.value===r.rec};return s})(),
-        el('button',{class:'primary',onclick:()=>decide(t,r,'승인')},'승인'),el('button',{onclick:()=>decide(t,r,'보류')},'보류'),el('button',{onclick:()=>decide(t,r,'추가 관측')},'추가 관측')),
-      el('input',{id:'reason',placeholder:'권고와 다른 대응을 선택한 이유 (필수)',hidden:'',style:'width:100%;margin-top:8px'}),
-      el('p',{class:'notice',style:'margin:10px 0 0'},'AI는 선택지와 근거만 제시합니다. 최종 결정과 실행은 운용자가 합니다.'))
-  );
+  if(RUI.id!==t.id)Object.assign(RUI,{id:t.id,act:r.rec,reason:''});
+  if(r.st[RUI.act]==='out')RUI.act=r.rec;
+  const ST={allowed:'허용',cond:'조건부',excluded:'제외',out:'범위 밖'};
+  const harmCol=c=>c==='높음'?'var(--crit)':c==='중간'?'var(--high)':c==='낮음'?'var(--med)':'var(--muted)';
+  // A. situation: what, where, how long until the decision is due
+  const hero=el('div',{class:'panel hero'},
+    el('div',{class:'hero-l'},
+      el('div',{class:'kicker'},t.id+(t.prevId?` · 이전 ${t.prevId}`:'')),
+      el('div',{class:'hero-t'},CLS[t.cls],el('span',{class:'lvl '+t.level},t.level)),
+      el('div',{class:'hero-s'},`${t.zone?`${t.zone.name}까지 ${fmtTTI(t.tti)}`:'보호구역 접근 안 함'} · ${t.rid?`Remote ID ${t.rid}`:'Remote ID 없음'}`),
+      t.stale||t.prevId?el('div',{class:'hero-n'},
+        t.stale?`추적이 ${Math.round(t.staleFor)}초 전에 끊김 · 마지막 위협도·카드 표시 (${PENDING_HOLD}초 유지)`:'',
+        t.prevId?`${t.stale?' · ':''}끊겼던 ${t.prevId}와 같은 표적 · 결정 소요는 첫 경보부터`:'',
+        t.inherited?' · 식별이 끝날 때까지 이전 판정 유지':''):''),
+    el('div',{class:'hero-r'},el('div',{class:'kicker'},'결정 마감'),el('div',{id:'dl',class:'dl num'},fmtDL(r.deadline))));
+  // B. recommendation + decision: why this step, pick a step on the ladder, decide
+  const usable=LADDER.filter(a=>r.st[a]==='allowed'||r.st[a]==='cond'),excl=LADDER.filter(a=>r.st[a]==='excluded');
+  const why=[
+    `위협 ${t.level}${t.zone&&isFinite(t.tti)?` · ${t.zone.name}까지 ${fmtTTI(t.tti)}`:''}`,
+    `허용 범위: ${usable.map(a=>ACT[a]+(r.st[a]==='cond'?'(조건부)':'')).join(' · ')||'없음'}${excl.length?` / 제외: ${excl.map(a=>ACT[a]).join(' · ')}`:''}`,
+    r.cases.length?`유사 사례 ${r.cases.length}건 (최고 유사도 ${Math.round(Math.max(...r.cases.map(c=>c.sim))*100)}%)의 대응 범위 안에서 선택`:'유사 사례 없음 → 관측 지속'];
+  const reason=el('input',{id:'reason',placeholder:'권고와 다른 대응을 선택한 이유 (필수)',style:'width:100%;margin-top:10px',oninput:e=>{RUI.reason=e.target.value}});
+  reason.value=RUI.reason;
+  const ladder=el('div',{class:'ladder pick',role:'radiogroup','aria-label':'대응 단계'});
+  const paint=()=>{for(const b of ladder.children)b.setAttribute('aria-checked',String(b.dataset.a===RUI.act));reason.hidden=RUI.act===r.rec};
+  for(const a of LADDER){const s=r.st[a],[c]=collateral(t,a);
+    ladder.append(el('button',{type:'button',role:'radio','data-a':a,class:s+(a===r.rec?' rec':''),style:`--step:${STEP_COL[a]}`,...(s==='out'?{disabled:''}:{}),
+      onclick:()=>{RUI.act=a;paint()}},
+      el('b',{},ACT[a]),el('small',{},a===r.rec?'권고':ST[s]),s==='out'?null:el('small',{class:'harm',style:`color:${harmCol(c)}`},`부수 피해 ${c}`)))}
+  paint();
+  const recp=el('div',{class:'panel recp'},
+    el('div',{class:'kicker'},'권고'),el('div',{class:'rec-big',style:`color:${STEP_COL[r.rec]}`},ACT[r.rec]),
+    el('ul',{class:'why-list'},...why.map(w=>el('li',{},w))),
+    ladder,reason,
+    el('div',{class:'decide',style:'margin-top:12px'},
+      el('button',{class:'primary big',onclick:()=>decide(t,r,'승인')},'선택한 대응 승인'),
+      el('button',{class:'big',onclick:()=>decide(t,r,'보류')},'보류'),
+      el('button',{class:'big',onclick:()=>decide(t,r,'추가 관측')},'추가 관측')),
+    el('div',{class:'hitl'},'AI는 선택지와 근거만 제시합니다. 최종 결정과 실행은 운용자가 합니다.',el('span',{class:'muted'},` · 판단 경로: ${r.why}`)));
+  // C. evidence: legal limits beside collateral damage, similar cases below as cards
+  const ev=(key,title,sum,...body)=>el('section',{class:'evcard evc-'+key},el('div',{class:'evh'},el('span',{class:'evt'},title),el('span',{class:'evs'},sum)),el('div',{class:'evb'},...body));
+  const law=ev('law',r.real?'법적·작전적 제약':'법적·작전적 제약 (예시)',`${r.cons.length}건${r.version?` · 색인 ${r.version}`:''}`,
+    el('ul',{class:'cons'},...r.cons.map(c=>el('li',{},el('b',{},`[${c.kind}] `),c.text,c.ref?el('span',{class:'tag'},` (${c.ref})`):null,el('span',{class:'muted'},` → ${c.applies}`),
+      c.quote?el('details',{class:'quote'},el('summary',{},'원문'+(c.verified?' · 원문 대조 확인':'')),`“${c.quote}”`):null))));
+  const cases=ev('cases','유사 사례',r.cases.length?`${r.cases.length}건 · 최고 유사도 ${Math.round(Math.max(...r.cases.map(c=>c.sim))*100)}%`:'없음',
+    el('div',{class:'casegrid'},...(r.cases.length?r.cases.map((c,i)=>el('details',{class:'case'},
+      el('summary',{},el('div',{class:'m'},el('span',{class:'cnum num'},i+1),`${c.date!=='—'?c.date+' · ':''}유사도 ${Math.round(c.sim*100)}%`),el('b',{},c.title),el('div',{},'결과: '+c.outcome)),
+      el('div',{},'조치: '+c.actions),
+      el('div',{class:'m'},`${c.matched.join('·')} 일치 · 제약: ${c.cons} · 출처: `,r.real?el('a',{href:c.src,target:'_blank',rel:'noopener'},new URL(c.src).hostname):c.src,' ',el('span',{class:'tag'},r.real?'공개 보도 기준':'예시 · 출처 확인 전')))):[el('p',{class:'muted'},'유사 사례 없음 → 관측 지속 권고')])));
+  const worst=LADDER.filter(a=>r.st[a]!=='out').map(a=>[a,collateral(t,a)]).pop();
+  const harm=ev('harm','대응별 부수 피해',worst?`권고 ${ACT[r.rec]}: ${collateral(t,r.rec)[0]}`+(worst[0]!==r.rec?` · 가장 강한 선택지 ${ACT[worst[0]]}: ${worst[1][0]}`:''):'',
+    el('table',{},el('tr',{},el('th',{},'대응'),el('th',{},'상태'),el('th',{},'피해'),el('th',{},'비고')),...LADDER.map(a=>{const[c,n]=collateral(t,a);return el('tr',{class:a===r.rec?'rec-row':''},el('td',{},ACT[a]),el('td',{},ST[r.st[a]]+(a===r.rec?' · 권고':'')),el('td',{style:`color:${harmCol(c)}`},c),el('td',{class:'muted'},n))})));
+  box.replaceChildren(hero,recp,el('div',{class:'panel evs-panel'},el('div',{class:'kicker'},'근거'),el('div',{class:'evgrid'},law,harm),cases));
 }
-function updateDeadline(q){const c=q.find(x=>x.t.id===S.rsel);const d=$('dl');if(c&&d){d.textContent='결정 마감 '+fmtDL(c.r.deadline);d.style.color=c.r.deadline<60?'var(--crit)':c.r.deadline<180?'var(--high)':''}}
+const RUI={id:null,act:null,reason:''};
+const STEP_COL={observe:'#7fb2ff',report:'#6fd3c7',alert:'#e6c84f',rf_jam:'#f0974a',kinetic:'#ef5b5b'};   // escalation: calm → forceful   // ③ per-target UI state that survives re-renders
+function updateDeadline(q){const c=q.find(x=>x.t.id===S.rsel);const d=$('dl');if(c&&d){d.textContent=fmtDL(c.r.deadline);d.style.color=c.r.deadline<60?'var(--crit)':c.r.deadline<180?'var(--high)':''}}
 /* ⑧ decision log: same line format as ops/service/decisions.py (DecisionLog) */
 const STORE_KEY='skysailor-ops-decisions';
 const DEC_KO={approve:'승인',hold:'보류',observe_more:'추가 관측',dismiss:'해제'},DEC_EN={'승인':'approve','보류':'hold','추가 관측':'observe_more'};
@@ -878,7 +1018,7 @@ function decisionSummary(){const n=DECISIONS.length,lat=DECISIONS.map(l=>l.laten
 function exportDecisions(){const body=[...DECISIONS].reverse().map(l=>JSON.stringify(l)).join('\n')+'\n';
   const a=el('a',{href:URL.createObjectURL(new Blob([body],{type:'application/x-ndjson'})),download:'decisions.jsonl'});document.body.append(a);a.click();a.remove()}
 function decide(t,r,decision){
-  const act=$('decAct').value;const reason=$('reason').value.trim();
+  const act=RUI.id===t.id?RUI.act:r.rec;const reason=$('reason').value.trim();
   if(decision==='승인'&&act!==r.rec&&!reason){$('reason').hidden=false;$('reason').focus();$('reason').style.borderColor='var(--crit)';return}
   const latency=S.t-(S.firstAlert[t.id]??S.t),action=decision==='승인'?act:null,ref=Math.random().toString(16).slice(2,14).padEnd(12,'0');
   DECISIONS.unshift({ref,logged_at:new Date().toISOString(),source:'prototype',
@@ -910,9 +1050,10 @@ function frame(now){
   const dt=Math.min(.1,(now-prev)/1000);prev=now;
   if(!S.paused&&!SRV){if(RP){acc+=dt*S.speed;let moved=false;while(acc>=RP.meta.dt){acc-=RP.meta.dt;S.ri++;moved=true;if(S.ri>=RP.frames.length){reset();moved=false;break}}if(moved)replayFrame(RP.frames[S.ri])}
     else{acc+=dt*S.speed;while(acc>=1){step(1);acc-=1}if(S.t>1500){reset()}}}
+  recNodes();
   if(screen==='main'&&!$('mapMain').hidden)drawMap($('mapMain'),{compact:true,fp:true});   // 2D fallback when the globe cannot load
   const city=window.OPS_CITY;
-  if(screen==='nodes'){if(city)city.update(mapState(),{screen:'nodes',truth:true});else drawMap($('mapNodes'),{truth:true,compact:!RP})}
+  if(screen==='nodes'){if(city)city.update(mapState(),{screen:'nodes',truth:true,nsel:NSEL});else drawMap($('mapNodes'),{truth:true,compact:!RP})}
   if(screen==='targets'){if(city)city.update(mapState(),{screen:'targets',sel:S.sel});else drawMap($('mapTargets'),{fp:true,sel:S.sel})}
   if(now-lastDom>500){lastDom=now;renderDom(false)}
   requestAnimationFrame(frame);
@@ -938,7 +1079,7 @@ function mapState(){
     nodes:NODES.map(n=>({id:n.id,...E(n.x,n.y),alt:n.alt||120,q:nodeQ(n),R:nodeR(n),tilt:RP?(S.nodeState[n.id]?.tilt??0):(1-nodeQ(n))*40})),
     zones:ZONES.map((z,i)=>({id:z.id,code:'ZONE '+'ABCDEFGH'[i],name:z.name,...E(z.x,z.y),r:z.r})),
     pop:POP.map(p=>({...E(p.x,p.y),s:p.s,a:p.a})),
-    rays:RP?(S.rays||[]).map(r=>{const n=node(r.node);return n?{...E(n.x,n.y),alt:n.alt||120,az:r.az,el:r.el||0,L:Math.min(W,H)*.45}:null}).filter(Boolean):[],
+    rays:RP?(S.rays||[]).map(r=>{const n=node(r.node);return n?{node:n.id,...E(n.x,n.y),alt:n.alt||120,az:r.az,el:r.el||0,L:Math.min(W,H)*.45}:null}).filter(Boolean):[],
     truths:(S.truths||[]).filter(o=>{const seen=RP?active().some(t=>Math.hypot(t.x-o.x,t.y-o.y)<50):(S.tracks[o.id]&&S.tracks[o.id].status!=='lost');return !(S.t<o.t0||o.landed||seen)}).map(o=>({id:o.id,...E(o.x,o.y),alt:o.alt||0})),
     tracks:Object.values(S.tracks).filter(t=>t.status!=='lost'&&t.status!=='landed').map(t=>({id:t.id,...E(t.x,t.y),alt:Math.max(0,t.alt||0),vx:t.vx,vy:t.vy,cls:t.cls,level:t.level,status:t.status,
       permitted:!!t.permitted,rid:t.rid||null,zone:t.zone?.id||null,zoneCode:t.zone?'ZONE '+'ABCDEFGH'[ZONES.indexOf(t.zone)]:null,tti:t.tti??Infinity,
@@ -946,7 +1087,7 @@ function mapState(){
   };
 }
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.target.closest('input,select,textarea,button,canvas')){e.preventDefault();$('pause').click()}});
-window.OPS_UI={go,screen:()=>screen,mapState,select:id=>{S.sel=id;renderDom(true)},region:'kr'};
+window.OPS_UI={go,screen:()=>screen,mapState,select:id=>{S.sel=id;renderDom(true)},selectNode,region:'kr'};
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(['main','nodes','targets','response'].includes(h)&&h!==screen)go(h)});
 
 (async()=>{
@@ -975,7 +1116,7 @@ const NOTE={us:'미국(뉴욕) 모드: 지도·탐지·추적·식별은 같은 
 // city view for ① ② (one renderer, moved between the two stages)
 try{
   const {createCity}=await import('./city.js');
-  const city=await createCity({host:$('mapTargets').parentElement,onPick:id=>window.OPS_UI.select(id)});
+  const city=await createCity({host:$('mapTargets').parentElement,onPick:id=>window.OPS_UI.select(id),onNode:id=>window.OPS_UI.selectNode(id)});
   await city.setCity('gangnam');
   $('mapNodes').hidden=$('mapTargets').hidden=true;
   window.OPS_CITY=city;
